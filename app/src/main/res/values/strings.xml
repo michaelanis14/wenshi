@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Wenshy</string>
+    <string name="button_call">Call</string>
 </resources>
