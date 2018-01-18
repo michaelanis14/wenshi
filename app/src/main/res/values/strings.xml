@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Wenshy</string>
     <string name="button_call">Call</string>
+    <string name="textView_payment">Payment Options</string>
+    <string name="radioButton_payment_cash">Cash</string>
+    <string name="radioButton_payment_credit">Credit Card</string>
+    <string name="button_payment_submit">Submit</string>
+
 </resources>
