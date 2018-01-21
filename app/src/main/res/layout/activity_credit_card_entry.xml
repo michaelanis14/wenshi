@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="michaelabadir.wenshy.CreditCardEntry">
+
+    <TextView
+        android:id="@+id/textView_CC_page_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="27dp"
+        android:text="@string/textView_CC_page_label"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_CC_page_card_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="108dp"
+        android:text="@string/textView_CC_page_card_number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_CC_page_card_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/textView_CC_page_card_date"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.353" />
+
+    <TextView
+        android:id="@+id/textView_CC_page_card_cvv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="55dp"
+        android:text="@string/textView_CC_page_card_cvv"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_CC_page_card_date"
+        app:layout_constraintStart_toEndOf="@+id/textView_CC_page_card_date" />
+
+    <TextView
+        android:id="@+id/textView_CC_page_card_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="270dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/textView_CC_page_card_name"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/editText_CC_page_card_number"
+        android:layout_width="247dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:digits="1234567890 "
+        android:ems="10"
+        android:hint="Card Number"
+        android:inputType="phone"
+        android:maxLength="19"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_CC_page_card_number" />
+
+    <EditText
+        android:id="@+id/editText_CC_page_card_date"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:ems="10"
+        android:hint="Date"
+        android:inputType="phone"
+        android:digits="1234567890/"
+        android:maxLength="7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_CC_page_card_date" />
+
+    <EditText
+        android:id="@+id/editText_CC_page_card_cvv"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="115dp"
+        android:ems="10"
+        android:hint="CVV"
+        android:inputType="number"
+        android:maxLength="3"
+        app:layout_constraintStart_toEndOf="@+id/editText_CC_page_card_date"
+        app:layout_constraintTop_toBottomOf="@+id/textView_CC_page_card_cvv" />
+
+    <EditText
+        android:id="@+id/editText_CC_page_card_name"
+        android:layout_width="247dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:ems="10"
+        android:hint="Name"
+        android:inputType="textPersonName"
+        app:layout_constraintTop_toBottomOf="@+id/textView_CC_page_card_name"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button_add_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
+        android:layout_marginEnd="33dp"
+        android:text="@string/button_payment_submit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+</android.support.constraint.ConstraintLayout>

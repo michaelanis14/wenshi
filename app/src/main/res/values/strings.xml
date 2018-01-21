@@ -1,9 +1,14 @@
 <resources>
     <string name="app_name">Wenshy</string>
     <string name="button_call">Call</string>
-    <string name="textView_payment">Payment Options</string>
+    <string name="textView_payment_page_label">Payment Options</string>
     <string name="radioButton_payment_cash">Cash</string>
     <string name="radioButton_payment_credit">Credit Card</string>
     <string name="button_payment_submit">Submit</string>
+    <string name="textView_CC_page_label">Credit Card Payment</string>
+    <string name="textView_CC_page_card_number">Card Number(XXXX XXXX XXXX XXXX)</string>
+    <string name="textView_CC_page_card_date">Expiry Date(MM/YYYY)</string>
+    <string name="textView_CC_page_card_cvv">CVV</string>
+    <string name="textView_CC_page_card_name">Name On Card</string>
 
 </resources>
