@@ -7,105 +7,108 @@
     tools:context="michaelabadir.wenshy.CreditCardEntry">
 
     <TextView
-        android:id="@+id/textView_CC_page_label"
+        android:id="@+id/textView_CC_entry_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="27dp"
-        android:text="@string/textView_CC_page_label"
+        android:text="@string/textView_CC_entry_label"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView_CC_page_card_number"
+        android:id="@+id/textView_CC_entry_card_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="108dp"
-        android:text="@string/textView_CC_page_card_number"
+        android:text="@string/textView_CC_entry_card_number"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView_CC_page_card_date"
+        android:id="@+id/textView_CC_entry_card_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="@string/textView_CC_page_card_date"
+        android:text="@string/textView_CC_entry_card_date"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.353" />
 
     <TextView
-        android:id="@+id/textView_CC_page_card_cvv"
+        android:id="@+id/textView_CC_entry_card_cvv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="55dp"
-        android:text="@string/textView_CC_page_card_cvv"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textView_CC_page_card_date"
-        app:layout_constraintStart_toEndOf="@+id/textView_CC_page_card_date" />
+        android:text="@string/textView_CC_entry_card_cvv"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView_CC_entry_card_date"
+        app:layout_constraintStart_toEndOf="@+id/textView_CC_entry_card_date" />
 
     <TextView
-        android:id="@+id/textView_CC_page_card_name"
+        android:id="@+id/textView_CC_entry_card_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="270dp"
         android:layout_marginStart="16dp"
-        android:text="@string/textView_CC_page_card_name"
+        android:text="@string/textView_CC_entry_card_name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/editText_CC_page_card_number"
-        android:layout_width="247dp"
+        android:id="@+id/editText_CC_entry_card_number"
+        android:layout_width="0dp"
         android:layout_height="40dp"
+        android:layout_marginEnd="9dp"
         android:layout_marginStart="16dp"
         android:digits="1234567890 "
         android:ems="10"
-        android:hint="Card Number"
+        android:hint="@string/editText_CC_entry_card_number"
         android:inputType="phone"
         android:maxLength="19"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_CC_page_card_number" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_CC_entry_card_number" />
 
     <EditText
-        android:id="@+id/editText_CC_page_card_date"
+        android:id="@+id/editText_CC_entry_card_date"
         android:layout_width="80dp"
         android:layout_height="40dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginStart="16dp"
-        android:ems="10"
-        android:hint="Date"
-        android:inputType="phone"
         android:digits="1234567890/"
-        android:maxLength="7"
+        android:ems="10"
+        android:hint="@string/editText_CC_entry_card_date"
+        android:inputType="date"
+        android:maxLength="5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_CC_page_card_date" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_CC_entry_card_date" />
 
     <EditText
-        android:id="@+id/editText_CC_page_card_cvv"
+        android:id="@+id/editText_CC_entry_card_cvv"
         android:layout_width="50dp"
         android:layout_height="40dp"
         android:layout_marginStart="115dp"
         android:ems="10"
-        android:hint="CVV"
+        android:hint="@string/editText_CC_entry_card_cvv"
         android:inputType="number"
         android:maxLength="3"
-        app:layout_constraintStart_toEndOf="@+id/editText_CC_page_card_date"
-        app:layout_constraintTop_toBottomOf="@+id/textView_CC_page_card_cvv" />
+        app:layout_constraintStart_toEndOf="@+id/editText_CC_entry_card_date"
+        app:layout_constraintTop_toBottomOf="@+id/textView_CC_entry_card_cvv" />
 
     <EditText
-        android:id="@+id/editText_CC_page_card_name"
-        android:layout_width="247dp"
+        android:id="@+id/editText_CC_entry_card_name"
+        android:layout_width="0dp"
         android:layout_height="40dp"
+        android:layout_marginEnd="9dp"
         android:layout_marginStart="16dp"
         android:ems="10"
-        android:hint="Name"
+        android:hint="@string/editText_CC_entry_card_name"
         android:inputType="textPersonName"
-        app:layout_constraintTop_toBottomOf="@+id/textView_CC_page_card_name"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_CC_entry_card_name" />
 
     <Button
         android:id="@+id/button_add_card"
@@ -116,6 +119,52 @@
         android:text="@string/button_payment_submit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_CC_entry_numberError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:text="@string/textView_CC_entry_card_numberError"
+        android:textColor="?attr/colorError"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/editText_CC_entry_card_number"
+        app:layout_constraintStart_toEndOf="@+id/editText_CC_entry_card_number" />
+
+    <TextView
+        android:id="@+id/textView_CC_entry_dateError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:layout_marginEnd="114dp"
+        android:text="@string/textView_CC_entry_card_dateError"
+        android:textColor="?attr/colorError"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/editText_CC_entry_card_date"
+        app:layout_constraintStart_toEndOf="@+id/editText_CC_entry_card_date" />
+
+    <TextView
+        android:id="@+id/textView_CC_entry_cvvError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="54dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/textView_CC_entry_card_cvvError"
+        android:textColor="?attr/colorError"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/editText_CC_entry_card_cvv"
+        app:layout_constraintStart_toEndOf="@+id/editText_CC_entry_card_cvv" />
+
+    <TextView
+        android:id="@+id/textView_CC_entry_nameError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="54dp"
+        android:text="@string/textView_CC_entry_card_nameError"
+        android:textColor="?attr/colorError"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/editText_CC_entry_card_name"
+        app:layout_constraintStart_toEndOf="@+id/editText_CC_entry_card_name" />
 
 
 </android.support.constraint.ConstraintLayout>

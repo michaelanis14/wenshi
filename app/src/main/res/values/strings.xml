@@ -1,14 +1,27 @@
 <resources>
     <string name="app_name">Wenshy</string>
+
     <string name="button_call">Call</string>
+
     <string name="textView_payment_page_label">Payment Options</string>
     <string name="radioButton_payment_cash">Cash</string>
     <string name="radioButton_payment_credit">Credit Card</string>
     <string name="button_payment_submit">Submit</string>
-    <string name="textView_CC_page_label">Credit Card Payment</string>
-    <string name="textView_CC_page_card_number">Card Number(XXXX XXXX XXXX XXXX)</string>
-    <string name="textView_CC_page_card_date">Expiry Date(MM/YYYY)</string>
-    <string name="textView_CC_page_card_cvv">CVV</string>
-    <string name="textView_CC_page_card_name">Name On Card</string>
+
+    <string name="textView_CC_entry_label">Credit Card Payment</string>
+    <string name="textView_CC_entry_card_number">Card Number(XXXX XXXX XXXX XXXX)</string>
+    <string name="textView_CC_entry_card_date">Expiry Date(MM/YY)</string>
+    <string name="textView_CC_entry_card_cvv">CVV</string>
+    <string name="textView_CC_entry_card_name">Name On Card</string>
+
+    <string name="editText_CC_entry_card_number">Card Number</string>
+    <string name="editText_CC_entry_card_date">Date</string>
+    <string name="editText_CC_entry_card_cvv">CVV</string>
+    <string name="editText_CC_entry_card_name">Name</string>
+
+    <string name="textView_CC_entry_card_numberError">Wrong Number</string>
+    <string name="textView_CC_entry_card_dateError">Wrong Date</string>
+    <string name="textView_CC_entry_card_cvvError">Wrong CVV</string>
+    <string name="textView_CC_entry_card_nameError">Wrong Name</string>
 
 </resources>

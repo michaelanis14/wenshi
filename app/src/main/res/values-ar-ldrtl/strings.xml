@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">ونشي</string>
+
+    <string name="button_call">اتصال</string>
+
+    <string name="textView_payment_page_label">طرق الدفع</string>
+    <string name="radioButton_payment_cash">كاش</string>
+    <string name="radioButton_payment_credit">كارت ائتمان</string>
+    <string name="button_payment_submit">متابعة</string>
+
+    <string name="textView_CC_entry_label">كارت الائتمان</string>
+    <string name="textView_CC_entry_card_number">رقم الكارت(XXXX XXXX XXXX XXXX)</string>
+    <string name="textView_CC_entry_card_date">تاريخ الانتهاء(MM/YYYY)</string>
+    <string name="textView_CC_entry_card_cvv">CVV</string>
+    <string name="textView_CC_entry_card_name">الإسم على الكارت</string>
+
+    <string name="editText_CC_entry_card_number">رقم الكارت</string>
+    <string name="editText_CC_entry_card_date">تاريخ الانتهاء</string>
+    <string name="editText_CC_entry_card_cvv">CVV</string>
+    <string name="editText_CC_entry_card_name">الإسم</string>
+
+    <string name="textView_CC_entry_card_numberError">رقم غير صحيح</string>
+    <string name="textView_CC_entry_card_dateError">تاريخ غير صحيح</string>
+    <string name="textView_CC_entry_card_cvvError">غير صحيح CVV</string>
+    <string name="textView_CC_entry_card_nameError">اسم غير صحيح</string>
+
+</resources>

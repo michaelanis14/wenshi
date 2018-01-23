@@ -9,20 +9,17 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class PaymentOptions extends AppCompatActivity {
 
-    private RadioGroup radioGroup;
-    private RadioButton radioButton, rb1, rb2;
-    private Button btnDisplay;
+    private RadioButton rb1;
     private TextView resultText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_options);
-        radioGroup = (RadioGroup) findViewById(R.id.radiogroup);
+        RadioGroup radioGroup = findViewById(R.id.radiogroup);
         radioGroup.check(R.id.radioButton_payment_cash);
 
         addListenerOnButton();
@@ -32,12 +29,9 @@ public class PaymentOptions extends AppCompatActivity {
     public void addListenerOnButton() {
 
 
-        btnDisplay = (Button) findViewById(R.id.button_payment_submit);
+        Button btnDisplay = findViewById(R.id.button_payment_submit);
 
         rb1 = findViewById(R.id.radioButton_payment_cash);
-        rb2 = findViewById(R.id.radioButton_payment_credit);
-
-
 
         btnDisplay.setOnClickListener(new OnClickListener() {
 
@@ -47,7 +41,7 @@ public class PaymentOptions extends AppCompatActivity {
              //   radioButton = (RadioButton) findViewById(selectedId);
              //   Toast.makeText(PaymentOptions.this, "Hello From the other sideeee!!!", Toast.LENGTH_SHORT).show();
                 if(rb1.isChecked()) {
-                    resultText = (TextView) findViewById(R.id.textView_payment_result);
+                    resultText = findViewById(R.id.textView_payment_result);
                     resultText.setText(rb1.getText());
                 }
                 else    {

@@ -21,7 +21,7 @@ public class CallDriver extends AppCompatActivity {
         });
     }
 
-    private void dialContactPhone(final String phoneNumber) {
+    private void dialContactPhone(String phoneNumber) {
         startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null)));
     }
 

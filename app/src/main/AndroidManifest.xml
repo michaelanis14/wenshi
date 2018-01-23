@@ -16,8 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:label="@string/app_name" android:name=".CreditCardEntry"/>
-
+        <activity
+            android:name=".CreditCardEntry"
+            android:label="@string/app_name" />
     </application>
 
 </manifest>
