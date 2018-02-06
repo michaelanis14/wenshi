@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="textView_historic_trips_label">الرحلات السابقة</string>
+    <string name="button_historic_trips_next">المتابعة</string>
+    <string name="textView_historic_trips_id_label">رقم الرحلة</string>
+</resources>

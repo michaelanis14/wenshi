@@ -1,4 +1,4 @@
-package michaelabadir.wenshy;
+package michaelabadir.wenshi;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Wenshy</string>
+    <string name="app_name">Wenshi</string>
 
     <string name="button_call">Call</string>
 
@@ -23,5 +23,8 @@
     <string name="textView_CC_entry_card_dateError">Wrong Date</string>
     <string name="textView_CC_entry_card_cvvError">Wrong CVV</string>
     <string name="textView_CC_entry_card_nameError">Wrong Name</string>
+
+    <string name="textView_historic_trips_label">Historic Trips</string>
+
 
 </resources>

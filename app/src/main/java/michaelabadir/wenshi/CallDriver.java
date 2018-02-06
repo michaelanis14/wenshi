@@ -1,4 +1,4 @@
-package michaelabadir.wenshy;
+package michaelabadir.wenshi;
 
 import android.content.Intent;
 import android.net.Uri;
