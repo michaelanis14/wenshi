@@ -1,5 +1,6 @@
 package michaelabadir.wenshi;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,19 +10,12 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by Michael on 2/6/2018.
- */
-
-    public class MyCustomBaseAdapter extends BaseAdapter {
+public class MyCustomBaseAdapter extends BaseAdapter {
         private static ArrayList<Trip> searchArrayList;
 
         private LayoutInflater mInflater;
-        final String from = "From: ";
-        final String to = " To: ";
-        final String egp = " EGP";
 
-        public MyCustomBaseAdapter(Context context, ArrayList<Trip> results) {
+    MyCustomBaseAdapter(Context context, ArrayList<Trip> results) {
             searchArrayList = results;
             mInflater = LayoutInflater.from(context);
         }
@@ -38,15 +32,16 @@ import java.util.ArrayList;
             return position;
         }
 
+        @SuppressLint("InflateParams")
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.template_historic_trip, null);
                 holder = new ViewHolder();
-                holder.txtDate = (TextView) convertView.findViewById(R.id.textView_date);
-                holder.txtFrom = (TextView) convertView.findViewById(R.id.textView_from);
-                holder.txtTo = (TextView) convertView.findViewById(R.id.textView_to);
-                holder.txtCost = (TextView) convertView.findViewById(R.id.textView_cost);
+                holder.txtDate = convertView.findViewById(R.id.textView_date);
+                holder.txtFrom = convertView.findViewById(R.id.textView_from);
+                holder.txtTo = convertView.findViewById(R.id.textView_to);
+                holder.txtCost = convertView.findViewById(R.id.textView_cost);
 
                 convertView.setTag(holder);
             } else {
@@ -54,9 +49,9 @@ import java.util.ArrayList;
             }
 
             holder.txtDate.setText(searchArrayList.get(position).getDate());
-            holder.txtFrom.setText(from + searchArrayList.get(position).getFrom());
-            holder.txtTo.setText(to + searchArrayList.get(position).getTo());
-            holder.txtCost.setText(searchArrayList.get(position).getCost() + egp);
+            holder.txtFrom.setText(String.format("From: %s", searchArrayList.get(position).getFrom()));
+            holder.txtTo.setText(String.format("To: %s", searchArrayList.get(position).getTo()));
+            holder.txtCost.setText(String.format("%s EGP", searchArrayList.get(position).getCost()));
 
             return convertView;
         }

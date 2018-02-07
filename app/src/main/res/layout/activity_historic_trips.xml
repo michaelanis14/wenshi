@@ -26,6 +26,15 @@
         android:layout_marginTop="60dp"
 
         app:layout_constraintStart_toStartOf="@+id/textView_historic_trips_label"
-        app:layout_constraintTop_toBottomOf="@+id/textView_historic_trips_label" />
+        app:layout_constraintTop_toTopOf="@+id/textView_historic_trips_label" />
+
+    <TextView
+        android:id="@+id/tvValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="26dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/textView_historic_trips_label"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

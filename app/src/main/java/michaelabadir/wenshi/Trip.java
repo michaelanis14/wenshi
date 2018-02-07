@@ -19,6 +19,13 @@ public class Trip {
 
     public Trip(){};
 
+    public Trip(String date, String from, String to, double cost)   {
+        this.date = date;
+        this.from = from;
+        this.to = to;
+        this.cost = cost;
+    }
+
     public String getDate() {
         return date;
     }
