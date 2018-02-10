@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 
 /**
@@ -19,7 +20,7 @@ import android.view.ViewGroup;
  * Use the {@link HistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment   implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -31,6 +32,7 @@ public class HistoryFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    Button btnClose;
     public HistoryFragment() {
         // Required empty public constructor
     }
@@ -84,6 +86,8 @@ public class HistoryFragment extends Fragment {
         // Here we will can create click listners etc for all the gui elements on the fragment.
         // For eg: Button btn1= (Button) view.findViewById(R.id.frag1_btn1);
         // btn1.setOnclickListener(...
+        btnClose = (Button) view.findViewById(R.id.close_btn);
+        btnClose.setOnClickListener(this);
 
         return view;
     }
@@ -110,6 +114,24 @@ public class HistoryFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.close_btn:
+                final boolean b = getFragmentManager().popBackStackImmediate();
+                /** Do things you need to..
+                 fragmentTwo = new FragmentTwo();
+
+                 fragmentTransaction.replace(R.id.frameLayoutFragmentContainer, fragmentTwo);
+                 fragmentTransaction.addToBackStack(null);
+
+                 fragmentTransaction.commit();
+                 */
+                break;
+        }
+
     }
 
     /**

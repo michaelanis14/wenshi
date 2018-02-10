@@ -16,12 +16,14 @@ package com.wenshi_egypt.wenshi;
 
         import java.util.Arrays;
 
+        import javax.xml.validation.Validator;
+
         import butterknife.BindView;
 
 public class LoginActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
-
+    boolean rider = false;
     @BindView(R.id.root)
     View mRootView;
 
@@ -29,14 +31,17 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Bundle extras = getIntent().getExtras();
+        rider = extras.getBoolean("rider");
 
+        Log.i("RIDER",""+rider);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            startActivity(new Intent(LoginActivity.this, DriverMapsActivity.class));
         }
 
-      else   {
+       else   {
 
             if (isFacebookMisconfigured()) {
                 Log.i("problem with Facebook", "configuration");
@@ -49,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                             .setAvailableProviders(Arrays.asList(
                                     new AuthUI.IdpConfig.EmailBuilder().build(),
                                     //   new AuthUI.IdpConfig.PhoneBuilder().build(),
-                                    new AuthUI.IdpConfig.GoogleBuilder().build(),
+                                   // new AuthUI.IdpConfig.GoogleBuilder().build(),
                                     new AuthUI.IdpConfig.FacebookBuilder().build(),
                                     new AuthUI.IdpConfig.TwitterBuilder().build()))
                             .build(),
@@ -65,29 +70,29 @@ public class LoginActivity extends AppCompatActivity {
 
             // Successfully signed in
             if (resultCode == RESULT_OK) {
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                startActivity(new Intent(LoginActivity.this, DriverMapsActivity.class));
                 finish();
                 return;
             } else {
                 // Sign in failed
                 if (response == null) {
                     // User pressed back button
-                    //   showSnackbar(R.string.sign_in_cancelled);
+                       showSnackbar(R.string.sign_in_cancelled);
                     return;
                 }
 
                 if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    //    showSnackbar(R.string.no_internet_connection);
+                        showSnackbar(R.string.no_internet_connection);
                     return;
                 }
 
                 if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                    //    showSnackbar(R.string.unknown_error);
+                        showSnackbar(R.string.unknown_error);
                     return;
                 }
             }
 
-            //showSnackbar(R.string.unknown_sign_in_response);
+            showSnackbar(R.string.unknown_sign_in_response);
         }
     }
 

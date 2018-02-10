@@ -20,6 +20,7 @@ package com.wenshi_egypt.wenshi;
 
         import com.google.android.gms.common.ConnectionResult;
         import com.google.android.gms.common.api.GoogleApiClient;
+        import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity
         implements
@@ -89,6 +90,10 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+        else if(id == R.id.action_signout){
+            FirebaseAuth.getInstance().signOut();
+
         }
 
         return super.onOptionsItemSelected(item);

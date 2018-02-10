@@ -1,9 +1,70 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:visibility="visible"
     tools:context="com.wenshi_egypt.wenshi.WelcomeActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/label_logoDescritop"
+
+        app:srcCompat="@drawable/full_logo" />
+
+
+
+
+
+    <Switch
+        android:id="@+id/riderOrDriver_swtch"
+        android:layout_width="68dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/imageView2"
+        android:layout_centerHorizontal="true"
+        android:checked="false"
+        android:fadeScrollbars="true" />
+
+
+    <TextView
+        android:id="@+id/DriverText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageView2"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/riderOrDriver_swtch"
+        android:layout_toRightOf="@id/riderOrDriver_swtch"
+        android:text="@string/label_driver"
+        android:textColor="#373737"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/RiderText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageView2"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toLeftOf="@id/riderOrDriver_swtch"
+        android:layout_toStartOf="@id/riderOrDriver_swtch"
+        android:text="@string/label_rider"
+        android:textColor="#373737"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/Button_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/riderOrDriver_swtch"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:onClick="getStarted"
+        android:text="@string/button_start" />
+
+</RelativeLayout>
