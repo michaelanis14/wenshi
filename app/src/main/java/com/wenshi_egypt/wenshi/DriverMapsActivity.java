@@ -20,6 +20,7 @@ package com.wenshi_egypt.wenshi;
         import android.support.v4.view.GravityCompat;
         import android.support.v4.widget.DrawerLayout;
         import android.support.v7.app.ActionBarDrawerToggle;
+        import android.support.v7.app.AppCompatActivity;
         import android.support.v7.widget.Toolbar;
         import android.util.Log;
         import android.view.Menu;
@@ -49,7 +50,7 @@ package com.wenshi_egypt.wenshi;
 
         import java.util.List;
 
-public class DriverMapsActivity extends FragmentActivity implements
+public class DriverMapsActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -82,7 +83,7 @@ public class DriverMapsActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_maps);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-       // setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -464,7 +465,7 @@ public class DriverMapsActivity extends FragmentActivity implements
     @Override
     public void onFragmentInteraction(Uri uri) {
         // NOTE:  Code to replace the toolbar title based current visible fragment
-       // getSupportActionBar().setTitle(uri.getHost());
+        getSupportActionBar().setTitle(uri.getHost());
     }
 
 }

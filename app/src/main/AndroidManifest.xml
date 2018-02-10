@@ -33,7 +33,8 @@ package="com.wenshi_egypt.wenshi">
 
     <activity
         android:name=".DriverMapsActivity"
-        android:label="@string/title_activity_driver_maps">
+        android:label="@string/title_activity_driver_maps"
+        android:theme="@style/AppTheme.NoActionBar">
     </activity>
 </application>
 </manifest>
