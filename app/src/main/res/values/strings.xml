@@ -42,6 +42,8 @@
     <string name="no_internet_connection">No Active Internet Connection</string>
     <string name="unknown_error">unknown_error</string>
     <string name="unknown_sign_in_response">unknown_sign_in_response</string>
+    <string name="cancelTrip">Cancel trip</string>
+    <string name="request_winsh">Request Wenshi</string>
 
 
 </resources>

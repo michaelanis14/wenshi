@@ -5,13 +5,13 @@ xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-tools:context="com.wenshi_egypt.wenshi.MainActivity"
 tools:showIn="@layout/app_bar_main">
 <!-- Note : This is the container Frame Layout for all the fragmetns-->
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/mainFrame"
+    android:background="@android:color/white"
     android:orientation="vertical">
 </LinearLayout>
 </android.support.constraint.ConstraintLayout>

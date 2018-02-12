@@ -13,6 +13,8 @@ package com.wenshi_egypt.wenshi;
         import com.firebase.ui.auth.ErrorCodes;
         import com.firebase.ui.auth.IdpResponse;
         import com.google.firebase.auth.FirebaseAuth;
+        import com.google.firebase.database.DatabaseReference;
+        import com.google.firebase.database.FirebaseDatabase;
 
         import java.util.Arrays;
 
@@ -23,20 +25,20 @@ package com.wenshi_egypt.wenshi;
 public class LoginActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
-    boolean rider = false;
+    boolean customer = false;
     @BindView(R.id.root)
     View mRootView;
-
+    FirebaseAuth auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         Bundle extras = getIntent().getExtras();
-        rider = extras.getBoolean("rider");
+        customer = extras.getBoolean("customer");
 
-        Log.i("RIDER",""+rider);
+        Log.i("RIDER",""+customer);
 
-        FirebaseAuth auth = FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             startActivity(new Intent(LoginActivity.this, DriverMapsActivity.class));
         }
@@ -70,7 +72,17 @@ public class LoginActivity extends AppCompatActivity {
 
             // Successfully signed in
             if (resultCode == RESULT_OK) {
-                startActivity(new Intent(LoginActivity.this, DriverMapsActivity.class));
+                String user= auth.getCurrentUser().getUid();
+
+                if(customer) {
+                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(user);
+                    currentUser.setValue(true); // to allow changes to happen
+                    startActivity(new Intent(LoginActivity.this, CustomerMapActivity.class));
+                }else{
+                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(user);
+                    currentUser.setValue(true); // to allow changes to happen
+                    startActivity(new Intent(LoginActivity.this, DriverMapsActivity.class));
+                }
                 finish();
                 return;
             } else {
@@ -97,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isFacebookMisconfigured() {
-        return AuthUI.UNCONFIGURED_CONFIG_VALUE.equals(getString(R.string.facebook_application_id));
+      return AuthUI.UNCONFIGURED_CONFIG_VALUE.equals(("FACEBOOK_ERR112"));
     }
 
 

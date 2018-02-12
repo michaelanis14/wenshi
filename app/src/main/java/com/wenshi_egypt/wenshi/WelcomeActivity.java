@@ -91,15 +91,20 @@ public class WelcomeActivity extends AppCompatActivity {
             Log.i("UID",currentDriverId);
 
 
-            DatabaseReference customerAssignedRef = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(currentDriverId);
-            customerAssignedRef.addValueEventListener(new ValueEventListener() {
+            DatabaseReference isDriverRef = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(currentDriverId);
+
+            Log.i("DRRR",isDriverRef.toString());
+            isDriverRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         Log.i("isDriver","");
                         startActivity(new Intent(WelcomeActivity.this, DriverMapsActivity.class));
                     } else  {
+                      //  startActivity(new Intent(WelcomeActivity.this, DriverMapsActivity.class));
+
                         Log.i("isCustomer","");
+                        startActivity(new Intent(WelcomeActivity.this, CustomerMapActivity.class));
                     }
                 }
 
@@ -116,15 +121,16 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
     public void getStarted(View view){
-        boolean rider = true;
+        boolean customer = true;
 
      if(swtch_RiderOrDriver.isChecked()){
-         rider = false;
+         customer = false;
 
      }
-        mFirebaseAnalytics.setUserProperty("RiderOrDriver", ""+rider);
+        mFirebaseAnalytics.setUserProperty("RiderOrDriver", ""+customer);
+
         Intent loginInent = new Intent(WelcomeActivity.this, LoginActivity.class);
-        loginInent.putExtra("rider", rider);
+        loginInent.putExtra("customer", customer);
         startActivity(loginInent);
         finish();
     }
