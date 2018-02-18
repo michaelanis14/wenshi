@@ -183,7 +183,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
    //     mBottomSheetBehavior.setPeekHeight(320);
 
 // set hideable or not
-        mBottomSheetBehavior.setHideable(false);
+        mBottomSheetBehavior.setHideable(true);
 
 // set callback for changes
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -503,6 +503,8 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
         //NOTE: Fragment changing code
         if (fragment != null) {
+            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            fab.setVisibility(View.INVISIBLE);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
