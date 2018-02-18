@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'Wenshii'
+            keyPassword 'Merply2018'
+            storeFile file('/Users/michaelanis/Keys')
+            storePassword '2019066'
+        }
+    }
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.wenshi_egypt.wenshi"
@@ -44,5 +52,6 @@ dependencies {
     // Find the latest Twitter SDK releases here: https://goo.gl/E5wZvQ
     implementation('com.twitter.sdk.android:twitter-core:3.1.1@aar') { transitive = true }
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    compile 'com.android.support:design:26.0.0'
 }
 apply plugin: 'com.google.gms.google-services'

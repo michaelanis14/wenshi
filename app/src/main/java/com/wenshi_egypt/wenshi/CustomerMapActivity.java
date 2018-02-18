@@ -5,6 +5,7 @@ import android.location.Criteria;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.StyleRes;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -30,6 +31,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.firebase.geofire.GeoFire;
@@ -58,7 +60,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.List;
 
-public class CustomerMapActivity extends AppCompatActivity implements
+public class CustomerMapActivity extends AppCompatActivity implements View.OnClickListener,
         ProfileFragment.OnFragmentInteractionListener,
         HistoryFragment.OnFragmentInteractionListener,
         DriverFragment.OnFragmentInteractionListener,
@@ -96,13 +98,20 @@ public class CustomerMapActivity extends AppCompatActivity implements
     String provider;
     Location lastLocation;
     DrawerLayout drawer;
+    View mBottomSheet;
+
+    BottomSheetBehavior mBottomSheetBehavior;
+    Button mButton;
+    View fab;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_map);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+      /*  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        if(fab != null)
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,7 +119,7 @@ public class CustomerMapActivity extends AppCompatActivity implements
                         .setAction("Action", null).show();
             }
         });
-
+*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -140,8 +149,8 @@ public class CustomerMapActivity extends AppCompatActivity implements
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        mRequest = (Button) findViewById(R.id.request);
-        mCancel = (Button) findViewById(R.id.cancel);
+        mRequest = (Button) findViewById(R.id.request_wenshi_btn);
+        mCancel = (Button) findViewById(R.id.cancel_wenshi_btn);
         mCancel.setVisibility(View.GONE);
         mRequest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,16 +166,58 @@ public class CustomerMapActivity extends AppCompatActivity implements
         });
 
 
+    //get the bottom sheet view
+        fab = findViewById(R.id.fab);
+        mBottomSheet = findViewById(R.id.bottom_sheet);
 
 
-        navigationView.bringToFront();
-        navigationView.requestLayout();
+// init the bottom sheet behavior
+        mBottomSheetBehavior= BottomSheetBehavior.from(mBottomSheet);
 
+// change the state of the bottom sheet
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+       //
+        //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+// set the peek height
+   //     mBottomSheetBehavior.setPeekHeight(320);
+
+// set hideable or not
+        mBottomSheetBehavior.setHideable(false);
+
+// set callback for changes
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                                                               @Override
+                                                               public void onStateChanged(@NonNull View bottomSheet,
+                                                                                          int newState) {
+                                                               }
+                                                               @Override
+                                                               public void onSlide(@NonNull View bottomSheet, float
+                                                                       slideOffset) {
+                                                                   fab.animate().scaleX(1 - slideOffset).scaleY(1 -
+                                                                           slideOffset).setDuration(0).start();
+                                                               } });
+
+        getSupportActionBar().setTitle("Customer View");
+
+        findViewById(R.id.toolbar).bringToFront();
+        findViewById(R.id.toolbar).requestLayout();
+      //  findViewById(R.id.main_body)
+       // findViewById(R.id.customer_map).bringToFront();
+        //findViewById(R.id.customer_map).requestLayout();
         findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+       navigationView.bringToFront();
+        navigationView.requestLayout();
 
     }
 
-
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.button:
+               // mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                break;
+        }
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -264,16 +315,22 @@ public class CustomerMapActivity extends AppCompatActivity implements
 
     private void requestButtonClicked(){
 
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Requests");
 
-        GeoFire geoFire = new GeoFire(dbRef); //The reference where the data is stored
-        geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(),mLastLocation.getLongitude()));
+        if( mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED){
+            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+    else {
+            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Requests");
 
-        pickUpLocation = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("Your Pickup"));
+            GeoFire geoFire = new GeoFire(dbRef); //The reference where the data is stored
+            geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
-        mRequest.setText("Requesting Winsh");
-        getClosestDriver();
+            pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("Your Pickup"));
+
+            mRequest.setText("Requesting Winsh");
+            getClosestDriver();
+        }
     }
 
 
@@ -430,8 +487,9 @@ public class CustomerMapActivity extends AppCompatActivity implements
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
-        findViewById(R.id.mainFrame).bringToFront();
-        findViewById(R.id.mainFrame).requestLayout();
+        findViewById(R.id.customer_nav_view).bringToFront();
+        findViewById(R.id.customer_nav_view).requestLayout();
+
 
         // Handle navigation view item clicks here.
         int id = item.getItemId();

@@ -85,6 +85,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_driver_maps);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +94,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
                         .setAction("Action", null).show();
             }
         });
-
+*/
          drawer = (DrawerLayout) findViewById(R.id.driver_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -137,6 +138,8 @@ public class DriverMapsActivity extends AppCompatActivity implements
         navigationView.requestLayout();
 
     findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+
+        getSupportActionBar().setTitle("Driver");
     }
 
 
