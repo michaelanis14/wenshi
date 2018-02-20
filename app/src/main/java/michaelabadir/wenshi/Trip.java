@@ -1,35 +1,23 @@
 package michaelabadir.wenshi;
 
-
-import com.google.firebase.database.Exclude;
-
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
-
-
-
-/**
- * Created by Michael on 2/1/2018.
-*/
 
 public class Trip {
-    String date, from, to;
-    double cost;
+    private String date, from, to;
+    private double cost;
 
-    public Trip(){};
-
-    public Trip(String date, String from, String to, double cost)   {
+    Trip(String date, String from, String to, double cost)   {
         this.date = date;
         this.from = from;
         this.to = to;
         this.cost = cost;
     }
 
-    public String getDate() {
+    String getDate() {
         return date;
     }
 
+    @SuppressWarnings("unused")
     public void setDate(String date) {
         this.date = date;
     }
@@ -42,19 +30,21 @@ public class Trip {
         this.from = from;
     }
 
-    public String getTo() {
+    String getTo() {
         return to;
     }
 
+    @SuppressWarnings("unused")
     public void setTo(String to) {
         this.to = to;
     }
 
-    public String getCost() {
+    String getCost() {
         DecimalFormat format = new DecimalFormat("0.#");
         return format.format(cost);
     }
 
+    @SuppressWarnings("unused")
     public void setCost(double cost) {
         this.cost = cost;
     }

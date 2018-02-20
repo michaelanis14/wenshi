@@ -15,7 +15,6 @@ public class CreditCardEntry extends AppCompatActivity {
 
     private static final char space = ' ';
     private static final char slash = '/';
-    private static final char zero = '0';
     EditText cardNumber, expDate, cvv, name;
     TextView cardNumberError, expDateError, cvvError, nameError;
     Button submit;
@@ -45,7 +44,6 @@ public class CreditCardEntry extends AppCompatActivity {
     }
 
     public void addListenerOnButton() {
-
 
         submit = findViewById(R.id.button_add_card);
 
@@ -104,10 +102,7 @@ public class CreditCardEntry extends AppCompatActivity {
         int year = Integer.parseInt(s.substring(3,5));
         char sl = s.charAt(2);
 
-        if(mon > 0 && mon < 13 && year > 17 & sl == '/') {
-            return true;
-        }
-        return false;
+        return mon > 0 && mon < 13 && year > 17 & sl == '/';
     }
 
     class cardWatch implements TextWatcher  {
@@ -155,12 +150,6 @@ public class CreditCardEntry extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
-            // Insert zero
-//            if(s.length()==1) {
-//                char c = s.charAt(s.length() - 1);
-//                if (Character.isDigit(c) && (TextUtils.split(s.toString(), String.valueOf(zero)).length <= 1))
-//                    s.insert(s.length() - 1, String.valueOf(zero));
-//            }
 
             // Remove slash
             if (s.length() > 0 && (s.length() % 3) == 0) {

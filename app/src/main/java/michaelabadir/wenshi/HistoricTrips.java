@@ -28,53 +28,25 @@ public class HistoricTrips extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_historic_trips, container, false);
+        return inflater.inflate(R.layout.fragment_historic_trips, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        ArrayList<Trip> Trip = GetTrip();
+        ArrayList<Trip> trip = GetTrip();
+        //noinspection ConstantConditions
         demoValue = getView().findViewById(R.id.tvValue);
         final ListView lv1 = getView().findViewById(R.id.listView_historic_trips);
 
-        lv1.setAdapter(new MyCustomBaseAdapter(getActivity(), Trip));
+        lv1.setAdapter(new MyCustomBaseAdapter(getActivity(), trip));
 
         lv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                //Object o = lv1.getItemAtPosition(position);
-                //Trip fullObject = (Trip) o;
-                //Toast.makeText(ListViewBlogPost.this, "You have chosen: " + " " + fullObject.getName(), Toast.LENGTH_LONG).show();
             }
         });
-
     }
-
-
-/*
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-   ////     setContentView(R.layout.activity_historic_trips);
-
-        ArrayList<Trip> Trip = GetTrip();
-   ////     demoValue = findViewById(R.id.tvValue);
-
-   ////     final ListView lv1 = findViewById(R.id.listView_historic_trips);
-        lv1.setAdapter(new MyCustomBaseAdapter(this, Trip));
-
-        lv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                //Object o = lv1.getItemAtPosition(position);
-                //Trip fullObject = (Trip) o;
-                //Toast.makeText(ListViewBlogPost.this, "You have chosen: " + " " + fullObject.getName(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-    }
-*/
 
     private ArrayList<Trip> GetTrip(){
         final ArrayList<Trip> results = new ArrayList<>();
@@ -85,6 +57,7 @@ public class HistoricTrips extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
+                    //noinspection unchecked
                     HashMap<String, String> value = (HashMap<String, String>) child.getValue();
                     assert value != null;
                     date = value.get("date");
@@ -93,7 +66,6 @@ public class HistoricTrips extends Fragment {
                     cost = value.get("cost");
 
                     demoValue.setText("");
-//                    Toast.makeText(HistoricTrips.this, to, Toast.LENGTH_SHORT).show();
                     results.add(new Trip(date, from, to, Double.parseDouble(cost)));
 
                 }

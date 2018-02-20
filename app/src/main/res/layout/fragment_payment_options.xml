@@ -13,7 +13,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="88dp"
         android:text="@string/textView_payment_page_label"
-        android:textColor="#d3d3d3"
+        android:textColor="@android:color/darker_gray"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

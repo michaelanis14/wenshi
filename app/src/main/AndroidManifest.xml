@@ -24,6 +24,7 @@
         <activity
             android:name=".CreditCardEntry"
             android:label="@string/app_name" />
+        <activity android:name=".CallDriver" />
     </application>
 
 </manifest>
