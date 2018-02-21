@@ -45,9 +45,12 @@
     <string name="cancelTrip">Cancel trip</string>
     <string name="request_winsh">Request Wenshi</string>
     <string name="order_now">Order Now</string>
-    <string name="request_wenshi">Request</string>
+    <string name="request_wenshi">Request Wenshi</string>
     <string name="bottom_sheet_content">Contentt</string>
     <string name="request_winsh_btn">Request Now!</string>
+    <string name="vehicle">Vehicle</string>
+    <string name="service">Service</string>
+    <string name="drop_off_location">Drop-Off Location</string>
 
 
 </resources>

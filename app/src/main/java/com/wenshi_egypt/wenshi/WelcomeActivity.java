@@ -1,58 +1,26 @@
 package com.wenshi_egypt.wenshi;
 
 
-        import android.content.Intent;
-        import android.content.pm.PackageInfo;
-        import android.content.pm.PackageManager;
-        import android.content.pm.Signature;
-        import android.support.v7.app.AppCompatActivity;
-        import android.os.Bundle;
-        import android.util.Base64;
-        import android.util.Log;
-        import android.view.View;
-        import android.widget.Button;
-        import android.widget.Switch;
-
-        import com.facebook.login.Login;
-        import com.google.firebase.analytics.FirebaseAnalytics;
-        import com.google.firebase.auth.FirebaseAuth;
-        import com.google.firebase.database.DataSnapshot;
-        import com.google.firebase.database.DatabaseError;
-        import com.google.firebase.database.DatabaseReference;
-        import com.google.firebase.database.FirebaseDatabase;
-        import com.google.firebase.database.Query;
-        import com.google.firebase.database.ValueEventListener;
-
-        import java.security.MessageDigest;
-        import java.security.NoSuchAlgorithmException;
-
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Switch;
 
 public class WelcomeActivity extends AppCompatActivity {
 
     Switch swtch_RiderOrDriver;
-    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "com.example.packagename",
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (PackageManager.NameNotFoundException e) {
 
-        } catch (NoSuchAlgorithmException e) {
 
-        }
         swtch_RiderOrDriver = (Switch) findViewById(R.id.riderOrDriver_swtch);
 
+/*
     //getSupportActionBar().hide();
         FirebaseAuth auth = FirebaseAuth.getInstance();
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -64,7 +32,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
 
-/*
             DatabaseReference database = FirebaseDatabase.getInstance().getReference();
             DatabaseReference ref = database.child("Users").child("Drivers");
 
@@ -84,7 +51,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
 
-*/
+
 
 
 
@@ -115,23 +82,31 @@ public class WelcomeActivity extends AppCompatActivity {
             });
 
         }
-
+*/
     }
 
 
-
-    public void getStarted(View view){
+    public void getStarted(View view) {
         boolean customer = true;
 
-     if(swtch_RiderOrDriver.isChecked()){
-         customer = false;
+        if (swtch_RiderOrDriver.isChecked()) {
+            customer = false;
+            startActivity(new Intent(WelcomeActivity.this, DriverMapsActivity.class));
 
-     }
-        mFirebaseAnalytics.setUserProperty("RiderOrDriver", ""+customer);
+        } else {
+            startActivity(new Intent(WelcomeActivity.this, CustomerMapActivity.class));
+        }
+
+        finish();
+        return;
+
+/*
+   mFirebaseAnalytics.setUserProperty("RiderOrDriver", ""+customer);
 
         Intent loginInent = new Intent(WelcomeActivity.this, LoginActivity.class);
         loginInent.putExtra("customer", customer);
         startActivity(loginInent);
         finish();
+        */
     }
 }
