@@ -70,7 +70,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CustomerMapActivity extends AppCompatActivity implements View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, HistoryFragment.OnFragmentInteractionListener, DriverFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class CustomerMapActivity extends AppCompatActivity implements View.OnClickListener,
+        ProfileFragment.OnFragmentInteractionListener,
+        HistoricFragment.OnFragmentInteractionListener,
+        PaymentOptions.OnFragmentInteractionListener,
+        HelpFragment.OnFragmentInteractionListener,
+        RateAndChargesFragment.OnFragmentInteractionListener,
+        DriverFragment.OnFragmentInteractionListener,
+        NavigationView.OnNavigationItemSelectedListener,
+        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        com.google.android.gms.location.LocationListener {
 
     private static final long UPDATE_INTERVAL = 5000;
     private static final long FASTEST_INTERVAL = 3000;
@@ -542,9 +552,20 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
         if (id == R.id.nav_profile) {
             fragment = new ProfileFragment();
-        } else if (id == R.id.nav_history) {
-            fragment = new HistoryFragment();
         }
+        else if (id == R.id.nav_history) {
+            fragment = new HistoricFragment();
+        }
+        else if(id == R.id.nav_payment)    {
+            fragment = new PaymentOptions();
+        }
+        else if(id == R.id.nav_help)    {
+            fragment = new HelpFragment();
+        }
+        else if(id == R.id.nav_rateCharges)    {
+            fragment = new RateAndChargesFragment();
+        }
+
 
         //NOTE: Fragment changing code
         if (fragment != null) {
