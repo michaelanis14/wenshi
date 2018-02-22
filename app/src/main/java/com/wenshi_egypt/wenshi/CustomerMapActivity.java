@@ -108,7 +108,6 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     TextView mBottomTextView;
     BottomSheetBehavior mBottomSheetBehavior;
     Button mButton;
-    View fab;
 
     private GeoFire geoFireCustomerLocation;
     private DatabaseReference customerLocation;
@@ -129,19 +128,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         geoFireCustomerLocation = new GeoFire(customerLocation);
         setupLocation();
 
-
-      /*  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if(fab != null)
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-*/
         //Navigation
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -180,7 +167,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
 
         //get the bottom sheet view
-        fab = findViewById(R.id.fab);
+
         mBottomSheet = findViewById(R.id.bottom_sheet);
 
 
@@ -196,7 +183,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         //     mBottomSheetBehavior.setPeekHeight(320);
 
 // set hideable or not
-        mBottomSheetBehavior.setHideable(true);
+       // mBottomSheetBehavior.setHideable(true);
 
 // set callback for changes
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -206,7 +193,6 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                fab.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start();
             }
         });
 
@@ -402,7 +388,6 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
             public void onKeyEntered(String key, GeoLocation location) {
                 if (!driverFound) {
                     driverFound = true;
-                    driverFound = true;
                     requestedDriverID = key;
 
                     DatabaseReference driver = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(requestedDriverID);
@@ -563,8 +548,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
         //NOTE: Fragment changing code
         if (fragment != null) {
-            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-            fab.setVisibility(View.INVISIBLE);
+            mBottomSheet.setVisibility(View.GONE);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();

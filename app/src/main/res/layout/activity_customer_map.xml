@@ -7,12 +7,14 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
+
     <fragment
         android:id="@+id/customer_map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.wenshi_egypt.wenshi.CustomerMapActivity" />
+
     <android.support.design.widget.NavigationView
         android:id="@+id/customer_nav_view"
         android:layout_width="match_parent"
@@ -20,8 +22,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer">
-    </android.support.design.widget.NavigationView>
+        app:menu="@menu/activity_main_drawer"></android.support.design.widget.NavigationView>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -45,18 +46,18 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
-            android:layout_height="340dp"
+            android:layout_height="300dp"
             android:background="@android:color/background_light"
             android:orientation="vertical"
-            app:behavior_hideable="true"
-            app:behavior_peekHeight="100dp"
+            app:behavior_hideable="false"
+            app:behavior_peekHeight="80dp"
             app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
             tools:layout_editor_absoluteY="115dp">
 
             <TextView
                 android:id="@+id/bottom_view_lbl"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="40dp"
                 android:background="@android:color/holo_orange_light"
                 android:gravity="center"
                 android:text="@string/request_wenshi"
@@ -66,65 +67,71 @@
             <Button
                 android:id="@+id/request_wenshi_btn"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/request_winsh_btn" />
+                android:layout_height="40dp"
+                android:text="@string/choose_service_btn" />
 
 
-
-<LinearLayout
-    android:id="@+id/request_wenshi_info"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-            <TextView
-                android:id="@+id/vehicle_lbl"
+            <LinearLayout
+                android:id="@+id/request_wenshi_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text="@string/vehicle"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"/>
+                android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/vehicle_editText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textAutoComplete"
-        android:text="VEHICLE" />
+                <TextView
+                    android:id="@+id/vehicle_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="@string/vehicle"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="18sp" />
 
-    <TextView
-                android:id="@+id/service_lbl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text="@string/service"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"/>
+                <EditText
+                    android:id="@+id/vehicle_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:textStyle="bold"
+                    android:inputType="textAutoComplete"
+                    android:text="VEHICLE" />
 
-    <EditText
-        android:id="@+id/service_editText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:editable="false"
-        android:text="Wenshi" />
+                <TextView
+                    android:id="@+id/service_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="@string/service"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="18sp" />
 
-    <TextView
-                android:id="@+id/droppOff_lbl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text="@string/drop_off_location"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"/>
-    <fragment
-        android:id="@+id/place_autocomplete_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-        />
-</LinearLayout>
+                <EditText
+                    android:id="@+id/service_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:ems="10"
+                    android:textStyle="bold"
+                    android:text="Wenshi" />
+
+                <TextView
+                    android:id="@+id/droppOff_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="@string/drop_off_location"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/droppOff_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:textStyle="bold"
+                    android:text="Nasr City" />
+
+            </LinearLayout>
+
             <Button
                 android:id="@+id/request_wenshi_bottom_btn"
                 android:layout_width="match_parent"
@@ -136,19 +143,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/cancelTrip" />
-
         </LinearLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:scaleType="center"
-            android:src="@mipmap/wenshi_logo_round"
-            app:backgroundTint="@android:color/holo_orange_light"
-            app:layout_anchor="@+id/bottom_sheet"
-            app:layout_anchorGravity="top|end" />
     </android.support.design.widget.CoordinatorLayout>
 
 </android.support.v4.widget.DrawerLayout>
