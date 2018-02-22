@@ -70,17 +70,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CustomerMapActivity extends AppCompatActivity implements View.OnClickListener,
-        ProfileFragment.OnFragmentInteractionListener,
-        HistoricFragment.OnFragmentInteractionListener,
-        PaymentOptions.OnFragmentInteractionListener,
-        HelpFragment.OnFragmentInteractionListener,
-        RateAndChargesFragment.OnFragmentInteractionListener,
-        DriverFragment.OnFragmentInteractionListener,
-        NavigationView.OnNavigationItemSelectedListener,
-        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        com.google.android.gms.location.LocationListener {
+public class CustomerMapActivity extends AppCompatActivity implements View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, HistoryFragment.OnFragmentInteractionListener, DriverFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptions.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private static final long UPDATE_INTERVAL = 5000;
     private static final long FASTEST_INTERVAL = 3000;
@@ -118,7 +108,6 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     TextView mBottomTextView;
     BottomSheetBehavior mBottomSheetBehavior;
     Button mButton;
-    View fab;
 
     private GeoFire geoFireCustomerLocation;
     private DatabaseReference customerLocation;
@@ -139,19 +128,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         geoFireCustomerLocation = new GeoFire(customerLocation);
         setupLocation();
 
-
-      /*  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if(fab != null)
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-*/
         //Navigation
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -190,7 +167,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
 
         //get the bottom sheet view
-        fab = findViewById(R.id.fab);
+
         mBottomSheet = findViewById(R.id.bottom_sheet);
 
 
@@ -206,7 +183,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         //     mBottomSheetBehavior.setPeekHeight(320);
 
 // set hideable or not
-        mBottomSheetBehavior.setHideable(true);
+        // mBottomSheetBehavior.setHideable(true);
 
 // set callback for changes
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -216,7 +193,6 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                fab.animate().scaleX(1 - slideOffset).scaleY(1 - slideOffset).setDuration(0).start();
             }
         });
 
@@ -232,7 +208,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         navigationView.requestLayout();
 
 
-       // sendNotification("Michael", "This is a message to tell clients stop eating your feet");
+        // sendNotification("Michael", "This is a message to tell clients stop eating your feet");
 
     }
 
@@ -412,7 +388,6 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
             public void onKeyEntered(String key, GeoLocation location) {
                 if (!driverFound) {
                     driverFound = true;
-                    driverFound = true;
                     requestedDriverID = key;
 
                     DatabaseReference driver = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(requestedDriverID);
@@ -567,25 +542,19 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
         if (id == R.id.nav_profile) {
             fragment = new ProfileFragment();
-        }
-        else if (id == R.id.nav_history) {
+        } else if (id == R.id.nav_history) {
             fragment = new HistoricFragment();
-        }
-        else if(id == R.id.nav_payment)    {
+        } else if (id == R.id.nav_payment) {
             fragment = new PaymentOptions();
-        }
-        else if(id == R.id.nav_help)    {
+        } else if (id == R.id.nav_help) {
             fragment = new HelpFragment();
-        }
-        else if(id == R.id.nav_rateCharges)    {
+        } else if (id == R.id.nav_rateCharges) {
             fragment = new RateAndChargesFragment();
         }
 
-
         //NOTE: Fragment changing code
         if (fragment != null) {
-            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-            fab.setVisibility(View.INVISIBLE);
+            mBottomSheet.setVisibility(View.GONE);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();

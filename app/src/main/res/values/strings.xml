@@ -51,6 +51,7 @@
     <string name="vehicle">Vehicle</string>
     <string name="service">Service</string>
     <string name="drop_off_location">Drop-Off Location</string>
+    <string name="choose_service_btn">Choose Service</string>
 
 
     <!-- Michael Abadir -->
