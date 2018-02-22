@@ -33,9 +33,11 @@
         <activity
             android:name=".DriverMapsActivity"
             android:label="@string/title_activity_driver_maps"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".CustomerMapActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CustomerMapActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".CreditCardEntry" />
 
     </application>
 

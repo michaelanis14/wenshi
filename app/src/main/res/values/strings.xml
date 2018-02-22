@@ -53,4 +53,32 @@
     <string name="drop_off_location">Drop-Off Location</string>
 
 
+    <!-- Michael Abadir -->
+    <string name="textView_help_Info">Help Info</string>
+    <string name="textView_rate_and_charges">Rate and Charges</string>
+    <string name="textView_about">About</string>
+    <string name="textView_invite">Invite</string>
+
+    <string name="textView_payment_page_label">Current Payment Method</string>
+    <string name="radioButton_payment_cash">Cash</string>
+    <string name="radioButton_payment_credit">Add Credit Card</string>
+    <string name="button_payment_submit">Submit</string>
+
+    <string name="textView_CC_entry_label">Credit Card Payment</string>
+    <string name="textView_CC_entry_card_number">Card Number(XXXX XXXX XXXX XXXX)</string>
+    <string name="textView_CC_entry_card_date">Expiry Date(MM/YY)</string>
+    <string name="textView_CC_entry_card_cvv">CVV</string>
+    <string name="textView_CC_entry_card_name">Name On Card</string>
+
+    <string name="editText_CC_entry_card_number">Card Number</string>
+    <string name="editText_CC_entry_card_date">Date</string>
+    <string name="editText_CC_entry_card_cvv">CVV</string>
+    <string name="editText_CC_entry_card_name">Name</string>
+
+    <string name="textView_CC_entry_card_numberError">Wrong Number</string>
+    <string name="textView_CC_entry_card_dateError">Wrong Date</string>
+    <string name="textView_CC_entry_card_cvvError">Wrong CVV</string>
+    <string name="textView_CC_entry_card_nameError">Wrong Name</string>
+
+
 </resources>

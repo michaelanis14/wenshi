@@ -1,0 +1,40 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.wenshi_egypt.wenshi.HelpFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/helpInfo"
+        android:layout_width="134dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/textView_help_Info"
+        android:textColor="@color/colorBlack"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.064"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/helpDemo"
+        android:layout_width="168dp"
+        android:layout_height="116dp"
+        android:layout_marginBottom="244dp"
+        android:text="Demo"
+        android:gravity="center"
+        android:textSize="17sp"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/helpInfo" />
+
+
+
+
+</android.support.constraint.ConstraintLayout>
