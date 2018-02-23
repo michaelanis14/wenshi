@@ -29,6 +29,14 @@ android {
     }
 }
 
+allprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url "https://dl.bintray.com/paymobsolutions/paymob_accept_sdk" }
+    }
+}
+
 dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:support-v4:26.1.0'
@@ -54,5 +62,6 @@ dependencies {
     implementation('com.twitter.sdk.android:twitter-core:3.1.1@aar') { transitive = true }
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.android.support:design:26.0.0'
+    compile 'com.paymob:acceptsdk:1.0.2'
 }
 apply plugin: 'com.google.gms.google-services'
