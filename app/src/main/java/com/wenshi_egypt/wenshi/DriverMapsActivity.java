@@ -1,5 +1,7 @@
 package com.wenshi_egypt.wenshi;
 
+        import android.*;
+        import android.Manifest;
         import android.content.Context;
         import android.content.pm.PackageManager;
         import android.location.Criteria;
@@ -32,7 +34,9 @@ package com.wenshi_egypt.wenshi;
 
         import com.firebase.geofire.GeoFire;
         import com.firebase.geofire.GeoLocation;
+        import com.firebase.geofire.GeoQuery;
         import com.google.android.gms.common.ConnectionResult;
+        import com.google.android.gms.common.GooglePlayServicesUtil;
         import com.google.android.gms.common.api.GoogleApiClient;
         import com.google.android.gms.location.LocationRequest;
         import com.google.android.gms.location.LocationServices;
@@ -41,6 +45,7 @@ package com.wenshi_egypt.wenshi;
         import com.google.android.gms.maps.OnMapReadyCallback;
         import com.google.android.gms.maps.SupportMapFragment;
         import com.google.android.gms.maps.model.LatLng;
+        import com.google.android.gms.maps.model.Marker;
         import com.google.android.gms.maps.model.MarkerOptions;
         import com.google.firebase.auth.FirebaseAuth;
         import com.google.firebase.database.DataSnapshot;
@@ -50,6 +55,7 @@ package com.wenshi_egypt.wenshi;
         import com.google.firebase.database.ValueEventListener;
 
         import java.util.List;
+        import java.util.Map;
 
 public class DriverMapsActivity extends AppCompatActivity implements
         OnMapReadyCallback,
@@ -61,17 +67,24 @@ public class DriverMapsActivity extends AppCompatActivity implements
         OnNavigationItemSelectedListener,
         com.google.android.gms.location.LocationListener {
 
+    private static final long UPDATE_INTERVAL = 5000;
+    private static final long FASTEST_INTERVAL = 3000;
+    private static final float DISPLACMENT = 10;
+
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
+    private DatabaseReference driverLocation;
+    private GeoFire geoFireDriverLocation;
 
-    LocationManager locationManager;
-    String provider;
-    Location lastLocation;
-    final int location_request_code = 1;
-    private String assignedCustomer = "";
+    final int MY_PERMISSION_REQ_CODE = 1234;
+    final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
+
+    private String userId = "D_";
+
+  private String assignedCustomer = "";
 
     private Button mCancel;
     private Boolean makeRequest = false;
@@ -79,23 +92,30 @@ public class DriverMapsActivity extends AppCompatActivity implements
     private DatabaseReference assignedCustomerPickupLocationRef;
     private ValueEventListener assignedCustomerPickupLocationRefEventListner;
     DrawerLayout drawer;
+
+
+    private Marker myCurrent;
+    private Map<String, Marker> markers;
+
+    private GeoQuery geoQuery;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_maps);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-*/
-         drawer = (DrawerLayout) findViewById(R.id.driver_drawer_layout);
+
+
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.driver_map);
+        mapFragment.getMapAsync(this);
+        driverLocation = FirebaseDatabase.getInstance().getReference("DriversAvailable");
+        geoFireDriverLocation = new GeoFire(driverLocation);
+        setupLocation();
+
+
+
+        drawer = (DrawerLayout) findViewById(R.id.driver_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -108,25 +128,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
         navigationView.requestLayout();
 
 
-        mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.driver_map);
-
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(DriverMapsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, location_request_code);
-        } else {
-            mapFragment.getMapAsync(this);
-        }
-
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        provider = locationManager.getBestProvider(new Criteria(), false);
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(DriverMapsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, location_request_code);
-        }
-
-
-        lastLocation = locationManager.getLastKnownLocation(provider);
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
 
@@ -139,7 +141,82 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
     findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
 
-        getSupportActionBar().setTitle("Driver");
+        getSupportActionBar().setTitle("Wenshi Driver");
+    }
+
+
+    private void setupLocation() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_REQ_CODE);
+        } else {
+            Log.i("else if", "@");
+            if (checkPlayServices()) {
+                Log.i("in if", "@");
+
+                buildGoogleApiClient();
+                createLocationRequest();
+                displayLocation();
+            }
+
+        }
+    }
+
+
+    private void displayLocation() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        if (mGoogleApiClient != null)
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+
+            //update FireBase
+            geoFireDriverLocation.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
+                @Override
+                public void onComplete(String key, DatabaseError error) {
+                    //Add Marker
+                    if (myCurrent != null) myCurrent.remove();  //remove Old Marker
+                    LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                    myCurrent = mMap.addMarker(new MarkerOptions().position(loc));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 15.0f));
+                }
+            });
+
+
+            //  mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
+
+        }
+    }
+
+    private void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setSmallestDisplacement(DISPLACMENT);
+
+    }
+
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode))
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICE_RESLUOTION_CODE).show();
+            else {
+                Toast.makeText(this, "This device is not supported", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    void buildGoogleApiClient() {
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
+            mGoogleApiClient.connect();
+        }
     }
 
 
@@ -155,43 +232,25 @@ public class DriverMapsActivity extends AppCompatActivity implements
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        buildGoogleApiClient();
-        mMap.setMyLocationEnabled(true);
-        if (lastLocation != null)
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(),lastLocation.getLongitude()), 15));
-       // mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).title("Your Location"));
-
-        //  mMap.addMarker(new MarkerOptions().position())
     }
 
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        displayLocation();
+        startLocationUpdates();
+    }
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(DriverMapsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, location_request_code);
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -202,7 +261,9 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-
+        mLastLocation = location;
+        displayLocation();
+/*
         Log.i("TEXT", "onLocationChanged: " + location.toString());
         if (getApplicationContext() != null) {
 
@@ -230,15 +291,20 @@ public class DriverMapsActivity extends AppCompatActivity implements
             }
 
         }
-
+*/
 
     }
 
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case location_request_code:
+            case MY_PERMISSION_REQ_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (checkPlayServices()) {
+                        buildGoogleApiClient();
+                        createLocationRequest();
+                        displayLocation();
+                    }
                     mapFragment.getMapAsync(this);
                 } else {
                     Toast.makeText(this, "Location can't be accessed", Toast.LENGTH_SHORT).show();
@@ -254,14 +320,18 @@ public class DriverMapsActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
+        driverLocation.child(userId).removeValue();
+        if (geoQuery != null) this.geoQuery.removeAllListeners();
 
+        if (this.markers != null) {
+            for (Marker marker : this.markers.values()) {
+                marker.remove();
+            }
+            this.markers.clear();
+        }
         // LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this); //to remove the listener
+    // FirebaseDatabase.getInstance().getReference("DriversAvailable").child(userId).removeValue();
 
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("DriversAvailable");
-
-        GeoFire geoFire = new GeoFire(dbRef); //The reference where the data is stored
-        geoFire.removeLocation(userId);
     }
 
     private void getAssignedCustomer() {
@@ -321,66 +391,6 @@ public class DriverMapsActivity extends AppCompatActivity implements
         }
         mMap.clear();
 
-    }
-
-    private static final int TWO_MINUTES = 1000 * 60 * 2;
-
-    /**
-     * Determines whether one Location reading is better than the current Location fix
-     *
-     * @param location            The new Location that you want to evaluate
-     * @param currentBestLocation The current Location fix, to which you want to compare the new one
-     */
-    protected boolean isBetterLocation(Location location, Location currentBestLocation) {
-        if (currentBestLocation == null) {
-            // A new location is always better than no location
-            return true;
-        }
-
-        // Check whether the new location fix is newer or older
-        long timeDelta = location.getTime() - currentBestLocation.getTime();
-        boolean isSignificantlyNewer = timeDelta > TWO_MINUTES;
-        boolean isSignificantlyOlder = timeDelta < -TWO_MINUTES;
-        boolean isNewer = timeDelta > 0;
-
-        // If it's been more than two minutes since the current location, use the new location
-        // because the user has likely moved
-        if (isSignificantlyNewer) {
-            return true;
-            // If the new location is more than two minutes older, it must be worse
-        } else if (isSignificantlyOlder) {
-            return false;
-        }
-
-        // Check whether the new location fix is more or less accurate
-        int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation.getAccuracy());
-        boolean isLessAccurate = accuracyDelta > 0;
-        boolean isMoreAccurate = accuracyDelta < 0;
-        boolean isSignificantlyLessAccurate = accuracyDelta > 200;
-
-        // Check if the old and new location are from the same provider
-        boolean isFromSameProvider = isSameProvider(location.getProvider(),
-                currentBestLocation.getProvider());
-
-        // Determine location quality using a combination of timeliness and accuracy
-        if (isMoreAccurate) {
-            return true;
-        } else if (isNewer && !isLessAccurate) {
-            return true;
-        } else if (isNewer && !isSignificantlyLessAccurate && isFromSameProvider) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Checks whether two providers are the same
-     */
-    private boolean isSameProvider(String provider1, String provider2) {
-        if (provider1 == null) {
-            return provider2 == null;
-        }
-        return provider1.equals(provider2);
     }
 
 

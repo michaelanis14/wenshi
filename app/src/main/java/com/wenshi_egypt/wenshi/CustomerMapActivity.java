@@ -60,12 +60,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +96,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     private String requestedDriverID = "";
 
     private GeoQuery geoQuery;
-    private DatabaseReference driverLocationRef;
+   private DatabaseReference driverLocationRef;
     private ValueEventListener driverLocationRefListener;
 
     private String userId = "_";
@@ -113,6 +115,8 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     private DatabaseReference customerLocation;
     private Marker myCurrent;
     private Map<String, Marker> markers;
+
+    private List<String> driversID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,10 +142,11 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         navigationView.setNavigationItemSelectedListener(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        driversID = new ArrayList<String>();
 
 
         mBottomTextView = findViewById(R.id.bottom_view_lbl);
-        // userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         mRequest = (Button) findViewById(R.id.request_wenshi_btn);
         mCancel = (Button) findViewById(R.id.cancel_wenshi_btn);
@@ -189,6 +194,20 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if(newState == BottomSheetBehavior.STATE_COLLAPSED){
+                    mRequest.setVisibility(View.VISIBLE);
+                    if(mCancel.getVisibility() == View.VISIBLE){
+
+                        mRequest.setText(R.string.cancelTrip);
+                    }
+                    else{
+                        mRequest.setText(R.string.request_winsh_btn);
+                    }
+
+                }
+                else if(newState == BottomSheetBehavior.STATE_EXPANDED){
+                    mRequest.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -196,7 +215,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-        getSupportActionBar().setTitle("Customer View");
+        getSupportActionBar().setTitle("Wenshi Customer");
 
         findViewById(R.id.toolbar).bringToFront();
         findViewById(R.id.toolbar).requestLayout();
@@ -320,6 +339,12 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         mMap = googleMap;
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        displayLocation();
+
+    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -366,8 +391,12 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
             GeoFire geoFire = new GeoFire(dbRef); //The reference where the data is stored
             geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
+
             pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("Your Pickup"));
+
+
+
 
             mBottomTextView.setText("Requesting Winsh");
             ((Button) findViewById(R.id.request_wenshi_bottom_btn)).setVisibility(View.GONE);
@@ -386,22 +415,50 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                if (!driverFound) {
-                    driverFound = true;
-                    requestedDriverID = key;
 
-                    DatabaseReference driver = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(requestedDriverID);
 
+                    driversID.add(key);
+                    DatabaseReference driver = FirebaseDatabase.getInstance().getReference("RequestDriver").child(key);
                     HashMap hm = new HashMap();
                     hm.put("CustomerID", userId);
-
+                    hm.put("Accept", "false");
                     driver.updateChildren(hm);
-                    traceDriver();
-                    mRequest.setText("We find driver for you!");
+
+
+              //  DatabaseReference driverAcceptState = FirebaseDatabase.getInstance().getReference("DriversAvailable").child(key).child("Accept");
+                driverLocationRefListener = driver.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        for (DataSnapshot imageSnapshot : dataSnapshot.getChildren()) {
+                            Log.d("TAG Driverr", "onDataChange: " + imageSnapshot.getKey());
+                            Log.d("TAG Driverr", "onDataChange V: " + imageSnapshot.getValue());
+
+                        }
+                        if (false) {
+                        //    HashMap<Object> map = (HashMap<Object>) dataSnapshot.getValue();
+
+
+                           // if (map.get(0) != null)
+                           //     mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(map.get(0).toString()), Double.parseDouble(map.get(1).toString()))).title("Driver location"));
+                        //    if (map.get(0) != null)
+                      //          Log.i("Driverr",""+map.get(0));
+                          //  getDistanceBetweenPickUpToDriver(new LatLng(Double.parseDouble(map.get(0).toString()), Double.parseDouble(map.get(1).toString())));
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                  //  traceDriver();
+                   // mRequest.setText("We find driver for you!");
                     mCancel.setVisibility(View.VISIBLE);
 
 
-                }
+
             }
 
             @Override
@@ -417,8 +474,9 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onGeoQueryReady() {
                 if (!driverFound) {
-                    radius++;
-                    //   getClosestDriver();
+                   // radius++;
+                    Log.i("Radius",""+radius);
+                    // ==  getClosestDriver();
                 }
             }
 
@@ -480,7 +538,10 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     private void cancelTrip() {
 
         mMap.clear();
+        if(driverLocationRef != null)
         driverLocationRef.removeEventListener(driverLocationRefListener);
+
+        // driverLocationRef.removeEventListener(driverLocationRefListener);
 
         if (requestedDriverID != null) {   //Remove CustomerID child
             DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(requestedDriverID);
@@ -493,6 +554,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         driverFound = false;
         radius = 1;
 
+        mBottomTextView.setText("Request Winsh");
         //Remove request from DB
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Requests");
         GeoFire geoFire = new GeoFire(ref);
@@ -576,7 +638,12 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
     protected void onStop() {
         super.onStop();
+
+        if(driverLocationRef != null)
+        driverLocationRef.removeEventListener(driverLocationRefListener);
         // remove all event listeners to stop updating in the background
+
+        customerLocation.child(userId).removeValue();
         if (geoQuery != null) this.geoQuery.removeAllListeners();
 
         if (this.markers != null) {

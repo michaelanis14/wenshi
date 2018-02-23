@@ -37,14 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         customer = extras.getBoolean("customer");
 
         Log.i("RIDER",""+customer);
-
         auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(LoginActivity.this, DriverMapsActivity.class));
-        }
-
-       else   {
-
             if (isFacebookMisconfigured()) {
                 Log.i("problem with Facebook", "configuration");
             }
@@ -61,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                                     new AuthUI.IdpConfig.TwitterBuilder().build()))
                             .build(),
                     RC_SIGN_IN);
-        }
+
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
