@@ -24,19 +24,21 @@ public class CreditCardEntry extends AppCompatActivity implements View.OnClickLi
     static final int ACCEPT_PAYMENT_REQUEST = 10;
 
     // Replace this with your actual payment key
-    final String paymentKey = "payment_key";
+    final String paymentKey = "'ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmhiVzkxYm5SZlkyVnVkSE1pT2pJMU1EQXdMQ0p2Y21SbGNsOXBaQ0k2TVRrME9Ua3lMQ0pqZFhKeVpXNWplU0k2SWtWSFVDSXNJbUpwYkd4cGJtZGZaR0YwWVNJNmV5Sm1hWEp6ZEY5dVlXMWxJam9pVjJWdWMyZ2lMQ0pzWVhOMFgyNWhiV1VpT2lKVVpYTjBYMWRsYm5Ob0lpd2ljM1J5WldWMElqb2lSWFJvWVc0Z1RHRnVaQ0lzSW1KMWFXeGthVzVuSWpvaU9EQXlPQ0lzSW1ac2IyOXlJam9pTkRJaUxDSmhjR0Z5ZEcxbGJuUWlPaUk0TURNaUxDSmphWFI1SWpvaVNtRnphMjlzYzJ0cFluVnlaMmdpTENKemRHRjBaU0k2SWxWMFlXZ2lMQ0pqYjNWdWRISjVJam9pUTFJaUxDSmxiV0ZwYkNJNkltMXBZMmhoWld3dVlXSmhaR2x5UUcxdlpYSnBZM011WTI5dElpd2ljR2h2Ym1WZmJuVnRZbVZ5SWpvaUt6SXdNVEF4T1Rrek1qUTROQ0lzSW5CdmMzUmhiRjlqYjJSbElqb2lNREU0T1RnaUxDSmxlSFJ5WVY5a1pYTmpjbWx3ZEdsdmJpSTZJazVCSW4wc0luVnpaWEpmYVdRaU9qWTJOaXdpWTJGeVpGOXBiblJsWjNKaGRHbHZibDlwWkNJNk56a3dmUS5EMFNoQXdGLXlUVVFzMG1VQXltQTlaZ3lnbTlYcVlYVmZjVXNlSW55dmtGM0dPeUpfd3R6S3hkek01Ym9PakVPLWNDTEJZbzN2bVZxa1ZVZVUzcm1oZw==";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_paymob);
+//        setContentView(R.layout.activity_paymob);
+//
+//        button1 = findViewById(R.id.Button1_paymob);
+//        button1.setOnClickListener(this);
+//        button2 = findViewById(R.id.Button2_paymob);
+//        button2.setOnClickListener(this);
+//        button3 = findViewById(R.id.Button3_paymob);
+//        button3.setOnClickListener(this);
+        startPayActivityNoToken(false);
 
-        button1 = findViewById(R.id.Button1_paymob);
-        button1.setOnClickListener(this);
-        button2 = findViewById(R.id.Button2_paymob);
-        button2.setOnClickListener(this);
-        button3 = findViewById(R.id.Button3_paymob);
-        button3.setOnClickListener(this);
     }
 
     @Override
