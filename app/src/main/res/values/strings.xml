@@ -84,5 +84,12 @@
     <string name="offline">Offline</string>
     <string name="accept">Accept</string>
 
+    <string name="textView_profile_userName_label">User Name</string>
+    <string name="textView_profile_email_label">Email</string>
+    <string name="textView_profile_mobile_label">Mobile</string>
+    <string name="textView_profile_carType_label">Car type</string>
+    <string name="textView_profile_model_label">Model</string>
+    <string name="textView_profile_address_label">Address</string>
+
 
 </resources>
