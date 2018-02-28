@@ -38,10 +38,6 @@ public class LoginActivity extends AppCompatActivity {
 
         Log.i("RIDER",""+customer);
         auth = FirebaseAuth.getInstance();
-            if (isFacebookMisconfigured()) {
-                Log.i("problem with Facebook", "configuration");
-            }
-
 
             startActivityForResult(
                     AuthUI.getInstance()

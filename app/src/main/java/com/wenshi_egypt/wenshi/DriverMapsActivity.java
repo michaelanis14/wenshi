@@ -12,6 +12,7 @@ package com.wenshi_egypt.wenshi;
         import android.os.Bundle;
         import android.support.annotation.NonNull;
         import android.support.annotation.Nullable;
+        import android.support.design.widget.BottomSheetBehavior;
         import android.support.design.widget.FloatingActionButton;
         import android.support.design.widget.NavigationView;
         import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
@@ -30,6 +31,9 @@ package com.wenshi_egypt.wenshi;
         import android.view.MenuItem;
         import android.view.View;
         import android.widget.Button;
+        import android.widget.CompoundButton;
+        import android.widget.Switch;
+        import android.widget.TextView;
         import android.widget.Toast;
 
         import com.firebase.geofire.GeoFire;
@@ -86,18 +90,26 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
   private String assignedCustomer = "";
 
-    private Button mCancel;
     private Boolean makeRequest = false;
 
     private DatabaseReference assignedCustomerPickupLocationRef;
     private ValueEventListener assignedCustomerPickupLocationRefEventListner;
     DrawerLayout drawer;
 
+    View mBottomSheet;
+    TextView mBottomTextView;
+    BottomSheetBehavior mBottomSheetBehavior;
 
     private Marker myCurrent;
     private Map<String, Marker> markers;
 
     private GeoQuery geoQuery;
+
+    private ValueEventListener geoFireDriverRequests;
+
+    private Switch swtch_onlineOffline;
+    DatabaseReference driver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +144,39 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
 
 
-     //   mCancel = (Button) findViewById(R.id.cancelTrip);
+
+        mBottomTextView = findViewById(R.id.driver_bottom_view_lbl);
+        swtch_onlineOffline = findViewById(R.id.onlineOffline_swtch);
+
+        //get the bottom sheet view
+        mBottomSheet = findViewById(R.id.driver_bottom_sheet);
+        // init the bottom sheet behavior
+        mBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
+        // change the state of the bottom sheet
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if(newState == BottomSheetBehavior.STATE_COLLAPSED){
+                  //  mRequest.setVisibility(View.VISIBLE);
+                //    if(mCancel.getVisibility() == View.VISIBLE){
+                   //     mRequest.setText(R.string.cancelTrip);
+                 //   }
+             //       else{
+                     //   mRequest.setText(R.string.request_winsh_btn);
+               //     }
+                }
+                else if(newState == BottomSheetBehavior.STATE_EXPANDED){
+                 //   mRequest.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+            }
+        });
+
+
+        //   mCancel = (Button) findViewById(R.id.cancelTrip);
       //  mCancel.setVisibility(View.GONE);
         getAssignedCustomer();
 
@@ -142,8 +186,63 @@ public class DriverMapsActivity extends AppCompatActivity implements
     findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
 
         getSupportActionBar().setTitle("Wenshi Driver");
+
+
+
+
+
+
+        swtch_onlineOffline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                reciveRequests(isChecked);
+            }
+
+        });
     }
 
+
+
+    private void reciveRequests(boolean state){
+
+        if(state) {
+            driver = FirebaseDatabase.getInstance().getReference("RequestDriver");
+            geoFireDriverRequests = driver.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    for (DataSnapshot imageSnapshot : dataSnapshot.getChildren()) {
+                        Log.d("TAG Driverr", "changeee: " + imageSnapshot.getKey());
+
+                        if (imageSnapshot.getKey().equals(userId)) {
+                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                            Log.d("TAG Driverr", "onDataChange DD: " + imageSnapshot.getKey());
+                            Log.d("TAG Driverr", "onDataChange DD: " + imageSnapshot.getValue());
+                            break;
+                        } else {
+                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.d("TAG ERRRR", "onDataChange V: " + databaseError.toString());
+
+                }
+            });
+
+            mBottomTextView.setText(R.string.online);
+            displayLocation();
+        }
+        else{
+            if(driver != null)
+                driver.removeEventListener(geoFireDriverRequests);
+            offline();
+
+        }
+
+    }
 
     private void setupLocation() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -171,6 +270,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
         if (mLastLocation != null) {
 
             //update FireBase
+            if(swtch_onlineOffline != null && swtch_onlineOffline.isChecked())
             geoFireDriverLocation.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
                 @Override
                 public void onComplete(String key, DatabaseError error) {
@@ -314,25 +414,33 @@ public class DriverMapsActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * The driver is no longer available when he is not using the application
-     */
-    @Override
-    protected void onStop() {
-        super.onStop();
+    private void offline(){
         driverLocation.child(userId).removeValue();
-        if (geoQuery != null) this.geoQuery.removeAllListeners();
-
         if (this.markers != null) {
             for (Marker marker : this.markers.values()) {
                 marker.remove();
             }
             this.markers.clear();
         }
+        mBottomTextView.setText(R.string.offline);
+    }
+    /**
+     * The driver is no longer available when he is not using the application
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+        offline();
+        if (geoQuery != null) this.geoQuery.removeAllListeners();
+
+
+
         // LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this); //to remove the listener
     // FirebaseDatabase.getInstance().getReference("DriversAvailable").child(userId).removeValue();
 
     }
+
+
 
     private void getAssignedCustomer() {
 
@@ -383,8 +491,8 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
     private void requestCancelled() {
 
-        mCancel.setVisibility(View.VISIBLE);
-        mCancel.setText("Driver cancelled the trip!!");
+        //mCancel.setVisibility(View.VISIBLE);
+        //mCancel.setText("Driver cancelled the trip!!");
         assignedCustomer = "";
         if (assignedCustomerPickupLocationRef != null) {
             assignedCustomerPickupLocationRef.removeEventListener(assignedCustomerPickupLocationRefEventListner);
@@ -397,7 +505,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -435,7 +543,6 @@ public class DriverMapsActivity extends AppCompatActivity implements
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
-
         findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
         findViewById(R.id.mainFrame).bringToFront();
         findViewById(R.id.mainFrame).requestLayout();
@@ -451,6 +558,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
         //NOTE: Fragment changing code
         if (fragment != null) {
+            mBottomSheet.setVisibility(View.GONE);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
@@ -467,5 +575,10 @@ public class DriverMapsActivity extends AppCompatActivity implements
         // NOTE:  Code to replace the toolbar title based current visible fragment
         getSupportActionBar().setTitle(uri.getHost());
     }
+    @Override
+    public void onResume(){
+        super.onResume();
+        displayLocation();
 
+    }
 }

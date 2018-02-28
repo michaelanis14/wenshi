@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -102,6 +103,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     private String userId = "_";
 
 
+
     private AppCompatDelegate mDelegate;
     private int mThemeId = 0;
     private Resources mResources;
@@ -113,6 +115,8 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
     private GeoFire geoFireCustomerLocation;
     private DatabaseReference customerLocation;
+
+    private DatabaseReference requestDriver;
     private Marker myCurrent;
     private Map<String, Marker> markers;
 
@@ -129,6 +133,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.customer_map);
         mapFragment.getMapAsync(this);
         customerLocation = FirebaseDatabase.getInstance().getReference("CustomersOnline");
+        requestDriver = FirebaseDatabase.getInstance().getReference("RequestDriver");
         geoFireCustomerLocation = new GeoFire(customerLocation);
         setupLocation();
 
@@ -172,44 +177,27 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
 
         //get the bottom sheet view
-
         mBottomSheet = findViewById(R.id.bottom_sheet);
-
-
-// init the bottom sheet behavior
+        // init the bottom sheet behavior
         mBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
-
-// change the state of the bottom sheet
+        // change the state of the bottom sheet
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        //
-        //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-// set the peek height
-        //     mBottomSheetBehavior.setPeekHeight(320);
-
-// set hideable or not
-        // mBottomSheetBehavior.setHideable(true);
-
-// set callback for changes
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if(newState == BottomSheetBehavior.STATE_COLLAPSED){
                     mRequest.setVisibility(View.VISIBLE);
                     if(mCancel.getVisibility() == View.VISIBLE){
-
                         mRequest.setText(R.string.cancelTrip);
                     }
                     else{
                         mRequest.setText(R.string.request_winsh_btn);
                     }
-
                 }
                 else if(newState == BottomSheetBehavior.STATE_EXPANDED){
                     mRequest.setVisibility(View.GONE);
                 }
             }
-
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
             }
@@ -386,17 +374,12 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
         } else {
 
-            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Requests");
-
-            GeoFire geoFire = new GeoFire(dbRef); //The reference where the data is stored
-            geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+            //GeoFire geoFire = new GeoFire(dbRef); //The reference where the data is stored
+            //geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
 
             pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("Your Pickup"));
-
-
-
 
             mBottomTextView.setText("Requesting Winsh");
             ((Button) findViewById(R.id.request_wenshi_bottom_btn)).setVisibility(View.GONE);
@@ -418,21 +401,27 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
 
                     driversID.add(key);
-                    DatabaseReference driver = FirebaseDatabase.getInstance().getReference("RequestDriver").child(key);
-                    HashMap hm = new HashMap();
+                DatabaseReference driver = requestDriver.child(key);
+
+                HashMap hm = new HashMap();
                     hm.put("CustomerID", userId);
                     hm.put("Accept", "false");
-                    driver.updateChildren(hm);
+                driver.updateChildren(hm);
+
+
+                GeoFire customerGeoFire =  new GeoFire(driver);
+                customerGeoFire.setLocation("Location", new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+
 
 
               //  DatabaseReference driverAcceptState = FirebaseDatabase.getInstance().getReference("DriversAvailable").child(key).child("Accept");
-                driverLocationRefListener = driver.addValueEventListener(new ValueEventListener() {
+                driverLocationRefListener = requestDriver.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         for (DataSnapshot imageSnapshot : dataSnapshot.getChildren()) {
-                            Log.d("TAG Driverr", "onDataChange: " + imageSnapshot.getKey());
-                            Log.d("TAG Driverr", "onDataChange V: " + imageSnapshot.getValue());
+                            Log.d("TAG Customer", "onDataChange: " + imageSnapshot.getKey());
+                            Log.d("TAG Customer", "onDataChange V: " + imageSnapshot.getValue());
 
                         }
                         if (false) {
@@ -544,10 +533,14 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         // driverLocationRef.removeEventListener(driverLocationRefListener);
 
         if (requestedDriverID != null) {   //Remove CustomerID child
-            DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(requestedDriverID);
-            driverRef.setValue(true);
-            requestedDriverID = null;
+         //   DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(requestedDriverID);
+          //  driverRef.setValue(true);
+           // requestedDriverID = null;
 
+        }
+
+        for (String driverID : driversID) {
+            requestDriver.child(driverID).removeValue();
         }
         //Intialize nearest driver query variables
         geoQuery.removeAllListeners();
@@ -556,9 +549,9 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
         mBottomTextView.setText("Request Winsh");
         //Remove request from DB
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Requests");
-        GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(userId);
+        for (String driverID : driversID) {
+            customerLocation.child(driverID).removeValue();
+        }
 
 
         ((Button) findViewById(R.id.request_wenshi_bottom_btn)).setVisibility(View.VISIBLE);
@@ -586,6 +579,46 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
      *
      * @return The Activity's ActionBar, or null if it does not have one.
      */
+
+
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
+        if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        else if(id == R.id.action_signout){
+            FirebaseAuth.getInstance().signOut();
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Nullable
     public ActionBar getSupportActionBar() {
         return getDelegate().getSupportActionBar();
@@ -631,7 +664,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onFragmentInteraction(Uri uri) {
         // NOTE:  Code to replace the toolbar title based current visible fragment
-        getSupportActionBar().setTitle(uri.getHost());
+//        getSupportActionBar().setTitle(uri.getHost());
 
     }
 
@@ -642,8 +675,10 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         if(driverLocationRef != null)
         driverLocationRef.removeEventListener(driverLocationRefListener);
         // remove all event listeners to stop updating in the background
+        for (String driverID : driversID) {
+            requestDriver.child(driverID).removeValue();
+        }
 
-        customerLocation.child(userId).removeValue();
         if (geoQuery != null) this.geoQuery.removeAllListeners();
 
         if (this.markers != null) {

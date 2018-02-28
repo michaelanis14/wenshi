@@ -80,6 +80,9 @@
     <string name="textView_CC_entry_card_dateError">Wrong Date</string>
     <string name="textView_CC_entry_card_cvvError">Wrong CVV</string>
     <string name="textView_CC_entry_card_nameError">Wrong Name</string>
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
+    <string name="accept">Accept</string>
 
 
 </resources>
