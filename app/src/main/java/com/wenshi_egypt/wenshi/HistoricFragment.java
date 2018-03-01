@@ -22,7 +22,7 @@ import java.util.HashMap;
 
 public class HistoricFragment extends Fragment implements View.OnClickListener{
 
-    DatabaseReference rootRef;
+    DatabaseReference rootRef, histRef;
     TextView demoValue;
     static String date, from, to, cost;
 
@@ -35,7 +35,8 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        ArrayList<Trip> trip = GetTrip();
+        ArrayList<HistoricTrip> trip = GetTrip();
+
         //noinspection ConstantConditions
         demoValue = getView().findViewById(R.id.tvValue);
         final ListView lv1 = getView().findViewById(R.id.listView_historic_trips);
@@ -49,12 +50,13 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
         });
     }
 
-    private ArrayList<Trip> GetTrip(){
-        final ArrayList<Trip> results = new ArrayList<>();
+    private ArrayList<HistoricTrip> GetTrip(){
+        final ArrayList<HistoricTrip> results = new ArrayList<>();
 
         //database reference pointing to root of database
         rootRef = FirebaseDatabase.getInstance().getReference();
-        rootRef.child("Trips").orderByKey().addValueEventListener(new ValueEventListener() {
+        histRef = rootRef.child("Trips");
+        histRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
@@ -64,10 +66,11 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
                     date = value.get("date");
                     from = value.get("from");
                     to = value.get("to");
-                    cost = value.get("cost");
+                    cost = String.format("%s", value.get("cost"));
 
                     demoValue.setText("");
-                    results.add(new Trip(date, from, to, Double.parseDouble(cost)));
+                    results.add(new HistoricTrip(date, from, to, Double.parseDouble(cost)));
+
 
                 }
             }
@@ -76,6 +79,7 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
              //   Toast.makeText(HistoricFragment.this, "Error", Toast.LENGTH_SHORT).show();
             }
         });
+
         return results;
     }
 

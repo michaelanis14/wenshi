@@ -2,11 +2,11 @@ package com.wenshi_egypt.wenshi;
 
 import java.text.DecimalFormat;
 
-public class Trip {
+public class HistoricTrip {
     private String date, from, to;
     private double cost;
 
-    Trip(String date, String from, String to, double cost)   {
+    HistoricTrip(String date, String from, String to, double cost)   {
         this.date = date;
         this.from = from;
         this.to = to;

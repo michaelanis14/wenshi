@@ -10,12 +10,12 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class MyCustomBaseAdapter extends BaseAdapter {
-        private static ArrayList<HistoricTrip> searchArrayList;
+public class MyVehiclesAdapter extends BaseAdapter {
+        private static ArrayList<Vehicle> searchArrayList;
 
         private LayoutInflater mInflater;
 
-    MyCustomBaseAdapter(Context context, ArrayList<HistoricTrip> results) {
+    MyVehiclesAdapter(Context context, ArrayList<Vehicle> results) {
             searchArrayList = results;
             mInflater = LayoutInflater.from(context);
         }
@@ -36,31 +36,28 @@ public class MyCustomBaseAdapter extends BaseAdapter {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.template_historic_trip, null);
+                convertView = mInflater.inflate(R.layout.template_vehicle, null);
                 holder = new ViewHolder();
-                holder.txtDate = convertView.findViewById(R.id.textView_date);
-                holder.txtFrom = convertView.findViewById(R.id.textView_from);
-                holder.txtTo = convertView.findViewById(R.id.textView_to);
-                holder.txtCost = convertView.findViewById(R.id.textView_cost);
+                holder.txtType = convertView.findViewById(R.id.textView_vehicle_type);
+                holder.txtType2 = convertView.findViewById(R.id.textView_vehicle_type2);
+                holder.txtModel = convertView.findViewById(R.id.textView_vehicle_model);
 
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            holder.txtDate.setText(searchArrayList.get(position).getDate());
-            holder.txtFrom.setText(String.format("From: %s", searchArrayList.get(position).getFrom()));
-            holder.txtTo.setText(String.format("To: %s", searchArrayList.get(position).getTo()));
-            holder.txtCost.setText(String.format("%s EGP", searchArrayList.get(position).getCost()));
+            holder.txtType.setText(searchArrayList.get(position).getType());
+            holder.txtType2.setText(String.format(searchArrayList.get(position).getType2()));
+            holder.txtModel.setText(String.format(searchArrayList.get(position).getModel()));
 
             return convertView;
         }
 
         static class ViewHolder {
-            TextView txtDate;
-            TextView txtFrom;
-            TextView txtTo;
-            TextView txtCost;
+            TextView txtType;
+            TextView txtType2;
+            TextView txtModel;
         }
     }
 
