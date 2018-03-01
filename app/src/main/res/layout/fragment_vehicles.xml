@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.wenshi_egypt.wenshi.VehiclesFragment">
+
+    <ListView
+        android:id="@+id/listView_vehicles"
+        android:layout_width="match_parent"
+        android:layout_height="325dp"
+        android:listSelector="@color/colorGreen"
+        android:textColor="@color/colorBlack"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvValue2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="26dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@id/listView_vehicles"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_vehicle_addNew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/textView_vehicle_addNew"
+        android:textSize="20sp"
+        android:clickable="true"
+        app:layout_constraintStart_toStartOf="@id/listView_vehicles"
+        app:layout_constraintTop_toBottomOf="@+id/listView_vehicles"
+        android:layout_marginLeft="16dp"
+        android:focusable="true" />
+
+</android.support.constraint.ConstraintLayout>
