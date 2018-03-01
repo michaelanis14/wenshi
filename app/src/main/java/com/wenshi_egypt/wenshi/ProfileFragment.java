@@ -1,75 +1,46 @@
 package com.wenshi_egypt.wenshi;
+import android.content.Context;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
-        import android.content.Context;
-        import android.net.Uri;
-        import android.os.Bundle;
-        import android.support.v4.app.Fragment;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ProfileFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ProfileFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class ProfileFragment extends Fragment implements View.OnClickListener {
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    EditText username, email, mobile, carType,  model, address;
 
-    private OnFragmentInteractionListener mListener;
+    DatabaseReference rootRef, profRef;
+    Button saveButton;
 
-    public ProfileFragment() {
-        // Required empty public constructor
-    }
+    private ProfileFragment.OnFragmentInteractionListener mListener;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    public ProfileFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view= inflater.inflate(R.layout.fragment_profile, container, false);
-
-        // NOTE : We are calling the onFragmentInteraction() declared in the MainActivity
-        // ie we are sending "Fragment 1" as title parameter when fragment1 is activated
         if (mListener != null) {
             Uri.Builder builder = new Uri.Builder();
-            builder.scheme("https")
+            builder.scheme("http")
                     .authority("www.merply.com")
                     .appendPath("winshy")
                     .appendPath("types")
@@ -79,26 +50,62 @@ public class ProfileFragment extends Fragment {
             mListener.onFragmentInteraction(builder.build());
         }
 
-        // Here we will can create click listners etc for all the gui elements on the fragment.
-        // For eg: Button btn1= (Button) view.findViewById(R.id.frag1_btn1);
-        // btn1.setOnclickListener(...
-
-        return view;
-
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
+        username = getView().findViewById(R.id.editText_profile_userName);
+        email = getView().findViewById(R.id.editText_profile_email);
+        mobile = getView().findViewById(R.id.editText_profile_mobile);
+        carType = getView().findViewById(R.id.editText_profile_carType);
+        model = getView().findViewById(R.id.editText_profile_model);
+        address = getView().findViewById(R.id.editText_profile_address);
+        saveButton = getView().findViewById(R.id.button_profile_saveButton);
+
+        rootRef = FirebaseDatabase.getInstance().getReference();
+        profRef = rootRef.child("Profile").child("user1");
+
+        profRef.orderByKey().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
+                username.setText(value.get("userName"));
+                email.setText(value.get("email"));
+                mobile.setText(value.get("mobile"));
+                carType.setText(value.get("carType"));
+                model.setText(String.format("%s", value.get("model")));
+                address.setText(value.get("address"));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        getView().findViewById(R.id.button_profile_saveButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference profModify = rootRef.child("Profile").child("user1");
+                profModify.child("userName").setValue(String.valueOf(username.getText()));
+                profModify.child("email").setValue(String.valueOf(email.getText()));
+                profModify.child("mobile").setValue(String.valueOf(mobile.getText()));
+                profModify.child("carType").setValue(String.valueOf(carType.getText()));
+                profModify.child("model").setValue(String.valueOf(model.getText()));
+                profModify.child("address").setValue(String.valueOf(address.getText()));
+                Toast.makeText(getActivity(), "Changes Saved Successfully", Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof HelpFragment.OnFragmentInteractionListener) {
+            mListener = (ProfileFragment.OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -110,6 +117,12 @@ public class ProfileFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    @Override
+    public void onClick(View view) {
+
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this

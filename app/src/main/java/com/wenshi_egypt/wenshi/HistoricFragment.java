@@ -22,7 +22,7 @@ import java.util.HashMap;
 
 public class HistoricFragment extends Fragment implements View.OnClickListener{
 
-    DatabaseReference rootRef;
+    DatabaseReference rootRef, histRef;
     TextView demoValue;
     static String date, from, to, cost;
 
@@ -54,7 +54,8 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
 
         //database reference pointing to root of database
         rootRef = FirebaseDatabase.getInstance().getReference();
-        rootRef.child("Trips").orderByKey().addValueEventListener(new ValueEventListener() {
+        histRef = rootRef.child("Trips");
+        histRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
@@ -64,7 +65,7 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
                     date = value.get("date");
                     from = value.get("from");
                     to = value.get("to");
-                    cost = value.get("cost");
+                    cost = String.format("%s", value.get("cost"));
 
                     demoValue.setText("");
                     results.add(new Trip(date, from, to, Double.parseDouble(cost)));

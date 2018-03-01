@@ -55,6 +55,8 @@
 
 
     <!-- Michael Abadir -->
+    <string name="button_call">Call</string>
+
     <string name="textView_help_Info">Help Info</string>
     <string name="textView_rate_and_charges">Rate and Charges</string>
     <string name="textView_about">About</string>
@@ -87,6 +89,7 @@
     <string name="textView_profile_carType_label">Car type</string>
     <string name="textView_profile_model_label">Model</string>
     <string name="textView_profile_address_label">Address</string>
+    <string name="button_profile_saveButton">Save</string>
 
 
 </resources>

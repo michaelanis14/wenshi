@@ -20,7 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 
 
-public class HelpFragment extends Fragment   implements View.OnClickListener{
+public class HelpFragment extends Fragment implements View.OnClickListener{
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -98,11 +98,6 @@ public class HelpFragment extends Fragment   implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()){
-            case R.id.close_btn:
-                final boolean b = getFragmentManager().popBackStackImmediate();
-                break;
-        }
 
     }
 
