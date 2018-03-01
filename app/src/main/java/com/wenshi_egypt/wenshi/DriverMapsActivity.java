@@ -9,6 +9,7 @@ package com.wenshi_egypt.wenshi;
         import android.location.LocationListener;
         import android.location.LocationManager;
         import android.net.Uri;
+        import android.os.Build;
         import android.os.Bundle;
         import android.support.annotation.NonNull;
         import android.support.annotation.Nullable;
@@ -27,11 +28,18 @@ package com.wenshi_egypt.wenshi;
         import android.support.v7.app.AppCompatActivity;
         import android.support.v7.widget.Toolbar;
         import android.util.Log;
+        import android.view.Gravity;
+        import android.view.LayoutInflater;
         import android.view.Menu;
         import android.view.MenuItem;
         import android.view.View;
+        import android.view.ViewGroup;
         import android.widget.Button;
         import android.widget.CompoundButton;
+        import android.widget.ImageButton;
+        import android.widget.LinearLayout;
+        import android.widget.PopupWindow;
+        import android.widget.RelativeLayout;
         import android.widget.Switch;
         import android.widget.TextView;
         import android.widget.Toast;
@@ -110,6 +118,11 @@ public class DriverMapsActivity extends AppCompatActivity implements
     private Switch swtch_onlineOffline;
     DatabaseReference driver;
 
+    private LinearLayout mRelativeLayout;
+    private Button mButton;
+
+    private PopupWindow mPopupWindow;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +131,8 @@ public class DriverMapsActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mContext = getApplicationContext();
+        mRelativeLayout = (LinearLayout) findViewById(R.id.drive_main_layout);
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.driver_map);
         mapFragment.getMapAsync(this);
@@ -200,8 +215,6 @@ public class DriverMapsActivity extends AppCompatActivity implements
         });
     }
 
-
-
     private void reciveRequests(boolean state){
 
         if(state) {
@@ -217,6 +230,51 @@ public class DriverMapsActivity extends AppCompatActivity implements
                             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                             Log.d("TAG Driverr", "onDataChange DD: " + imageSnapshot.getKey());
                             Log.d("TAG Driverr", "onDataChange DD: " + imageSnapshot.getValue());
+
+                            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+                            // Inflate the custom layout/view
+                            View customView = inflater.inflate(R.layout.popup_layout,null);
+
+                /*
+                    public PopupWindow (View contentView, int width, int height)
+                        Create a new non focusable popup window which can display the contentView.
+                        The dimension of the window must be passed to this constructor.
+
+                        The popup does not provide any background. This should be handled by
+                        the content view.
+
+                    Parameters
+                        contentView : the popup's content
+                        width : the popup's width
+                        height : the popup's height
+                */
+                            // Initialize a new instance of popup window
+                            mPopupWindow = new PopupWindow(
+                                    customView,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT
+                            );
+
+                            // Set an elevation value for popup window
+                            // Call requires API level 21
+                            if(Build.VERSION.SDK_INT>=21){
+                                mPopupWindow.setElevation(5.0f);
+                            }
+
+                            // Get a reference for the custom view close button
+                            ImageButton closeButton = (ImageButton) customView.findViewById(R.id.ib_close);
+
+                            // Set a click listener for the popup window close button
+                            closeButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    // Dismiss the popup window
+                                    mPopupWindow.dismiss();
+                                }
+                            });
+
+                            mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
                             break;
                         } else {
                             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -259,7 +317,6 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
         }
     }
-
 
     private void displayLocation() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -581,4 +638,5 @@ public class DriverMapsActivity extends AppCompatActivity implements
         displayLocation();
 
     }
+
 }

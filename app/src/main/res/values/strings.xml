@@ -90,6 +90,8 @@
     <string name="textView_profile_carType_label">Car type</string>
     <string name="textView_profile_model_label">Model</string>
     <string name="textView_profile_address_label">Address</string>
+    <string name="new_request">NEW REQUEST</string>
+    <string name="todo">TODO</string>
 
 
 </resources>

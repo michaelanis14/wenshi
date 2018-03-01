@@ -20,13 +20,13 @@ package com.wenshi_egypt.wenshi;
 
         import javax.xml.validation.Validator;
 
-        import butterknife.BindView;
+//        import butterknife.BindView;
 
 public class LoginActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     boolean customer = false;
-    @BindView(R.id.root)
+   // @BindView(R.id.root)
     View mRootView;
     FirebaseAuth auth;
     @Override

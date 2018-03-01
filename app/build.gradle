@@ -14,8 +14,9 @@ android {
     }
     compileSdkVersion 26
     defaultConfig {
+        resConfigs ("en", "xxxhdpi")
         applicationId "com.wenshi_egypt.wenshi"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -35,9 +36,16 @@ android {
 
 allprojects {
     repositories {
-        mavenCentral()
-        jcenter()
+      //  mavenCentral()
+       jcenter()
         maven { url "https://dl.bintray.com/paymobsolutions/paymob_accept_sdk" }
+
+    }
+}
+tasks.withType(JavaCompile){
+    options.incremental = true;
+    options.fork = true
+    doFirst { println "Task ${path} annotation processors: ${effectiveAnnotationProcessorPath.asPath}"
     }
 }
 
@@ -46,12 +54,12 @@ dependencies {
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.google.android.gms:play-services-maps:11.8.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+  //  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+  //      exclude group: 'com.android.support', module: 'support-annotations'
+  //  })
     compile 'com.android.support:appcompat-v7:26.1.0'
-    testCompile 'junit:junit:4.12'
-    compile 'com.jakewharton:butterknife:8.8.1'
+    //testCompile 'junit:junit:4.12'
+  //  compile 'com.jakewharton:butterknife:8.8.1'
     compile 'com.google.firebase:firebase-core:11.8.0'
     implementation 'com.firebaseui:firebase-ui-auth:3.2.1'
     compile 'com.google.firebase:firebase-database:11.8.0'
@@ -64,7 +72,7 @@ dependencies {
     // Required only if Twitter LoginActivity support is required
     // Find the latest Twitter SDK releases here: https://goo.gl/E5wZvQ
     implementation('com.twitter.sdk.android:twitter-core:3.1.1@aar') { transitive = true }
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+  //  annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.android.support:design:26.0.0'
     compile 'com.paymob:acceptsdk:1.0.2'
 }
