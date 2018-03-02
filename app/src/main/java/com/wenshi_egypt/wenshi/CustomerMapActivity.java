@@ -295,14 +295,17 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
 
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode))
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
                 GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICE_RESLUOTION_CODE).show();
-            else {
+                Toast.makeText(this, "checkPlayServices isUserRecoverableError"+PLAY_SERVICE_RESLUOTION_CODE, Toast.LENGTH_SHORT).show();
+
+            }else {
                 Toast.makeText(this, "This device is not supported", Toast.LENGTH_SHORT).show();
                 finish();
             }
             return false;
         }
+
         return true;
     }
 

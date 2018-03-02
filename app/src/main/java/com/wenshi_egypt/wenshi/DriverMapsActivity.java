@@ -223,61 +223,19 @@ public class DriverMapsActivity extends AppCompatActivity implements
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    for (DataSnapshot imageSnapshot : dataSnapshot.getChildren()) {
-                        Log.d("TAG Driverr", "changeee: " + imageSnapshot.getKey());
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    hidePopup();
 
-                        if (imageSnapshot.getKey().equals(userId)) {
+                    for (DataSnapshot customerSnapshot : dataSnapshot.getChildren()) {
+                        Log.d("TAG Driverr", "changeee: " + customerSnapshot.getKey());
+
+                        if (customerSnapshot.getKey().equals(userId)) {
                             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                            Log.d("TAG Driverr", "onDataChange DD: " + imageSnapshot.getKey());
-                            Log.d("TAG Driverr", "onDataChange DD: " + imageSnapshot.getValue());
+                            Log.d("TAG Driverr", "onDataChange DD: " + customerSnapshot.getKey());
+                            Log.d("TAG Driverr", "onDataChange DD: " + customerSnapshot.getValue());
 
-                            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-
-                            // Inflate the custom layout/view
-                            View customView = inflater.inflate(R.layout.popup_layout,null);
-
-                /*
-                    public PopupWindow (View contentView, int width, int height)
-                        Create a new non focusable popup window which can display the contentView.
-                        The dimension of the window must be passed to this constructor.
-
-                        The popup does not provide any background. This should be handled by
-                        the content view.
-
-                    Parameters
-                        contentView : the popup's content
-                        width : the popup's width
-                        height : the popup's height
-                */
-                            // Initialize a new instance of popup window
-                            mPopupWindow = new PopupWindow(
-                                    customView,
-                                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                                    ViewGroup.LayoutParams.WRAP_CONTENT
-                            );
-
-                            // Set an elevation value for popup window
-                            // Call requires API level 21
-                            if(Build.VERSION.SDK_INT>=21){
-                                mPopupWindow.setElevation(5.0f);
-                            }
-
-                            // Get a reference for the custom view close button
-                            ImageButton closeButton = (ImageButton) customView.findViewById(R.id.ib_close);
-
-                            // Set a click listener for the popup window close button
-                            closeButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    // Dismiss the popup window
-                                    mPopupWindow.dismiss();
-                                }
-                            });
-
-                            mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
+                            showPopup(getResources().getString(R.string.new_request),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString());
                             break;
-                        } else {
-                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                         }
 
                     }
@@ -637,6 +595,90 @@ public class DriverMapsActivity extends AppCompatActivity implements
         super.onResume();
         displayLocation();
 
+    }
+
+    private void showPopup(String title,String line1,String line2,String line3,String line4){
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        // Inflate the custom layout/view
+        View popupLayout = inflater.inflate(R.layout.popup_layout,null);
+
+                /*
+                    public PopupWindow (View contentView, int width, int height)
+                        Create a new non focusable popup window which can display the contentView.
+                        The dimension of the window must be passed to this constructor.
+
+                        The popup does not provide any background. This should be handled by
+                        the content view.
+
+                    Parameters
+                        contentView : the popup's content
+                        width : the popup's width
+                        height : the popup's height
+                */
+        // Initialize a new instance of popup window
+        if(mPopupWindow == null)
+        mPopupWindow = new PopupWindow(
+                popupLayout,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+
+        // Set an elevation value for popup window
+        // Call requires API level 21
+        if(Build.VERSION.SDK_INT>=21){
+            mPopupWindow.setElevation(5.0f);
+        }
+
+        // Get a reference for the custom view close button
+       // ImageButton closeButton = (ImageButton) popupLayout.findViewById(R.id.ib_close);
+
+        if(!title.trim().isEmpty()) {
+            ((TextView) popupLayout.findViewById(R.id.title_popup)).setVisibility(View.VISIBLE);
+            ((TextView) popupLayout.findViewById(R.id.title_popup)).setText(title);
+        }else
+            ((TextView) popupLayout.findViewById(R.id.title_popup)).setVisibility(View.INVISIBLE);
+
+        if(!line1.trim().isEmpty()) {
+            ((TextView) popupLayout.findViewById(R.id.body_popup)).setVisibility(View.VISIBLE);
+            ((TextView) popupLayout.findViewById(R.id.body_popup)).setText(line1);
+        }else
+            ((TextView) popupLayout.findViewById(R.id.body_popup)).setVisibility(View.INVISIBLE);
+
+        if(!line2.trim().isEmpty()) {
+            ((TextView) popupLayout.findViewById(R.id.body1_popup)).setText(line2);
+        }else
+            ((TextView) popupLayout.findViewById(R.id.body1_popup)).setVisibility(View.INVISIBLE);
+
+        if(!line3.trim().isEmpty()) {
+            ((TextView) popupLayout.findViewById(R.id.body2_popup)).setText(line3);
+        }else
+            ((TextView) popupLayout.findViewById(R.id.body2_popup)).setVisibility(View.INVISIBLE);
+
+        if(!line4.trim().isEmpty()) {
+            ((TextView) popupLayout.findViewById(R.id.body3_popup)).setText(line4);
+        }else
+            ((TextView) popupLayout.findViewById(R.id.body3_popup)).setVisibility(View.INVISIBLE);
+
+
+
+        // Set a click listener for the popup window close button
+        //closeButton.setOnClickListener(new View.OnClickListener() {
+       //     @Override
+      //      public void onClick(View view) {
+      //          // Dismiss the popup window
+       //         mPopupWindow.dismiss();
+        //    }
+     //   });
+if(!mPopupWindow.isShowing())
+        mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
+
+    }
+
+    private void hidePopup(){
+
+        if(mPopupWindow != null && mPopupWindow.isShowing())
+            mPopupWindow.dismiss();
     }
 
 }

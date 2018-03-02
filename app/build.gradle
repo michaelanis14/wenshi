@@ -36,7 +36,7 @@ android {
 
 allprojects {
     repositories {
-      //  mavenCentral()
+        mavenCentral()
        jcenter()
         maven { url "https://dl.bintray.com/paymobsolutions/paymob_accept_sdk" }
 
@@ -55,24 +55,22 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:11.8.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
   //  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-  //      exclude group: 'com.android.support', module: 'support-annotations'
-  //  })
+   //     exclude group: 'com.android.support', module: 'support-annotations'
+    //})
     compile 'com.android.support:appcompat-v7:26.1.0'
-    //testCompile 'junit:junit:4.12'
-  //  compile 'com.jakewharton:butterknife:8.8.1'
+  //  testCompile 'junit:junit:4.12'
+    compile 'com.jakewharton:butterknife:8.8.1'
     compile 'com.google.firebase:firebase-core:11.8.0'
     implementation 'com.firebaseui:firebase-ui-auth:3.2.1'
     compile 'com.google.firebase:firebase-database:11.8.0'
     compile 'com.firebase:geofire-android:2.2.0'
     compile 'com.google.android.gms:play-services-location:11.8.0'
     compile 'com.google.android.gms:play-services-places:11.8.0'
-    // Required only if Facebook LoginActivity support is required
-    // Find the latest Facebook SDK releases here: https://goo.gl/Ce5L94
+
     implementation 'com.facebook.android:facebook-login:[4,5)'
-    // Required only if Twitter LoginActivity support is required
-    // Find the latest Twitter SDK releases here: https://goo.gl/E5wZvQ
+
     implementation('com.twitter.sdk.android:twitter-core:3.1.1@aar') { transitive = true }
-  //  annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.android.support:design:26.0.0'
     compile 'com.paymob:acceptsdk:1.0.2'
 }

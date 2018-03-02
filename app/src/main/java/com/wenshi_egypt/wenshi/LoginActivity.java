@@ -13,20 +13,22 @@ package com.wenshi_egypt.wenshi;
         import com.firebase.ui.auth.ErrorCodes;
         import com.firebase.ui.auth.IdpResponse;
         import com.google.firebase.auth.FirebaseAuth;
+        import com.google.firebase.auth.FirebaseUser;
         import com.google.firebase.database.DatabaseReference;
         import com.google.firebase.database.FirebaseDatabase;
+        import com.wenshi_egypt.wenshi.model.UserModel;
 
         import java.util.Arrays;
 
         import javax.xml.validation.Validator;
 
-//        import butterknife.BindView;
+        import butterknife.BindView;
 
 public class LoginActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     boolean customer = false;
-   // @BindView(R.id.root)
+    @BindView(R.id.root)
     View mRootView;
     FirebaseAuth auth;
     @Override
@@ -61,14 +63,20 @@ public class LoginActivity extends AppCompatActivity {
 
             // Successfully signed in
             if (resultCode == RESULT_OK) {
-                String user= auth.getCurrentUser().getUid();
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                String uid = user.getUid();
+                String name = user.getDisplayName();
+                String email = user.getEmail();
+                String mobil = user.getPhoneNumber();
+
 
                 if(customer) {
-                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(user);
+                    UserModel currenctUser = new UserModel(uid,name,email,mobil);
+                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid);
                     currentUser.setValue(true); // to allow changes to happen
                     startActivity(new Intent(LoginActivity.this, CustomerMapActivity.class));
                 }else{
-                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(user);
+                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid);
                     currentUser.setValue(true); // to allow changes to happen
                     startActivity(new Intent(LoginActivity.this, DriverMapsActivity.class));
                 }
