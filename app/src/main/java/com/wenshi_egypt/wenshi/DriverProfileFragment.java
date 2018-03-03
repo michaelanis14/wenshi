@@ -1,6 +1,5 @@
 package com.wenshi_egypt.wenshi;
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -22,18 +20,18 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 
 
-public class ProfileFragment extends Fragment implements View.OnClickListener {
+public class DriverProfileFragment extends Fragment implements View.OnClickListener {
 
     private String mParam1;
     private String mParam2;
-    EditText username, email, mobile, carType,  model, address;
+    EditText username, email, mobile, carType;
 
     DatabaseReference rootRef, profRef;
     Button saveButton;
 
-    private ProfileFragment.OnFragmentInteractionListener mListener;
+    private DriverProfileFragment.OnFragmentInteractionListener mListener;
 
-    public ProfileFragment() { }
+    public DriverProfileFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,22 +48,20 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             mListener.onFragmentInteraction(builder.build());
         }
 
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        return inflater.inflate(R.layout.fragment_driver_profile, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        username = getView().findViewById(R.id.editText_profile_userName);
-        email = getView().findViewById(R.id.editText_profile_email);
-        mobile = getView().findViewById(R.id.editText_profile_mobile);
-        carType = getView().findViewById(R.id.editText_profile_carType);
-        model = getView().findViewById(R.id.editText_profile_model);
-        address = getView().findViewById(R.id.editText_profile_address);
-        saveButton = getView().findViewById(R.id.button_profile_saveButton);
+        username = getView().findViewById(R.id.editText_driverProfile_userName);
+        email = getView().findViewById(R.id.editText_driverProfile_email);
+        mobile = getView().findViewById(R.id.editText_driverProfile_mobile);
+        carType = getView().findViewById(R.id.editText_driverProfile_carType);
+        saveButton = getView().findViewById(R.id.button_driverProfile_saveButton);
 
         rootRef = FirebaseDatabase.getInstance().getReference();
-        profRef = rootRef.child("Users").child("Customers").child("user1");
+        profRef = rootRef.child("Profile").child("driver1");
 
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
@@ -75,8 +71,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 email.setText(value.get("email"));
                 mobile.setText(value.get("mobile"));
                 carType.setText(value.get("carType"));
-                model.setText(String.format("%s", value.get("model")));
-                address.setText(value.get("address"));
             }
 
             @Override
@@ -85,16 +79,14 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        getView().findViewById(R.id.button_profile_saveButton).setOnClickListener(new View.OnClickListener() {
+        getView().findViewById(R.id.button_driverProfile_saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference profModify = rootRef.child("Users").child("Customers").child("user1");
+                DatabaseReference profModify = rootRef.child("Profile").child("driver1");
                 profModify.child("userName").setValue(String.valueOf(username.getText()));
                 profModify.child("email").setValue(String.valueOf(email.getText()));
                 profModify.child("mobile").setValue(String.valueOf(mobile.getText()));
                 profModify.child("carType").setValue(String.valueOf(carType.getText()));
-                profModify.child("model").setValue(String.valueOf(model.getText()));
-                profModify.child("address").setValue(String.valueOf(address.getText()));
                 Toast.makeText(getActivity(), "Changes Saved Successfully", Toast.LENGTH_LONG).show();
             }
         });
@@ -104,8 +96,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof HelpFragment.OnFragmentInteractionListener) {
-            mListener = (ProfileFragment.OnFragmentInteractionListener) context;
+        if (context instanceof DriverProfileFragment.OnFragmentInteractionListener) {
+            mListener = (DriverProfileFragment.OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
