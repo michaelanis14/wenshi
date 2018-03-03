@@ -73,7 +73,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        ProfileFragment.OnFragmentInteractionListener,
+        DriverProfileFragment.OnFragmentInteractionListener,
         HistoricFragment.OnFragmentInteractionListener,
         DriverFragment.OnFragmentInteractionListener,
         OnNavigationItemSelectedListener,
@@ -566,7 +566,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
         Fragment fragment = null;
 
         if (id == R.id.nav_profile) {
-            fragment = new ProfileFragment();
+            fragment = new DriverProfileFragment();
         } else if (id == R.id.nav_history) {
            // fragment = new HistoryFragment();
         }

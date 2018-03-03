@@ -55,7 +55,7 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
 
         //database reference pointing to root of database
         rootRef = FirebaseDatabase.getInstance().getReference();
-        histRef = rootRef.child("Trips");
+        histRef = rootRef.child("Users").child("Customers").child("user1").child("Trips");
         histRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
