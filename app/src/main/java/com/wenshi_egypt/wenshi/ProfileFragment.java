@@ -1,4 +1,5 @@
 package com.wenshi_egypt.wenshi;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
@@ -18,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.wenshi_egypt.wenshi.model.UserModel;
 
 import java.util.HashMap;
 
@@ -26,27 +28,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private String mParam1;
     private String mParam2;
-    EditText username, email, mobile, carType,  model, address;
+    EditText username, email, mobile, carType, model, address;
 
     DatabaseReference rootRef, profRef;
     Button saveButton;
-
+    private UserModel user;
     private ProfileFragment.OnFragmentInteractionListener mListener;
 
-    public ProfileFragment() { }
+    public ProfileFragment() {
+    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (mListener != null) {
             Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http")
-                    .authority("www.merply.com")
-                    .appendPath("winshy")
-                    .appendPath("types")
-                    .appendQueryParameter("type", "1")
-                    .appendQueryParameter("sort", "relevance")
-                    .fragment("profile");
+            builder.scheme("http").authority("www.merply.com").appendPath("Winshe").appendPath("types").appendQueryParameter("type", "1").appendQueryParameter("sort", "relevance").fragment("profile");
             mListener.onFragmentInteraction(builder.build());
         }
 
@@ -64,8 +60,22 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         address = getView().findViewById(R.id.editText_profile_address);
         saveButton = getView().findViewById(R.id.button_profile_saveButton);
 
+
+        user = ((CustomerMapActivity)getActivity()).getCustomer();
+        if (user != null) {
+            username.setText(user.getName());
+            email.setText(user.getEmail());
+            mobile.setText(user.getMobile());
+            //carType.setText(user.getVehicle);
+            //model.setText(String.format("%s", user.get("model")));
+            address.setText(user.getAddress());
+        }
+       /*
         rootRef = FirebaseDatabase.getInstance().getReference();
         profRef = rootRef.child("Users").child("Customers").child("user1");
+
+
+
 
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
@@ -84,7 +94,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
             }
         });
-
+*/
         getView().findViewById(R.id.button_profile_saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,8 +117,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         if (context instanceof HelpFragment.OnFragmentInteractionListener) {
             mListener = (ProfileFragment.OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
         }
     }
 

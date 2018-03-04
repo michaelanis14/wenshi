@@ -3,6 +3,8 @@ package com.wenshi_egypt.wenshi.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.wenshi_egypt.wenshi.Vehicle;
+
 import java.util.ArrayList;
 
 /**
@@ -10,12 +12,34 @@ import java.util.ArrayList;
  */
 
 public class UserModel implements Parcelable {
-    String ID;
-    String Name;
-    String email;
-    String Mobile;
-    String Address = "";
+    String ID ="ID";
+
+    public String getID() {
+        return ID;
+    }
+
+    public String getName() {
+        return Name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getMobile() {
+        return Mobile;
+    }
+
+    public String getAddress() {
+        return Address;
+    }
+
+    String Name = "FirstLastName";
+    String email= "Email@email.com";
+    String Mobile="00000";
+    String Address = "Addres";
     ArrayList<VehicleModel> Vehicles = new ArrayList<VehicleModel>();
+
 
 
     public UserModel(String id,String name, String email, String mobile, String Address) {
@@ -24,7 +48,6 @@ public class UserModel implements Parcelable {
         this.email = email;
         this.Mobile = mobile;
         this.Address = Address;
-
     }
 
     public ArrayList<VehicleModel> getVehicles() {

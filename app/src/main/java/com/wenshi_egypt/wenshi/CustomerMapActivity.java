@@ -48,6 +48,7 @@ import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryDataEventListener;
 import com.firebase.geofire.GeoQueryEventListener;
+import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -716,5 +717,9 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         mNotifyMgr.notify(mNotificationId, notification);
 
 
+    }
+
+    public UserModel getCustomer(){
+        return  user;
     }
 }
