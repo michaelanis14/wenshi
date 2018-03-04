@@ -61,6 +61,7 @@
     <string name="textView_rate_and_charges">Rate and Charges</string>
     <string name="textView_about">About</string>
     <string name="textView_invite">Invite</string>
+    <string name="textView_family_view">Family View</string>
 
     <string name="textView_payment_page_label">Current Payment Method</string>
     <string name="radioButton_payment_cash">Cash</string>

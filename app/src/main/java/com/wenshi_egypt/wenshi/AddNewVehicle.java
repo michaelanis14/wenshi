@@ -3,6 +3,8 @@ package com.wenshi_egypt.wenshi;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -49,12 +51,25 @@ public class AddNewVehicle extends AppCompatActivity {
                 if(TextUtils.isEmpty(newType.getText())||TextUtils.isEmpty(newModel.getText()))
                     Toast.makeText(AddNewVehicle.this, "Cannot submit empty field",  Toast.LENGTH_LONG).show();
                 else {
+
                     DatabaseReference addVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child("user1").child("Vehicles").child("newVic" + vicCount);
                     addVehicle.child("type").setValue(newType.getText().toString());
                     addVehicle.child("model").setValue(newModel.getText().toString());
                     addVehicle.child("defaultVehicle").setValue("False");
                     vicCount++;
-                    savedSuccess.setVisibility(View.VISIBLE);
+
+                    new CountDownTimer(3000, 10) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            savedSuccess.setVisibility(View.VISIBLE);
+                        }
+                        @Override
+                        public void onFinish() {
+                            startActivity(new Intent(AddNewVehicle.this, WelcomeActivity.class));
+                        }
+                    }.start();
+
+
                    // Toast.makeText(AddNewVehicle.this, "Data saved successfully", Toast.LENGTH_LONG).show();
                 }
 

@@ -1,5 +1,6 @@
 package com.wenshi_egypt.wenshi;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +26,17 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
     DatabaseReference rootRef, histRef;
     TextView demoValue;
     static String date, from, to, cost;
+
+    public HistoricFragment(){}
+
+    @SuppressLint("ValidFragment")
+    public HistoricFragment(boolean b)  {
+        if (b)  {
+            this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child("user1").child("Trips");
+        }
+        else
+            this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child("driver1").child("Trips");
+    }
 
     @Nullable
     @Override
@@ -54,8 +66,8 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
         final ArrayList<HistoricTrip> results = new ArrayList<>();
 
         //database reference pointing to root of database
-        rootRef = FirebaseDatabase.getInstance().getReference();
-        histRef = rootRef.child("Users").child("Customers").child("user1").child("Trips");
+       // rootRef = FirebaseDatabase.getInstance().getReference();
+       // histRef = rootRef.child("Users").child("Customers").child("user1").child("Trips");
         histRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

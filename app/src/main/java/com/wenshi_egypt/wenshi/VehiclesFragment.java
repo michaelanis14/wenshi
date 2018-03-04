@@ -63,14 +63,14 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-        addNewVehicle.setOnTouchListener(new View.OnTouchListener() {
+        addNewVehicle.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public void onClick(View view) {
                 startActivity(new Intent(getContext(), AddNewVehicle.class));
-                return true;
             }
         });
     }
+
 
     private ArrayList<Vehicle> getVehicle(){
         final ArrayList<Vehicle> results = new ArrayList<>();
