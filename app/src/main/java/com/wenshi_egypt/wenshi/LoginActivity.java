@@ -68,25 +68,27 @@ public class LoginActivity extends AppCompatActivity {
                 String name = user.getDisplayName();
                 String email = user.getEmail();
                 String mobil = user.getPhoneNumber();
+                UserModel currenctUserModel = new UserModel(uid,name,email,mobil,"");
 
 
                 if(customer) {
-                    UserModel currenctUser = new UserModel(uid,name,email,mobil);
                     DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid);
                     currentUser.setValue(true); // to allow changes to happen
 
-                    Intent loginInent = new Intent(LoginActivity.this, CustomerMapActivity.class);
-                   // loginInent.p("customer", currenctUser);
-
-
-                    startActivity(new Intent(LoginActivity.this, CustomerMapActivity.class));
+                    Intent customerIntent = new Intent(LoginActivity.this, CustomerMapActivity.class);
+                    customerIntent.putExtra("CurrentUser", currenctUserModel);
+                    startActivity(customerIntent);
                 }else{
                     DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid);
                     currentUser.setValue(true); // to allow changes to happen
-                    startActivity(new Intent(LoginActivity.this, DriverMapsActivity.class));
+
+                    Intent driverIntent = new Intent(LoginActivity.this, DriverMapsActivity.class);
+                    driverIntent.putExtra("CurrentUser", currenctUserModel);
+                    startActivity(driverIntent);
                 }
                 finish();
                 return;
+
             } else {
                 // Sign in failed
                 if (response == null) {

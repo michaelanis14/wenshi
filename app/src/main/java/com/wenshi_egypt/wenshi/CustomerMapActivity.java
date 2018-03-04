@@ -67,6 +67,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.wenshi_egypt.wenshi.model.UserModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,6 +122,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     private Map<String, Marker> markers;
 
     private List<String> driversID;
+    UserModel user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +131,10 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Intent i = getIntent();
+        user = (UserModel) i.getParcelableExtra("CurrentUser");
+
+        Log.i("CCurrentUser",user.toString());
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.customer_map);
         mapFragment.getMapAsync(this);
