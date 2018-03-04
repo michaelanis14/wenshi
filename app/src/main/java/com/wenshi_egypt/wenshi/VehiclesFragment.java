@@ -29,8 +29,8 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
 
     DatabaseReference rootRef, vehicleRef;
     TextView demoValue, addNewVehicle;
-    static String type, type2, model;
-    static String defType, defType2, defModel;
+    static String type, model;
+    static String defType, defModel;
 
     @Nullable
     @Override
@@ -57,10 +57,8 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
 //                defaultVehicle.setVisibility(View.VISIBLE);
                 //Toast.makeText(getActivity(), "position number: " + position, Toast.LENGTH_LONG).show();
                 defType = vehicle.get(position).getType();
-                defType2 = vehicle.get(position).getType2();
                 defModel = vehicle.get(position).getModel();
                 Toast.makeText(getActivity(), "Type: " + defType, Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(), "Type2: " + defType2, Toast.LENGTH_SHORT).show();
                 Toast.makeText(getActivity(), "Model: " + defModel, Toast.LENGTH_SHORT).show();
             }
         });
@@ -88,11 +86,10 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
                     HashMap<String, String> value = (HashMap<String, String>) child.getValue();
                     assert value != null;
                     type = value.get("type");
-                    type2 = value.get("type2");
                     model = String.format("%s", value.get("model"));
 
                     demoValue.setText("");
-                    results.add(new Vehicle(type, type2, model));
+                    results.add(new Vehicle(type,  model));
                 }
             }
             @Override

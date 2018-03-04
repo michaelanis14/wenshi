@@ -8,13 +8,13 @@ android {
             storeFile file('/Users/michaelanis/Keys')
             storePassword '2019066'
         }
-        if (project.hasProperty('devBuild')){
+        if (project.hasProperty('devBuild')) {
             aaptOptions.cruncherEnabled = false
         }
     }
     compileSdkVersion 26
     defaultConfig {
-        resConfigs ("en", "xxxhdpi")
+        resConfigs("en", "xxxhdpi")
         applicationId "com.wenshi_egypt.wenshi"
         minSdkVersion 21
         targetSdkVersion 26
@@ -37,15 +37,16 @@ android {
 allprojects {
     repositories {
         mavenCentral()
-       jcenter()
+        jcenter()
         maven { url "https://dl.bintray.com/paymobsolutions/paymob_accept_sdk" }
 
     }
 }
-tasks.withType(JavaCompile){
+tasks.withType(JavaCompile) {
     options.incremental = true;
     options.fork = true
-    doFirst { println "Task ${path} annotation processors: ${effectiveAnnotationProcessorPath.asPath}"
+    doFirst {
+        println "Task ${path} annotation processors: ${effectiveAnnotationProcessorPath.asPath}"
     }
 }
 
@@ -54,11 +55,11 @@ dependencies {
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.google.android.gms:play-services-maps:11.8.0'
     compile fileTree(include: ['*.jar'], dir: 'libs')
-  //  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-   //     exclude group: 'com.android.support', module: 'support-annotations'
+    //  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    //     exclude group: 'com.android.support', module: 'support-annotations'
     //})
     compile 'com.android.support:appcompat-v7:26.1.0'
-  //  testCompile 'junit:junit:4.12'
+    //  testCompile 'junit:junit:4.12'
     compile 'com.jakewharton:butterknife:8.8.1'
     compile 'com.google.firebase:firebase-core:11.8.0'
     implementation 'com.firebaseui:firebase-ui-auth:3.2.1'
