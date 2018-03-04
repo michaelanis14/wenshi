@@ -119,6 +119,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
     DatabaseReference driver;
 
     private LinearLayout mRelativeLayout;
+    private LinearLayout mbottomViewLayout;
     private Button mButton;
 
     private PopupWindow mPopupWindow;
@@ -133,7 +134,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
         mContext = getApplicationContext();
         mRelativeLayout = (LinearLayout) findViewById(R.id.drive_main_layout);
-
+        mbottomViewLayout = (LinearLayout) findViewById(R.id.bottomViewLayout);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.driver_map);
         mapFragment.getMapAsync(this);
         driverLocation = FirebaseDatabase.getInstance().getReference("DriversAvailable");
@@ -213,6 +214,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
             }
 
         });
+        Log.i("mBottomSheetBehavio",""+mBottomSheetBehavior.getPeekHeight());
     }
 
     private void reciveRequests(boolean state){
@@ -222,18 +224,16 @@ public class DriverMapsActivity extends AppCompatActivity implements
             geoFireDriverRequests = driver.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    mbottomViewLayout.setVisibility(View.VISIBLE);
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                     hidePopup();
 
                     for (DataSnapshot customerSnapshot : dataSnapshot.getChildren()) {
                         Log.d("TAG Driverr", "changeee: " + customerSnapshot.getKey());
 
                         if (customerSnapshot.getKey().equals(userId)) {
+                            mbottomViewLayout.setVisibility(View.GONE);
                             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                            Log.d("TAG Driverr", "onDataChange DD: " + customerSnapshot.getKey());
-                            Log.d("TAG Driverr", "onDataChange DD: " + customerSnapshot.getValue());
-
                             showPopup(getResources().getString(R.string.new_request),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString());
                             break;
                         }
