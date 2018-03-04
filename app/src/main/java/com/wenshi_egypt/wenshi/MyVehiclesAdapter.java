@@ -39,7 +39,6 @@ public class MyVehiclesAdapter extends BaseAdapter {
                 convertView = mInflater.inflate(R.layout.template_vehicle, null);
                 holder = new ViewHolder();
                 holder.txtType = convertView.findViewById(R.id.textView_vehicle_type);
-                holder.txtType2 = convertView.findViewById(R.id.textView_vehicle_type2);
                 holder.txtModel = convertView.findViewById(R.id.textView_vehicle_model);
 
                 convertView.setTag(holder);
@@ -48,7 +47,6 @@ public class MyVehiclesAdapter extends BaseAdapter {
             }
 
             holder.txtType.setText(searchArrayList.get(position).getType());
-            holder.txtType2.setText(String.format(searchArrayList.get(position).getType2()));
             holder.txtModel.setText(String.format(searchArrayList.get(position).getModel()));
 
             return convertView;
@@ -56,7 +54,6 @@ public class MyVehiclesAdapter extends BaseAdapter {
 
         static class ViewHolder {
             TextView txtType;
-            TextView txtType2;
             TextView txtModel;
         }
     }

@@ -30,12 +30,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:focusable="true"
         android:text="@string/textView_vehicle_addNew"
         android:textSize="20sp"
-        android:clickable="true"
         app:layout_constraintStart_toStartOf="@id/listView_vehicles"
-        app:layout_constraintTop_toBottomOf="@+id/listView_vehicles"
-        android:layout_marginLeft="16dp"
-        android:focusable="true" />
+        app:layout_constraintTop_toBottomOf="@+id/listView_vehicles" />
 
 </android.support.constraint.ConstraintLayout>
