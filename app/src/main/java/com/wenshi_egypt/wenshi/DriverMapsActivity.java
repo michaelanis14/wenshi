@@ -119,7 +119,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
     DatabaseReference driver;
 
     private LinearLayout mRelativeLayout;
-    private LinearLayout mbottomViewLayout;
+    private LinearLayout monlineOfflineLayout;
     private Button mButton;
 
     private PopupWindow mPopupWindow;
@@ -134,7 +134,8 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
         mContext = getApplicationContext();
         mRelativeLayout = (LinearLayout) findViewById(R.id.drive_main_layout);
-        mbottomViewLayout = (LinearLayout) findViewById(R.id.bottomViewLayout);
+        monlineOfflineLayout = (LinearLayout) findViewById(R.id.onlineOfflineLayout);
+        swtch_onlineOffline = findViewById(R.id.onlineOffline_swtch);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.driver_map);
         mapFragment.getMapAsync(this);
         driverLocation = FirebaseDatabase.getInstance().getReference("DriversAvailable");
@@ -155,6 +156,8 @@ public class DriverMapsActivity extends AppCompatActivity implements
         navigationView.bringToFront();
         navigationView.requestLayout();
 
+        //hide the accept request buttons
+      //
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -162,12 +165,15 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
 
         mBottomTextView = findViewById(R.id.driver_bottom_view_lbl);
-        swtch_onlineOffline = findViewById(R.id.onlineOffline_swtch);
 
         //get the bottom sheet view
         mBottomSheet = findViewById(R.id.driver_bottom_sheet);
         // init the bottom sheet behavior
         mBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
+
+
+        mBottomSheet.setVisibility(View.INVISIBLE);
+
         // change the state of the bottom sheet
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -224,16 +230,18 @@ public class DriverMapsActivity extends AppCompatActivity implements
             geoFireDriverRequests = driver.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    mbottomViewLayout.setVisibility(View.VISIBLE);
-                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                    mBottomSheet.setVisibility(View.GONE);
+                    monlineOfflineLayout.setVisibility(View.VISIBLE);
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     hidePopup();
 
                     for (DataSnapshot customerSnapshot : dataSnapshot.getChildren()) {
                         Log.d("TAG Driverr", "changeee: " + customerSnapshot.getKey());
 
                         if (customerSnapshot.getKey().equals(userId)) {
-                            mbottomViewLayout.setVisibility(View.GONE);
-                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                            mBottomSheet.setVisibility(View.VISIBLE);
+                            monlineOfflineLayout.setVisibility(View.GONE);
+                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                             showPopup(getResources().getString(R.string.new_request),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString());
                             break;
                         }

@@ -6,14 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-
+/*
 import com.paymob.acceptsdk.IntentConstants;
 import com.paymob.acceptsdk.PayActivity;
 import com.paymob.acceptsdk.PayActivityIntentKeys;
 import com.paymob.acceptsdk.PayResponseKeys;
 import com.paymob.acceptsdk.SaveCardResponseKeys;
 import com.paymob.acceptsdk.ToastMaker;
-
+*/
 public class CreditCardEntry extends AppCompatActivity implements View.OnClickListener {
 
     Button button1;
@@ -37,12 +37,13 @@ public class CreditCardEntry extends AppCompatActivity implements View.OnClickLi
 //        button2.setOnClickListener(this);
 //        button3 = findViewById(R.id.Button3_paymob);
 //        button3.setOnClickListener(this);
-        startPayActivityNoToken(false);
+        //startPayActivityNoToken(false);
 
     }
 
     @Override
     public void onClick(View v) {
+        /*
         switch (v.getId()) {
             case R.id.Button1_paymob:
                 startPayActivityNoToken(true);
@@ -54,8 +55,9 @@ public class CreditCardEntry extends AppCompatActivity implements View.OnClickLi
                 startPayActivityToken();
                 break;
         }
+        */
     }
-
+/*
     private void startPayActivityNoToken(Boolean showSaveCard) {
         Intent pay_intent = new Intent(this, PayActivity.class);
 
@@ -157,6 +159,9 @@ public class CreditCardEntry extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
+
+
+    */
 }
 
 
