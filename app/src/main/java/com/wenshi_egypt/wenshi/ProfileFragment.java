@@ -62,7 +62,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
 
         user = ((CustomerMapActivity)getActivity()).getCustomer();
+        /*
         if (user != null) {
+
+            Toast.makeText(getActivity(), "User: " + user.getID(), Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(getActivity(), "Username: " + user.getName(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Email: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Mobile: " + user.getMobile(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Vehicle type: " + user.getVehicles(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), "Vehicle Model: " + user.getName(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Address: " + user.getAddress(), Toast.LENGTH_SHORT).show();
+
+
             username.setText(user.getName());
             email.setText(user.getEmail());
             mobile.setText(user.getMobile());
@@ -70,12 +82,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             //model.setText(String.format("%s", user.get("model")));
             address.setText(user.getAddress());
         }
-       /*
+        */
+
+
+
         rootRef = FirebaseDatabase.getInstance().getReference();
-        profRef = rootRef.child("Users").child("Customers").child("user1");
-
-
-
+        profRef = rootRef.child("Users").child("Customers").child(user.getID());
 
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
@@ -94,11 +106,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
             }
         });
-*/
+
         getView().findViewById(R.id.button_profile_saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference profModify = rootRef.child("Users").child("Customers").child("user1");
+                DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID());
                 profModify.child("userName").setValue(String.valueOf(username.getText()));
                 profModify.child("email").setValue(String.valueOf(email.getText()));
                 profModify.child("mobile").setValue(String.valueOf(mobile.getText()));

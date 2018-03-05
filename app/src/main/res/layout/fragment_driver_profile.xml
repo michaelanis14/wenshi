@@ -103,10 +103,9 @@
         android:id="@+id/button_driverProfile_saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="116dp"
+        android:layout_marginEnd="28dp"
         android:text="@string/button_profile_saveButton"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginRight="4dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>

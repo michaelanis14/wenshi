@@ -14,32 +14,6 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="History" />
 
-        <item
-            android:id="@+id/nav_myVehicles"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="My Vehicles" />
-
-        <item
-            android:id="@+id/nav_payment"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Payment" />
-
-        <item
-            android:id="@+id/nav_help"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Help" />
-
-        <item
-            android:id="@+id/nav_rateCharges"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Rate and Charges" />
-
-        <item
-            android:id="@+id/nav_about"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="About" />
-
-
     </group>
 
 </menu>

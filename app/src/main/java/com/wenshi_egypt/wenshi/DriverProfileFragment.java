@@ -61,7 +61,7 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
         saveButton = getView().findViewById(R.id.button_driverProfile_saveButton);
 
         rootRef = FirebaseDatabase.getInstance().getReference();
-        profRef = rootRef.child("Profile").child("driver1");
+        profRef = rootRef.child("Users").child("Drivers").child("driver1");
 
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
@@ -82,7 +82,7 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
         getView().findViewById(R.id.button_driverProfile_saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference profModify = rootRef.child("Profile").child("driver1");
+                DatabaseReference profModify = rootRef.child("Users").child("Drivers").child("driver1");
                 profModify.child("userName").setValue(String.valueOf(username.getText()));
                 profModify.child("email").setValue(String.valueOf(email.getText()));
                 profModify.child("mobile").setValue(String.valueOf(mobile.getText()));

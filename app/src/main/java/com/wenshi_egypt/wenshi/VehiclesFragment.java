@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.wenshi_egypt.wenshi.model.UserModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
     TextView demoValue, addNewVehicle;
     static String type, model;
     static String defType, defModel;
+
 
     @Nullable
     @Override
@@ -63,21 +65,28 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-        addNewVehicle.setOnTouchListener(new View.OnTouchListener() {
+        addNewVehicle.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                startActivity(new Intent(getContext(), AddNewVehicle.class));
-                return true;
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), AddNewVehicle.class);
+                Bundle b = new Bundle();
+                b.putString("uid", ((CustomerMapActivity) getActivity()).getCustomer().getID());
+                intent.putExtras(b);
+                startActivity(intent);
+
+                //startActivity(new Intent(getContext(), AddNewVehicle.class));
             }
         });
     }
 
+
     private ArrayList<Vehicle> getVehicle(){
         final ArrayList<Vehicle> results = new ArrayList<>();
+        UserModel user = ((CustomerMapActivity) getActivity()).getCustomer();
 
         //database reference pointing to root of database
         rootRef = FirebaseDatabase.getInstance().getReference();
-        vehicleRef = rootRef.child("Users").child("Customers").child("user1").child("Vehicles");
+        vehicleRef = rootRef.child("Users").child("Customers").child(user.getID()).child("Vehicles");
         vehicleRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

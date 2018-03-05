@@ -75,7 +75,6 @@ public class DriverMapsActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         DriverProfileFragment.OnFragmentInteractionListener,
         HistoricFragment.OnFragmentInteractionListener,
-        DriverFragment.OnFragmentInteractionListener,
         OnNavigationItemSelectedListener,
         com.google.android.gms.location.LocationListener {
 
@@ -576,7 +575,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
         if (id == R.id.nav_profile) {
             fragment = new DriverProfileFragment();
         } else if (id == R.id.nav_history) {
-           // fragment = new HistoryFragment();
+            fragment = new HistoricFragment(false, "Test for now");
         }
 
         //NOTE: Fragment changing code
