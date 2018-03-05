@@ -661,7 +661,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         if (id == R.id.nav_profile) {
             fragment = new ProfileFragment();
         } else if (id == R.id.nav_history) {
-            fragment = new HistoricFragment(true);
+            fragment = new HistoricFragment(true, getCustomer().getID());
         } else if (id == R.id.nav_myVehicles) {
             fragment = new VehiclesFragment();
         }else if (id == R.id.nav_payment) {

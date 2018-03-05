@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.wenshi_egypt.wenshi.model.UserModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,9 +31,9 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
     public HistoricFragment(){}
 
     @SuppressLint("ValidFragment")
-    public HistoricFragment(boolean b)  {
+    public HistoricFragment(boolean b, String uid)  {
         if (b)  {
-            this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child("user1").child("Trips");
+            this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Trips");
         }
         else
             this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child("driver1").child("Trips");

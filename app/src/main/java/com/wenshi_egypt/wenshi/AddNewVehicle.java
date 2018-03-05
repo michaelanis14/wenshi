@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,12 +18,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-
-/**
- * Created by Michael on 3/1/2018.
- */
 
 public class AddNewVehicle extends AppCompatActivity {
 
@@ -52,22 +45,29 @@ public class AddNewVehicle extends AppCompatActivity {
                     Toast.makeText(AddNewVehicle.this, "Cannot submit empty field",  Toast.LENGTH_LONG).show();
                 else {
 
-                    DatabaseReference addVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child("user1").child("Vehicles").child("newVic" + vicCount);
-                    addVehicle.child("type").setValue(newType.getText().toString());
-                    addVehicle.child("model").setValue(newModel.getText().toString());
-                    addVehicle.child("defaultVehicle").setValue("False");
-                    vicCount++;
+                    Bundle b = getIntent().getExtras();
+                    String value = "";
+                    assert b != null;
+                    if(!b.isEmpty()) {
+                        value = b.getString("uid");
+                        DatabaseReference addVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(value).child("Vehicles").child("newVic" + vicCount);
+                        addVehicle.child("type").setValue(newType.getText().toString());
+                        addVehicle.child("model").setValue(newModel.getText().toString());
+                        addVehicle.child("defaultVehicle").setValue("False");
+                        vicCount++;
 
-                    new CountDownTimer(3000, 10) {
-                        @Override
-                        public void onTick(long millisUntilFinished) {
-                            savedSuccess.setVisibility(View.VISIBLE);
-                        }
-                        @Override
-                        public void onFinish() {
-                            startActivity(new Intent(AddNewVehicle.this, WelcomeActivity.class));
-                        }
-                    }.start();
+                        new CountDownTimer(3000, 10) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                savedSuccess.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                startActivity(new Intent(AddNewVehicle.this, WelcomeActivity.class));
+                            }
+                        }.start();
+                    }
 
 
                    // Toast.makeText(AddNewVehicle.this, "Data saved successfully", Toast.LENGTH_LONG).show();
@@ -83,6 +83,7 @@ public class AddNewVehicle extends AppCompatActivity {
         startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null)));
     }
 
+/*
     private long getVehicleCount()  {
         final long[] counter = {0};
         final ArrayList<Object> results = new ArrayList<>();
@@ -104,4 +105,5 @@ public class AddNewVehicle extends AppCompatActivity {
         });
         return counter.length;
     }
+*/
 }
