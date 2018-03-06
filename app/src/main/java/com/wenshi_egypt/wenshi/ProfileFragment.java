@@ -29,6 +29,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private String mParam1;
     private String mParam2;
     EditText username, email, mobile, carType, model, address;
+    double vicDouble = Math.random()*1000;
+    int vicCount = (int) vicDouble;
 
     DatabaseReference rootRef, profRef;
     Button saveButton;
@@ -117,6 +119,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 profModify.child("carType").setValue(String.valueOf(carType.getText()));
                 profModify.child("model").setValue(String.valueOf(model.getText()));
                 profModify.child("address").setValue(String.valueOf(address.getText()));
+
+                DatabaseReference profVehicle = rootRef.child("Users").child("Customers").child(user.getID()).child("Vehicles").child("newVic" + vicCount);
+                profVehicle.child("type").setValue(String.valueOf(carType.getText()));
+                profVehicle.child("model").setValue(String.valueOf(model.getText()));
+                profVehicle.child("defaultVehicle").setValue("True");
+                vicCount++;
+
                 Toast.makeText(getActivity(), "Changes Saved Successfully", Toast.LENGTH_LONG).show();
             }
         });

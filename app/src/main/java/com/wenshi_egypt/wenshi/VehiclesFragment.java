@@ -29,7 +29,7 @@ import java.util.HashMap;
 public class VehiclesFragment extends Fragment implements View.OnClickListener{
 
     DatabaseReference rootRef, vehicleRef;
-    TextView demoValue, addNewVehicle;
+    TextView demoValue, addNewVehicle, noVehicle;
     static String type, model;
     static String defType, defModel;
 
@@ -47,6 +47,7 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
         //noinspection ConstantConditions
         demoValue = getView().findViewById(R.id.tvValue2);
         addNewVehicle = getView().findViewById(R.id.textView_vehicle_addNew);
+        noVehicle = getView().findViewById(R.id.textView_no_vehicle);
 
         final ListView lv1 = getView().findViewById(R.id.listView_vehicles);
 
@@ -98,8 +99,13 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
                     model = String.format("%s", value.get("model"));
 
                     demoValue.setText("");
-                    results.add(new Vehicle(type,  model));
+                    if(!type.isEmpty()) {
+                        noVehicle.setVisibility(View.INVISIBLE);
+                        results.add(new Vehicle(type, model));
+                    }
                 }
+                if(results.size()==0)
+                    noVehicle.setVisibility(View.VISIBLE);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {

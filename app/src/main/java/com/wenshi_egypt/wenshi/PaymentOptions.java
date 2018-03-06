@@ -51,7 +51,7 @@ public class PaymentOptions extends Fragment implements OnClickListener{
                 }
                 else    {
                     Intent ccEntry = new Intent(getActivity().getApplicationContext(), CreditCardEntry.class);
-                    startActivityForResult(ccEntry, 0);
+                    //startActivityForResult(ccEntry, 0);
                 }
             }
 
