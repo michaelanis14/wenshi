@@ -119,12 +119,9 @@ public class DriverMapsActivity extends AppCompatActivity implements
     private PopupWindow mPopupWindow;
     private Context mContext;
 
-<<<<<<< HEAD
     UserModel driverMod;
 
-=======
     Map<String,String> requestsMap;
->>>>>>> ad76238062dadcb0b54d232fcb4d637f732c7bb2
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

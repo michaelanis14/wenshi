@@ -89,7 +89,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
 
         rootRef = FirebaseDatabase.getInstance().getReference();
-        profRef = rootRef.child("Users").child("Customers").child(user.getID());
+        profRef = rootRef.child("Users").child("Customers").child(user.getID()).child("FirstConstant");
 
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
@@ -112,7 +112,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         getView().findViewById(R.id.button_profile_saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID());
+                DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID()).child("FirstConstant");
                 profModify.child("userName").setValue(String.valueOf(username.getText()));
                 profModify.child("email").setValue(String.valueOf(email.getText()));
                 profModify.child("mobile").setValue(String.valueOf(mobile.getText()));
@@ -120,11 +120,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 profModify.child("model").setValue(String.valueOf(model.getText()));
                 profModify.child("address").setValue(String.valueOf(address.getText()));
 
-                DatabaseReference profVehicle = rootRef.child("Users").child("Customers").child(user.getID()).child("Vehicles").child("newVic" + vicCount);
-                profVehicle.child("type").setValue(String.valueOf(carType.getText()));
-                profVehicle.child("model").setValue(String.valueOf(model.getText()));
-                profVehicle.child("defaultVehicle").setValue("True");
-                vicCount++;
+//                DatabaseReference profVehicle = rootRef.child("Users").child("Customers").child(user.getID()).child("Vehicles").child("newVic" + vicCount);
+//                profVehicle.child("type").setValue(String.valueOf(carType.getText()));
+//                profVehicle.child("model").setValue(String.valueOf(model.getText()));
+//                profVehicle.child("defaultVehicle").setValue("True");
+//                vicCount++;
 
                 Toast.makeText(getActivity(), "Changes Saved Successfully", Toast.LENGTH_LONG).show();
             }

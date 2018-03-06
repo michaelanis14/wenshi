@@ -23,6 +23,7 @@ package com.wenshi_egypt.wenshi;
         import javax.xml.validation.Validator;
 
         import butterknife.BindView;
+        import retrofit2.http.HEAD;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -72,8 +73,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
                 if(customer) {
-<<<<<<< HEAD
-                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid);
+
+                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("FirstConstant");
                     currentUser.child("address").setValue("");
                     currentUser.child("carType").setValue("");
                     currentUser.child("email").setValue("");
@@ -91,18 +92,18 @@ public class LoginActivity extends AppCompatActivity {
                     currentUser.child("Vehicles").child("vehicle1").child("type").setValue("");
 
                     //currentUser.setValue(true); // to allow changes to happen
-=======
-                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("FirstConstant");
-                    currentUser.setValue(true); // to allow changes to happen
->>>>>>> ad76238062dadcb0b54d232fcb4d637f732c7bb2
+
+
+                   // currentUser.setValue(true); // to allow changes to happen
+
 
                     Intent customerIntent = new Intent(LoginActivity.this, CustomerMapActivity.class);
                     customerIntent.putExtra("CurrentUser", currenctUserModel);
                     startActivity(customerIntent);
                 }else{
-<<<<<<< HEAD
 
-                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid);
+
+                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("FirstConstant");
 
                     currentUser.child("address").setValue("");
                     currentUser.child("email").setValue("");
@@ -116,12 +117,12 @@ public class LoginActivity extends AppCompatActivity {
 
 
                     //currentUser.setValue(true); // to allow changes to happen
-=======
-                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("FirstConstant");
-                    currentUser.setValue(true); // to allow changes to happen
+
+
+                 //   currentUser.setValue(true); // to allow changes to happen
                     DatabaseReference reqInit = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("Requests").child("FirstConstant");
                     reqInit.setValue(true); // to allow changes to happen
->>>>>>> ad76238062dadcb0b54d232fcb4d637f732c7bb2
+
 
                     Intent driverIntent = new Intent(LoginActivity.this, DriverMapsActivity.class);
                     driverIntent.putExtra("CurrentUser", currenctUserModel);

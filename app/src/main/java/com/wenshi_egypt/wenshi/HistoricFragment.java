@@ -33,10 +33,10 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
     @SuppressLint("ValidFragment")
     public HistoricFragment(boolean b, String uid)  {
         if (b)  {
-            this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Trips");
+            this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("FirstConstant").child("Trips");
         }
         else
-            this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("Trips");
+            this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("FirstConstant").child("Trips");
     }
 
     @Nullable

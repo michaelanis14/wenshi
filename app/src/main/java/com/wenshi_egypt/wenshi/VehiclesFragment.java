@@ -87,7 +87,7 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
 
         //database reference pointing to root of database
         rootRef = FirebaseDatabase.getInstance().getReference();
-        vehicleRef = rootRef.child("Users").child("Customers").child(user.getID()).child("Vehicles");
+        vehicleRef = rootRef.child("Users").child("Customers").child(user.getID()).child("FirstConstant").child("Vehicles");
         vehicleRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
