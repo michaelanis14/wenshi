@@ -409,6 +409,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
 
                 driversID.add(key);
+
                 DatabaseReference driver = requestDriver.child(key).child("Requests").child(userId);
 
                 HashMap hm = new HashMap();
