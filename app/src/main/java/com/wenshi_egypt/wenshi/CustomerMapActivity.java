@@ -75,20 +75,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CustomerMapActivity extends AppCompatActivity implements View.OnClickListener,
-        ProfileFragment.OnFragmentInteractionListener,
-        HistoricFragment.OnFragmentInteractionListener,
-        VehiclesFragment.OnFragmentInteractionListener,
-        NavigationView.OnNavigationItemSelectedListener,
-        PaymentOptions.OnFragmentInteractionListener,
-        HelpFragment.OnFragmentInteractionListener,
-        RateAndChargesFragment.OnFragmentInteractionListener,
-        AboutFragment.OnFragmentInteractionListener,
-        InviteFragment.OnFragmentInteractionListener,
-        FamilyViewFragment.OnFragmentInteractionListener,
-        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        com.google.android.gms.location.LocationListener {
+public class CustomerMapActivity extends AppCompatActivity implements View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptions.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private static final long UPDATE_INTERVAL = 5000;
     private static final long FASTEST_INTERVAL = 3000;
@@ -112,11 +99,10 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     private String requestedDriverID = "";
 
     private GeoQuery geoQuery;
-   private DatabaseReference driverLocationRef;
+    private DatabaseReference driverLocationRef;
     private ValueEventListener driverLocationRefListener;
 
     private String userId = "_";
-
 
 
     private AppCompatDelegate mDelegate;
@@ -148,12 +134,12 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         Intent i = getIntent();
         user = (UserModel) i.getParcelableExtra("CurrentUser");
 
-        Log.i("CCurrentUser",user.toString());
+        Log.i("CCurrentUser", user.toString());
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.customer_map);
         mapFragment.getMapAsync(this);
         customerLocation = FirebaseDatabase.getInstance().getReference("CustomersOnline");
-        requestDriver = FirebaseDatabase.getInstance().getReference("RequestDriver");
+        requestDriver = FirebaseDatabase.getInstance().getReference("Users").child("Drivers");
         geoFireCustomerLocation = new GeoFire(customerLocation);
         setupLocation();
 
@@ -205,19 +191,18 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if(newState == BottomSheetBehavior.STATE_COLLAPSED){
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     mRequest.setVisibility(View.VISIBLE);
-                    if(mCancel.getVisibility() == View.VISIBLE){
+                    if (mCancel.getVisibility() == View.VISIBLE) {
                         mRequest.setText(R.string.cancelTrip);
-                    }
-                    else{
+                    } else {
                         mRequest.setText(R.string.request_winsh_btn);
                     }
-                }
-                else if(newState == BottomSheetBehavior.STATE_EXPANDED){
+                } else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     mRequest.setVisibility(View.GONE);
                 }
             }
+
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
             }
@@ -317,9 +302,9 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
                 GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICE_RESLUOTION_CODE).show();
-                Toast.makeText(this, "checkPlayServices isUserRecoverableError"+PLAY_SERVICE_RESLUOTION_CODE, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "checkPlayServices isUserRecoverableError" + PLAY_SERVICE_RESLUOTION_CODE, Toast.LENGTH_SHORT).show();
 
-            }else {
+            } else {
                 Toast.makeText(this, "This device is not supported", Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -351,7 +336,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         displayLocation();
 
@@ -423,21 +408,20 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
             public void onKeyEntered(String key, GeoLocation location) {
 
 
-                    driversID.add(key);
-                DatabaseReference driver = requestDriver.child(key);
+                driversID.add(key);
+                DatabaseReference driver = requestDriver.child(key).child("Requests").child(userId);
 
                 HashMap hm = new HashMap();
-                    hm.put("CustomerID", userId);
-                    hm.put("Accept", "false");
+                hm.put("CustomerID", userId);
+                hm.put("Accept", "false");
                 driver.updateChildren(hm);
 
 
-                GeoFire customerGeoFire =  new GeoFire(driver);
+                GeoFire customerGeoFire = new GeoFire(driver);
                 customerGeoFire.setLocation("Location", new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
 
-
-              //  DatabaseReference driverAcceptState = FirebaseDatabase.getInstance().getReference("DriversAvailable").child(key).child("Accept");
+                //  DatabaseReference driverAcceptState = FirebaseDatabase.getInstance().getReference("DriversAvailable").child(key).child("Accept");
                 driverLocationRefListener = requestDriver.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -448,14 +432,14 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
                         }
                         if (false) {
-                        //    HashMap<Object> map = (HashMap<Object>) dataSnapshot.getValue();
+                            //    HashMap<Object> map = (HashMap<Object>) dataSnapshot.getValue();
 
 
-                           // if (map.get(0) != null)
-                           //     mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(map.get(0).toString()), Double.parseDouble(map.get(1).toString()))).title("Driver location"));
-                        //    if (map.get(0) != null)
-                      //          Log.i("Driverr",""+map.get(0));
-                          //  getDistanceBetweenPickUpToDriver(new LatLng(Double.parseDouble(map.get(0).toString()), Double.parseDouble(map.get(1).toString())));
+                            // if (map.get(0) != null)
+                            //     mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(map.get(0).toString()), Double.parseDouble(map.get(1).toString()))).title("Driver location"));
+                            //    if (map.get(0) != null)
+                            //          Log.i("Driverr",""+map.get(0));
+                            //  getDistanceBetweenPickUpToDriver(new LatLng(Double.parseDouble(map.get(0).toString()), Double.parseDouble(map.get(1).toString())));
 
                         }
                     }
@@ -465,10 +449,9 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
                     }
                 });
-                  //  traceDriver();
-                   // mRequest.setText("We find driver for you!");
-                    mCancel.setVisibility(View.VISIBLE);
-
+                //  traceDriver();
+                // mRequest.setText("We find driver for you!");
+                mCancel.setVisibility(View.VISIBLE);
 
 
             }
@@ -486,8 +469,8 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onGeoQueryReady() {
                 if (!driverFound) {
-                   // radius++;
-                    Log.i("Radius",""+radius);
+                    // radius++;
+                    Log.i("Radius", "" + radius);
                     // ==  getClosestDriver();
                 }
             }
@@ -550,20 +533,20 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     private void cancelTrip() {
 
         mMap.clear();
-        if(driverLocationRef != null)
-        driverLocationRef.removeEventListener(driverLocationRefListener);
+        if (driverLocationRef != null)
+            driverLocationRef.removeEventListener(driverLocationRefListener);
 
         // driverLocationRef.removeEventListener(driverLocationRefListener);
 
         if (requestedDriverID != null) {   //Remove CustomerID child
-         //   DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(requestedDriverID);
-          //  driverRef.setValue(true);
-           // requestedDriverID = null;
+            //   DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(requestedDriverID);
+            //  driverRef.setValue(true);
+            // requestedDriverID = null;
 
         }
 
         for (String driverID : driversID) {
-            requestDriver.child(driverID).removeValue();
+            requestDriver.child(driverID).child("Requests").child(userId).removeValue();
         }
         //Intialize nearest driver query variables
         geoQuery.removeAllListeners();
@@ -572,9 +555,9 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
         mBottomTextView.setText("Request Winsh");
         //Remove request from DB
-        for (String driverID : driversID) {
-            customerLocation.child(driverID).removeValue();
-        }
+       // for (String driverID : driversID) {
+         //   customerLocation.child(driverID).removeValue();
+       // }
 
 
         ((Button) findViewById(R.id.request_wenshi_bottom_btn)).setVisibility(View.VISIBLE);
@@ -602,7 +585,6 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
      *
      * @return The Activity's ActionBar, or null if it does not have one.
      */
-
 
 
     @Override
@@ -633,8 +615,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }
-        else if(id == R.id.action_signout){
+        } else if (id == R.id.action_signout) {
             FirebaseAuth.getInstance().signOut();
 
         }
@@ -664,7 +645,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
             fragment = new HistoricFragment(true, getCustomer().getID());
         } else if (id == R.id.nav_myVehicles) {
             fragment = new VehiclesFragment();
-        }else if (id == R.id.nav_payment) {
+        } else if (id == R.id.nav_payment) {
             fragment = new PaymentOptions();
         } else if (id == R.id.nav_help) {
             fragment = new HelpFragment();
@@ -703,8 +684,8 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     protected void onStop() {
         super.onStop();
 
-        if(driverLocationRef != null)
-        driverLocationRef.removeEventListener(driverLocationRefListener);
+        if (driverLocationRef != null)
+            driverLocationRef.removeEventListener(driverLocationRefListener);
         // remove all event listeners to stop updating in the background
         for (String driverID : driversID) {
             requestDriver.child(driverID).removeValue();
@@ -738,7 +719,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
     }
 
-    public UserModel getCustomer(){
-        return  user;
+    public UserModel getCustomer() {
+        return user;
     }
 }

@@ -59,6 +59,8 @@ package com.wenshi_egypt.wenshi;
         import com.google.firebase.database.ValueEventListener;
         import com.wenshi_egypt.wenshi.model.UserModel;
 
+        import java.util.Collections;
+        import java.util.HashMap;
         import java.util.List;
         import java.util.Map;
 
@@ -117,8 +119,12 @@ public class DriverMapsActivity extends AppCompatActivity implements
     private PopupWindow mPopupWindow;
     private Context mContext;
 
+<<<<<<< HEAD
     UserModel driverMod;
 
+=======
+    Map<String,String> requestsMap;
+>>>>>>> ad76238062dadcb0b54d232fcb4d637f732c7bb2
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,7 +164,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-
+        requestsMap = Collections.synchronizedMap(new HashMap<String,String>());
 
 
 
@@ -199,7 +205,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
         //   mCancel = (Button) findViewById(R.id.cancelTrip);
       //  mCancel.setVisibility(View.GONE);
-        getAssignedCustomer();
+      //  getAssignedCustomer();
 
         navigationView.bringToFront();
         navigationView.requestLayout();
@@ -225,27 +231,28 @@ public class DriverMapsActivity extends AppCompatActivity implements
     private void reciveRequests(boolean state){
 
         if(state) {
-            driver = FirebaseDatabase.getInstance().getReference("RequestDriver");
+            driver = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests");
             geoFireDriverRequests = driver.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    mBottomSheet.setVisibility(View.GONE);
+                    mBottomSheet.setVisibility(View.INVISIBLE);
                     monlineOfflineLayout.setVisibility(View.VISIBLE);
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     hidePopup();
-
                     for (DataSnapshot customerSnapshot : dataSnapshot.getChildren()) {
                         Log.d("TAG Driverr", "changeee: " + customerSnapshot.getKey());
 
-                        if (customerSnapshot.getKey().equals(userId)) {
+                        if (!requestsMap.containsKey(customerSnapshot.getKey()) && !customerSnapshot.getKey().equals("FirstConstant")) {
                             mBottomSheet.setVisibility(View.VISIBLE);
                             monlineOfflineLayout.setVisibility(View.GONE);
                             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                            //requestsMap.put(customerSnapshot.getKey(),customerSnapshot.getKey());
                             showPopup(getResources().getString(R.string.new_request),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString());
                             break;
                         }
 
                     }
+
                 }
 
                 @Override
@@ -475,7 +482,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
                 if (dataSnapshot.exists()) {
                     makeRequest = true;
                     assignedCustomer = dataSnapshot.getValue().toString();
-                    getAssignedCustomerPickUpLocation();
+                //    getAssignedCustomerPickUpLocation();
                 } else if (makeRequest) {
                     requestCancelled();
                 }
