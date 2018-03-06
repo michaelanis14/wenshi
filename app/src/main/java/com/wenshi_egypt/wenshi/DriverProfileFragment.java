@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.wenshi_egypt.wenshi.model.UserModel;
 
 import java.util.HashMap;
 
@@ -28,7 +29,7 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
 
     DatabaseReference rootRef, profRef;
     Button saveButton;
-
+    private UserModel driver;
     private DriverProfileFragment.OnFragmentInteractionListener mListener;
 
     public DriverProfileFragment() { }
@@ -59,9 +60,12 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
         mobile = getView().findViewById(R.id.editText_driverProfile_mobile);
         carType = getView().findViewById(R.id.editText_driverProfile_carType);
         saveButton = getView().findViewById(R.id.button_driverProfile_saveButton);
+        driver = ((DriverMapsActivity)getActivity()).getDriver();
+
 
         rootRef = FirebaseDatabase.getInstance().getReference();
-        profRef = rootRef.child("Users").child("Drivers").child("driver1");
+    //    Toast.makeText(getActivity(), "ID: " + driver.getID(), Toast.LENGTH_LONG).show();
+        profRef = rootRef.child("Users").child("Drivers").child(driver.getID());
 
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
@@ -82,7 +86,7 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
         getView().findViewById(R.id.button_driverProfile_saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference profModify = rootRef.child("Users").child("Drivers").child("driver1");
+                DatabaseReference profModify = rootRef.child("Users").child("Drivers").child(driver.getID());
                 profModify.child("userName").setValue(String.valueOf(username.getText()));
                 profModify.child("email").setValue(String.valueOf(email.getText()));
                 profModify.child("mobile").setValue(String.valueOf(mobile.getText()));

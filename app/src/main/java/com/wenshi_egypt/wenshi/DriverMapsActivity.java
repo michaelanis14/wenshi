@@ -1,26 +1,20 @@
 package com.wenshi_egypt.wenshi;
 
-        import android.*;
         import android.Manifest;
         import android.content.Context;
+        import android.content.Intent;
         import android.content.pm.PackageManager;
-        import android.location.Criteria;
         import android.location.Location;
-        import android.location.LocationListener;
-        import android.location.LocationManager;
         import android.net.Uri;
         import android.os.Build;
         import android.os.Bundle;
         import android.support.annotation.NonNull;
         import android.support.annotation.Nullable;
         import android.support.design.widget.BottomSheetBehavior;
-        import android.support.design.widget.FloatingActionButton;
         import android.support.design.widget.NavigationView;
         import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
-        import android.support.design.widget.Snackbar;
         import android.support.v4.app.ActivityCompat;
         import android.support.v4.app.Fragment;
-        import android.support.v4.app.FragmentActivity;
         import android.support.v4.app.FragmentTransaction;
         import android.support.v4.view.GravityCompat;
         import android.support.v4.widget.DrawerLayout;
@@ -36,10 +30,8 @@ package com.wenshi_egypt.wenshi;
         import android.view.ViewGroup;
         import android.widget.Button;
         import android.widget.CompoundButton;
-        import android.widget.ImageButton;
         import android.widget.LinearLayout;
         import android.widget.PopupWindow;
-        import android.widget.RelativeLayout;
         import android.widget.Switch;
         import android.widget.TextView;
         import android.widget.Toast;
@@ -65,6 +57,7 @@ package com.wenshi_egypt.wenshi;
         import com.google.firebase.database.DatabaseReference;
         import com.google.firebase.database.FirebaseDatabase;
         import com.google.firebase.database.ValueEventListener;
+        import com.wenshi_egypt.wenshi.model.UserModel;
 
         import java.util.Collections;
         import java.util.HashMap;
@@ -126,6 +119,8 @@ public class DriverMapsActivity extends AppCompatActivity implements
     private PopupWindow mPopupWindow;
     private Context mContext;
 
+    UserModel driverMod;
+
     Map<String,String> requestsMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +128,9 @@ public class DriverMapsActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_driver_maps);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Intent i = getIntent();
+        driverMod = (UserModel) i.getParcelableExtra("CurrentUser");
 
         mContext = getApplicationContext();
         mRelativeLayout = (LinearLayout) findViewById(R.id.drive_main_layout);
@@ -164,6 +162,8 @@ public class DriverMapsActivity extends AppCompatActivity implements
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         requestsMap = Collections.synchronizedMap(new HashMap<String,String>());
+
+
 
 
         mBottomTextView = findViewById(R.id.driver_bottom_view_lbl);
@@ -579,7 +579,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
         if (id == R.id.nav_profile) {
             fragment = new DriverProfileFragment();
         } else if (id == R.id.nav_history) {
-            fragment = new HistoricFragment(false, "Test for now");
+            fragment = new HistoricFragment(false, getDriver().getID());
         }
 
         //NOTE: Fragment changing code
@@ -692,4 +692,7 @@ if(!mPopupWindow.isShowing())
             mPopupWindow.dismiss();
     }
 
+    public UserModel getDriver(){
+        return  driverMod;
+    }
 }

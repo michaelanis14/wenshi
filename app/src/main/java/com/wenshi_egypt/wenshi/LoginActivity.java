@@ -23,6 +23,7 @@ package com.wenshi_egypt.wenshi;
         import javax.xml.validation.Validator;
 
         import butterknife.BindView;
+        import retrofit2.http.HEAD;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -72,17 +73,56 @@ public class LoginActivity extends AppCompatActivity {
 
 
                 if(customer) {
+
                     DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("FirstConstant");
-                    currentUser.setValue(true); // to allow changes to happen
+                    currentUser.child("address").setValue("");
+                    currentUser.child("carType").setValue("");
+                    currentUser.child("email").setValue("");
+                    currentUser.child("mobile").setValue("");
+                    currentUser.child("model").setValue("");
+                    currentUser.child("userName").setValue("");
+
+                    currentUser.child("Trips").child("trip1").child("cost").setValue(" ");
+                    currentUser.child("Trips").child("trip1").child("date").setValue("");
+                    currentUser.child("Trips").child("trip1").child("from").setValue("");
+                    currentUser.child("Trips").child("trip1").child("to").setValue("");
+
+                    currentUser.child("Vehicles").child("vehicle1").child("defaultVehicle").setValue("");
+                    currentUser.child("Vehicles").child("vehicle1").child("model").setValue("");
+                    currentUser.child("Vehicles").child("vehicle1").child("type").setValue("");
+
+                    //currentUser.setValue(true); // to allow changes to happen
+
+
+                   // currentUser.setValue(true); // to allow changes to happen
+
 
                     Intent customerIntent = new Intent(LoginActivity.this, CustomerMapActivity.class);
                     customerIntent.putExtra("CurrentUser", currenctUserModel);
                     startActivity(customerIntent);
                 }else{
+
+
                     DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("FirstConstant");
-                    currentUser.setValue(true); // to allow changes to happen
+
+                    currentUser.child("address").setValue("");
+                    currentUser.child("email").setValue("");
+                    currentUser.child("mobile").setValue("");
+                    currentUser.child("userName").setValue("");
+
+                    currentUser.child("Trips").child("trip1").child("cost").setValue(" ");
+                    currentUser.child("Trips").child("trip1").child("date").setValue("");
+                    currentUser.child("Trips").child("trip1").child("from").setValue("");
+                    currentUser.child("Trips").child("trip1").child("to").setValue("");
+
+
+                    //currentUser.setValue(true); // to allow changes to happen
+
+
+                 //   currentUser.setValue(true); // to allow changes to happen
                     DatabaseReference reqInit = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("Requests").child("FirstConstant");
                     reqInit.setValue(true); // to allow changes to happen
+
 
                     Intent driverIntent = new Intent(LoginActivity.this, DriverMapsActivity.class);
                     driverIntent.putExtra("CurrentUser", currenctUserModel);

@@ -25,7 +25,7 @@ import java.util.HashMap;
 public class HistoricFragment extends Fragment implements View.OnClickListener{
 
     DatabaseReference rootRef, histRef;
-    TextView demoValue;
+    TextView demoValue, noHistoric;
     static String date, from, to, cost;
 
     public HistoricFragment(){}
@@ -33,10 +33,10 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
     @SuppressLint("ValidFragment")
     public HistoricFragment(boolean b, String uid)  {
         if (b)  {
-            this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Trips");
+            this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("FirstConstant").child("Trips");
         }
         else
-            this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child("driver1").child("Trips");
+            this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("FirstConstant").child("Trips");
     }
 
     @Nullable
@@ -52,6 +52,7 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
 
         //noinspection ConstantConditions
         demoValue = getView().findViewById(R.id.tvValue);
+        noHistoric = getView().findViewById(R.id.textView_no_historic);
         final ListView lv1 = getView().findViewById(R.id.listView_historic_trips);
 
         lv1.setAdapter(new MyCustomBaseAdapter(getActivity(), trip));
@@ -82,10 +83,13 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
                     cost = String.format("%s", value.get("cost"));
 
                     demoValue.setText("");
-                    results.add(new HistoricTrip(date, from, to, Double.parseDouble(cost)));
-
-
+                    if(!date.isEmpty()) {
+                        noHistoric.setVisibility(View.INVISIBLE);
+                        results.add(new HistoricTrip(date, from, to, Double.parseDouble(cost)));
+                    }
                 }
+                if(results.size()==0)
+                    noHistoric.setVisibility(View.VISIBLE);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
