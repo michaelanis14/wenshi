@@ -25,6 +25,8 @@ public class WelcomeActivity extends AppCompatActivity {
     View lbl_Driver;
     View btn_get_started;
     UserModel currenctUserModel;
+    DatabaseReference isDriverRef;
+    DatabaseReference isUserRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +55,7 @@ public class WelcomeActivity extends AppCompatActivity {
             currenctUserModel = new UserModel(uid,name,email,mobil,"");
 
 
-            DatabaseReference isDriverRef = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(uid);
+            isDriverRef = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(uid);
 
             isDriverRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -62,9 +64,12 @@ public class WelcomeActivity extends AppCompatActivity {
                         Intent driverIntent = new Intent(WelcomeActivity.this, DriverMapsActivity.class);
                         driverIntent.putExtra("CurrentUser", currenctUserModel);
                         startActivity(driverIntent);
-
+                        isDriverRef.removeEventListener(this   );
                         finish();
                         return;
+                    }
+                    else{
+                        isDriverRef.removeEventListener(this   );
                     }
                 }
                 @Override
@@ -75,7 +80,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
 
-            DatabaseReference isUserRef = FirebaseDatabase.getInstance().getReference("Users").child("Customers").child(uid);
+            isUserRef = FirebaseDatabase.getInstance().getReference("Users").child("Customers").child(uid);
 
             isUserRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -84,10 +89,12 @@ public class WelcomeActivity extends AppCompatActivity {
                         Intent customerIntent = new Intent(WelcomeActivity.this, CustomerMapActivity.class);
                         customerIntent.putExtra("CurrentUser", currenctUserModel);
                         startActivity(customerIntent);
+                        isUserRef.removeEventListener(this);
                          finish();
                          return;
                     }
                     else {
+                        isUserRef.removeEventListener(this);
                         swtch_RiderOrDriver.setVisibility(View.VISIBLE);
                         lbl_Rider.setVisibility(View.VISIBLE);
                         lbl_Driver.setVisibility(View.VISIBLE);

@@ -72,15 +72,17 @@ public class LoginActivity extends AppCompatActivity {
 
 
                 if(customer) {
-                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid);
+                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("FirstConstant");
                     currentUser.setValue(true); // to allow changes to happen
 
                     Intent customerIntent = new Intent(LoginActivity.this, CustomerMapActivity.class);
                     customerIntent.putExtra("CurrentUser", currenctUserModel);
                     startActivity(customerIntent);
                 }else{
-                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid);
+                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("FirstConstant");
                     currentUser.setValue(true); // to allow changes to happen
+                    DatabaseReference reqInit = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("Requests").child("FirstConstant");
+                    reqInit.setValue(true); // to allow changes to happen
 
                     Intent driverIntent = new Intent(LoginActivity.this, DriverMapsActivity.class);
                     driverIntent.putExtra("CurrentUser", currenctUserModel);
