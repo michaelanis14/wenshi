@@ -66,7 +66,7 @@ dependencies {
     compile 'com.google.firebase:firebase-database:11.8.0'
     compile 'com.firebase:geofire-android:2.2.0'
     compile 'com.google.android.gms:play-services-location:11.8.0'
-    compile 'com.google.android.gms:play-services-places:11.8.0'
+   // compile 'com.google.android.gms:play-services-places:11.8.0'
 
     implementation 'com.facebook.android:facebook-login:[4,5)'
 
