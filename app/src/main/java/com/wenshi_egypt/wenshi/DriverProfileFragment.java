@@ -2,6 +2,7 @@ package com.wenshi_egypt.wenshi;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,8 +24,6 @@ import java.util.HashMap;
 
 public class DriverProfileFragment extends Fragment implements View.OnClickListener {
 
-    private String mParam1;
-    private String mParam2;
     EditText username, email, mobile, carType;
 
     DatabaseReference rootRef, profRef;
@@ -35,7 +34,7 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
     public DriverProfileFragment() { }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (mListener != null) {
             Uri.Builder builder = new Uri.Builder();
@@ -53,13 +52,15 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
+        //noinspection ConstantConditions
         username = getView().findViewById(R.id.editText_driverProfile_userName);
         email = getView().findViewById(R.id.editText_driverProfile_email);
         mobile = getView().findViewById(R.id.editText_driverProfile_mobile);
         carType = getView().findViewById(R.id.editText_driverProfile_carType);
         saveButton = getView().findViewById(R.id.button_driverProfile_saveButton);
+        assert getActivity() != null;
         driver = ((DriverMapsActivity)getActivity()).getDriver();
 
 
@@ -70,7 +71,9 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                //noinspection unchecked
                 HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
+                assert value != null;
                 username.setText(value.get("userName"));
                 email.setText(value.get("email"));
                 mobile.setText(value.get("mobile"));
@@ -86,15 +89,20 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
         getView().findViewById(R.id.button_driverProfile_saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference profModify = rootRef.child("Users").child("Drivers").child(driver.getID());
-                profModify.child("userName").setValue(String.valueOf(username.getText()));
-                profModify.child("email").setValue(String.valueOf(email.getText()));
-                profModify.child("mobile").setValue(String.valueOf(mobile.getText()));
-                profModify.child("carType").setValue(String.valueOf(carType.getText()));
-                Toast.makeText(getActivity(), "Changes Saved Successfully", Toast.LENGTH_LONG).show();
+                if(!String.valueOf(username.getText()).isEmpty() &&
+                        !String.valueOf(email.getText()).isEmpty() &&
+                        !String.valueOf(mobile.getText()).isEmpty() &&
+                        !String.valueOf(carType.getText()).isEmpty()) {
+                            DatabaseReference profModify = rootRef.child("Users").child("Drivers").child(driver.getID());
+                            profModify.child("userName").setValue(String.valueOf(username.getText()));
+                            profModify.child("email").setValue(String.valueOf(email.getText()));
+                            profModify.child("mobile").setValue(String.valueOf(mobile.getText()));
+                            profModify.child("carType").setValue(String.valueOf(carType.getText()));
+                            Toast.makeText(getActivity(), "Changes Saved Successfully", Toast.LENGTH_LONG).show();
+                }
+                else Toast.makeText(getActivity(), "Please fill all details", Toast.LENGTH_LONG).show();
             }
         });
-
     }
 
     @Override
