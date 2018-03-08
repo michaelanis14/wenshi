@@ -89,7 +89,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
 
         rootRef = FirebaseDatabase.getInstance().getReference();
-        profRef = rootRef.child("Users").child("Customers").child(user.getID()).child("FirstConstant");
+        profRef = rootRef.child("Users").child("Customers").child(user.getID());
 
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
@@ -112,7 +112,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         getView().findViewById(R.id.button_profile_saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID()).child("FirstConstant");
+                DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID());
                 profModify.child("userName").setValue(String.valueOf(username.getText()));
                 profModify.child("email").setValue(String.valueOf(email.getText()));
                 profModify.child("mobile").setValue(String.valueOf(mobile.getText()));

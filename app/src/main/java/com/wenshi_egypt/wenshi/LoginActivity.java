@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(customer) {
 
-                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("FirstConstant");
+                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid);
                     currentUser.child("address").setValue("");
                     currentUser.child("carType").setValue("");
                     currentUser.child("email").setValue("");
@@ -94,8 +94,6 @@ public class LoginActivity extends AppCompatActivity {
                     //currentUser.setValue(true); // to allow changes to happen
 
 
-                   // currentUser.setValue(true); // to allow changes to happen
-
 
                     Intent customerIntent = new Intent(LoginActivity.this, CustomerMapActivity.class);
                     customerIntent.putExtra("CurrentUser", currenctUserModel);
@@ -103,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                 }else{
 
 
-                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("FirstConstant");
+                    DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid);
 
                     currentUser.child("address").setValue("");
                     currentUser.child("email").setValue("");
@@ -114,9 +112,6 @@ public class LoginActivity extends AppCompatActivity {
                     currentUser.child("Trips").child("trip1").child("date").setValue("");
                     currentUser.child("Trips").child("trip1").child("from").setValue("");
                     currentUser.child("Trips").child("trip1").child("to").setValue("");
-
-
-                    //currentUser.setValue(true); // to allow changes to happen
 
 
                  //   currentUser.setValue(true); // to allow changes to happen

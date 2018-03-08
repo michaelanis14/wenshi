@@ -50,7 +50,7 @@ public class AddNewVehicle extends AppCompatActivity {
                     assert b != null;
                     if(!b.isEmpty()) {
                         value = b.getString("uid");
-                        DatabaseReference addVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(value).child("FirstConstant").child("Vehicles").child("newVic" + vicCount);
+                        DatabaseReference addVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(value).child("Vehicles").child("newVic" + vicCount);
                         addVehicle.child("type").setValue(newType.getText().toString());
                         addVehicle.child("model").setValue(newModel.getText().toString());
                         addVehicle.child("defaultVehicle").setValue("False");
