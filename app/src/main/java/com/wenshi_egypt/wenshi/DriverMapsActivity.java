@@ -39,16 +39,19 @@ package com.wenshi_egypt.wenshi;
         import com.firebase.geofire.GeoFire;
         import com.firebase.geofire.GeoLocation;
         import com.firebase.geofire.GeoQuery;
+        import com.firebase.geofire.LocationCallback;
         import com.google.android.gms.common.ConnectionResult;
         import com.google.android.gms.common.GooglePlayServicesUtil;
         import com.google.android.gms.common.api.GoogleApiClient;
         import com.google.android.gms.location.LocationRequest;
         import com.google.android.gms.location.LocationServices;
+        import com.google.android.gms.maps.CameraUpdate;
         import com.google.android.gms.maps.CameraUpdateFactory;
         import com.google.android.gms.maps.GoogleMap;
         import com.google.android.gms.maps.OnMapReadyCallback;
         import com.google.android.gms.maps.SupportMapFragment;
         import com.google.android.gms.maps.model.LatLng;
+        import com.google.android.gms.maps.model.LatLngBounds;
         import com.google.android.gms.maps.model.Marker;
         import com.google.android.gms.maps.model.MarkerOptions;
         import com.google.firebase.auth.FirebaseAuth;
@@ -76,6 +79,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
     private static final long UPDATE_INTERVAL = 5000;
     private static final long FASTEST_INTERVAL = 3000;
     private static final float DISPLACMENT = 10;
+    static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
 
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
@@ -160,6 +164,8 @@ public class DriverMapsActivity extends AppCompatActivity implements
       //
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        markers = new HashMap<String, Marker>();
+
 
         requestsMap = Collections.synchronizedMap(new HashMap<String,String>());
 
@@ -218,6 +224,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
         swtch_onlineOffline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                displayLocation();
                 reciveRequests(isChecked);
             }
 
@@ -236,6 +243,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
                     monlineOfflineLayout.setVisibility(View.VISIBLE);
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     hidePopup();
+                    displayLocation();
                     for (DataSnapshot customerSnapshot : dataSnapshot.getChildren()) {
                         Log.d("TAG Driverr", "changeee: " + customerSnapshot.getKey());
 
@@ -243,8 +251,40 @@ public class DriverMapsActivity extends AppCompatActivity implements
                             mBottomSheet.setVisibility(View.VISIBLE);
                             monlineOfflineLayout.setVisibility(View.GONE);
                             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+
+                            GeoFire geoDriverLocation = new GeoFire(driver.child(customerSnapshot.getKey()));
+
+                            geoDriverLocation.getLocation("Location", new LocationCallback() {
+                                @Override
+                                public void onLocationResult(String key, GeoLocation location) {
+                                    if (location != null) {
+                                        Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng( location.latitude, location.longitude)).title("Wenshi"));
+                                        markers.put(key,mDriverMarker);
+                                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                                        marksCameraUpdate();
+                                    //    getDistanceBetweenPickUpToDriver(new LatLng(location.latitude, location.longitude));
+                                    } else {
+                                        System.out.println(String.format("customer uid for %s", userId));
+
+                                        System.out.println(String.format("There is no location for key %s in GeoFire", key));
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    System.err.println("There was an error getting the GeoFire location: " + databaseError);
+                                }
+                            });
+
+
+
                             //requestsMap.put(customerSnapshot.getKey(),customerSnapshot.getKey());
-                            showPopup(getResources().getString(R.string.new_request),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString(),customerSnapshot.getValue().toString());
+                            showPopup(getResources().getString(R.string.new_request),
+                                    customerSnapshot.getValue().toString(),
+                                    "",
+                                    "",
+                                    "");
                             break;
                         }
 
@@ -258,7 +298,6 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
                 }
             });
-
             mBottomTextView.setText(R.string.online);
             displayLocation();
         }
@@ -268,6 +307,20 @@ public class DriverMapsActivity extends AppCompatActivity implements
             offline();
 
         }
+
+    }
+    private void marksCameraUpdate(){
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+        builder.include(myCurrent.getPosition());
+        for (Marker marker : this.markers.values()) {
+            builder.include(marker.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
+        int padding =200 ; // offset from edges of the map in pixels
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
+        mMap.animateCamera(cu);
 
     }
 
@@ -320,13 +373,11 @@ public class DriverMapsActivity extends AppCompatActivity implements
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setSmallestDisplacement(DISPLACMENT);
-
     }
 
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
-
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode))
                 GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICE_RESLUOTION_CODE).show();
             else {
@@ -526,7 +577,6 @@ public class DriverMapsActivity extends AppCompatActivity implements
         mMap.clear();
 
     }
-
 
     @Override
     public void onBackPressed() {

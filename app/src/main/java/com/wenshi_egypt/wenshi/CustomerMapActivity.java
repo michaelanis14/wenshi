@@ -70,6 +70,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.wenshi_egypt.wenshi.model.UserModel;
 
@@ -83,6 +84,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     private static final long UPDATE_INTERVAL = 5000;
     private static final long FASTEST_INTERVAL = 3000;
     private static final float DISPLACMENT = 10;
+    static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
     private GoogleMap mMap;
     private Marker mDriverMarker;
 
@@ -122,6 +124,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
     private DatabaseReference requestDriver;
     private Marker myCurrent;
+
     private Map<String, Marker> markers;
 
     private List<String> driversID;
@@ -417,10 +420,13 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
                 driversID.add(key);
                 DatabaseReference driver = requestDriver.child(key).child("Requests").child(userId);
 
-                HashMap hm = new HashMap();
-                hm.put("CustomerID", userId);
-                hm.put("Accept", "false");
-                driver.updateChildren(hm);
+                HashMap requestDetails = new HashMap();
+                requestDetails.put("Accept", "false");
+                requestDetails.put("Customer",user);
+                requestDetails.put("Timestamp", ServerValue.TIMESTAMP);;
+
+
+                driver.updateChildren(requestDetails);
 
                 GeoFire customerGeoFire = new GeoFire(driver);
                 customerGeoFire.setLocation("Location", new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
@@ -432,6 +438,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
                         if (location != null) {
                             Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng( location.latitude, location.longitude)).title("Wenshi"));
                             markers.put(key,mDriverMarker);
+                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                             marksCameraUpdate();
                             getDistanceBetweenPickUpToDriver(new LatLng(location.latitude, location.longitude));
                         } else {
@@ -592,7 +599,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         }
         ((Button) findViewById(R.id.request_wenshi_bottom_btn)).setVisibility(View.VISIBLE);
         ((Button) findViewById(R.id.cancel_wenshi_btn)).setVisibility(View.GONE);
-
+        displayLocation();
     }
 
     @Override
