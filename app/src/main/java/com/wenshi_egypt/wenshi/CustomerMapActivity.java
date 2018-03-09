@@ -100,7 +100,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     private LatLng pickUpLocation;
 
     private boolean driverFound = false;
-    private float radius = 11;
+    private float radius = 200;
     private String requestedDriverID = "";
 
     private GeoQuery geoQuery;

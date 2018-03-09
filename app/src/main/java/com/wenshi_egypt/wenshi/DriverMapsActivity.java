@@ -63,8 +63,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wenshi_egypt.wenshi.model.UserModel;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,7 +88,7 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
     DatabaseReference driverAvalbl;
     DatabaseReference driver;
     UserModel driverMod;
-    Map<String, String> requestsMap;
+    LinkedHashMap<String, DataSnapshot> requestsMap;
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
     private DatabaseReference driverLocation;
@@ -157,7 +159,7 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
         markers = new HashMap<String, Marker>();
 
 
-        requestsMap = Collections.synchronizedMap(new HashMap<String, String>());
+        requestsMap = (new LinkedHashMap<String, DataSnapshot>());
 
 
         mBottomTextView = findViewById(R.id.driver_bottom_view_lbl);
@@ -225,8 +227,10 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
             driverAvalbl.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                Log.i("requestsMap",""+requestsMap.size()+dataSnapshot.getKey());
+                    if (requestsMap.size() == 0 && !requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
 
-                    if (!requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
+                        Log.i("addChildEver Size 0",""+requestsMap.size()+dataSnapshot.getKey());
                         mBottomSheet.setVisibility(View.VISIBLE);
                         monlineOfflineLayout.setVisibility(View.GONE);
                         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -253,7 +257,7 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
                                 System.err.println("There was an error getting the GeoFire location: " + databaseError);
                             }
                         });
-                        requestsMap.put(dataSnapshot.getKey(),dataSnapshot.getKey());
+                        requestsMap.put(dataSnapshot.getKey(),dataSnapshot);
                       //  break;
                         String name = (String) dataSnapshot.child("Customer").child("name").getValue();
                         String email = (String) dataSnapshot.child("Customer").child("email").getValue();
@@ -265,6 +269,10 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
                         showPopup(getResources().getString(R.string.new_request), "Name : "+name, "Name : "+name, "Name : "+name, "Name : "+name);
 
                     }
+                    else if(!requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
+                        Log.i("requestsMap Addinggg",""+requestsMap.size()+"  "+dataSnapshot.getKey());
+                        requestsMap.put(dataSnapshot.getKey(),dataSnapshot);
+                    }
                 }
 
                 @Override
@@ -272,20 +280,31 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    if(cutomerMod != null && cutomerMod.getID().contains(dataSnapshot.getKey()) && onRout){
+                    if(cutomerMod != null && cutomerMod.getID().equals(dataSnapshot.getKey()) && onRout){
+                        Log.i("rem1",""+requestsMap.size()+"  "+dataSnapshot.getKey());
                         cutomerMod = null;
                         onRout = false;
+                        clearMarkers();
                         displayLocation();
-
+                        requestsMap.remove(dataSnapshot.getKey());
                     }
-                    if (requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
+                    else if(requestsMap.containsKey(dataSnapshot.getKey()) && requestsMap.size() > 1){
+                        Log.i("rem2",""+requestsMap.size()+"  "+dataSnapshot.getKey());
+                        requestsMap.remove(dataSnapshot.getKey());
+                        DataSnapshot nextCustomer = (new ArrayList<DataSnapshot>(requestsMap.values())).get(0);
+                        requestsMap.remove(nextCustomer.getKey());
+                        onChildAdded(nextCustomer,"");
+                    }
+
+                     else if (requestsMap.size() == 1) {
+                         Log.i("final check",""+requestsMap.size()+"  "+dataSnapshot.getKey());
                         mBottomSheet.setVisibility(View.INVISIBLE);
                         monlineOfflineLayout.setVisibility(View.VISIBLE);
                         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                         requestsMap.remove(dataSnapshot.getKey());
-
-
+                        clearMarkers();
                         hidePopup();
+                        displayLocation();
                     }
 
                 }
@@ -550,15 +569,18 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onStop() {
         super.onStop();
+        hidePopup();
         offline();
+        hidePopup();
         if (geoQuery != null) this.geoQuery.removeAllListeners();
-
-
         // LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this); //to remove the listener
         // FirebaseDatabase.getInstance().getReference("DriversAvailable").child(userId).removeValue();
-
     }
-
+    @Override
+    protected void onPause() {
+        hidePopup();
+        super.onPause();
+    }
 
     private void getAssignedCustomer() {
 
@@ -696,10 +718,11 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
     public void onResume() {
         super.onResume();
         displayLocation();
-
     }
 
     private void showPopup(String title, String line1, String line2, String line3, String line4) {
+
+
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
 
         // Inflate the custom layout/view
@@ -767,9 +790,13 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
         //         mPopupWindow.dismiss();
         //    }
         //   });
-        if (!mPopupWindow.isShowing())
-            mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER, 0, 0);
 
+        mRelativeLayout.post(new Runnable() {
+            public void run() {
+                if (!mPopupWindow.isShowing())
+                mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER, 0, 0);
+            }
+        });
     }
 
     private void hidePopup() {
@@ -789,11 +816,20 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
             //driverAvalbl.
             mBottomSheet.setVisibility(View.INVISIBLE);
             onRout = true;
+            declineOtherRequests();
         }
     }
 
     private void declineOtherRequests(){
-        
+        if (this.requestsMap != null) {
+            for (String customerID : this.requestsMap.keySet()) {
+                if(cutomerMod != null &&
+                        !cutomerMod.getID().contains(customerID)) {
+                    FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests").child(customerID).removeValue();
+                    requestsMap.remove(cutomerMod.getID());
+                }
+            }
+        }
     }
 
     private void clearOtherRequests(){
