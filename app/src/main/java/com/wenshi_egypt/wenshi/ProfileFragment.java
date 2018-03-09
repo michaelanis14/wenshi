@@ -1,9 +1,9 @@
 package com.wenshi_egypt.wenshi;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -23,14 +22,9 @@ import com.wenshi_egypt.wenshi.model.UserModel;
 
 import java.util.HashMap;
 
-
 public class ProfileFragment extends Fragment implements View.OnClickListener {
 
-    private String mParam1;
-    private String mParam2;
     EditText username, email, mobile, carType, model, address;
-    double vicDouble = Math.random()*1000;
-    int vicCount = (int) vicDouble;
 
     DatabaseReference rootRef, profRef;
     Button saveButton;
@@ -41,7 +35,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (mListener != null) {
             Uri.Builder builder = new Uri.Builder();
             builder.scheme("http").authority("www.merply.com").appendPath("Winshe").appendPath("types").appendQueryParameter("type", "1").appendQueryParameter("sort", "relevance").fragment("profile");
@@ -51,8 +45,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         username = getView().findViewById(R.id.editText_profile_userName);
         email = getView().findViewById(R.id.editText_profile_email);
@@ -94,7 +89,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
+                @SuppressWarnings("unchecked") HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
                 username.setText(value.get("userName"));
                 email.setText(value.get("email"));
                 mobile.setText(value.get("mobile"));
@@ -112,21 +107,22 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         getView().findViewById(R.id.button_profile_saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID());
-                profModify.child("userName").setValue(String.valueOf(username.getText()));
-                profModify.child("email").setValue(String.valueOf(email.getText()));
-                profModify.child("mobile").setValue(String.valueOf(mobile.getText()));
-                profModify.child("carType").setValue(String.valueOf(carType.getText()));
-                profModify.child("model").setValue(String.valueOf(model.getText()));
-                profModify.child("address").setValue(String.valueOf(address.getText()));
-
-//                DatabaseReference profVehicle = rootRef.child("Users").child("Customers").child(user.getID()).child("Vehicles").child("newVic" + vicCount);
-//                profVehicle.child("type").setValue(String.valueOf(carType.getText()));
-//                profVehicle.child("model").setValue(String.valueOf(model.getText()));
-//                profVehicle.child("defaultVehicle").setValue("True");
-//                vicCount++;
-
-                Toast.makeText(getActivity(), "Changes Saved Successfully", Toast.LENGTH_LONG).show();
+                if(!String.valueOf(username.getText()).isEmpty() &&
+                   !String.valueOf(email.getText()).isEmpty() &&
+                   !String.valueOf(mobile.getText()).isEmpty() &&
+                   !String.valueOf(carType.getText()).isEmpty() &&
+                   !String.valueOf(model.getText()).isEmpty() &&
+                   !String.valueOf(address.getText()).isEmpty()) {
+                        DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID());
+                        profModify.child("userName").setValue(String.valueOf(username.getText()));
+                        profModify.child("email").setValue(String.valueOf(email.getText()));
+                        profModify.child("mobile").setValue(String.valueOf(mobile.getText()));
+                        profModify.child("carType").setValue(String.valueOf(carType.getText()));
+                        profModify.child("model").setValue(String.valueOf(model.getText()));
+                        profModify.child("address").setValue(String.valueOf(address.getText()));
+                        Toast.makeText(getActivity(), "Changes Saved Successfully", Toast.LENGTH_LONG).show();
+                }
+                else Toast.makeText(getActivity(), "Please fill all details", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -153,17 +149,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     }
 
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

@@ -6,15 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -61,8 +58,12 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
                 //Toast.makeText(getActivity(), "position number: " + position, Toast.LENGTH_LONG).show();
                 defType = vehicle.get(position).getType();
                 defModel = vehicle.get(position).getModel();
-                Toast.makeText(getActivity(), "Type: " + defType, Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(), "Model: " + defModel, Toast.LENGTH_SHORT).show();
+        //        Toast.makeText(getActivity(), "Type: " + defType, Toast.LENGTH_SHORT).show();
+        //        Toast.makeText(getActivity(), "Model: " + defModel, Toast.LENGTH_SHORT).show();
+
+                DatabaseReference defVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(((CustomerMapActivity) getActivity()).getCustomer().getID());
+                defVehicle.child("carType").setValue(defType);
+                defVehicle.child("model").setValue(defModel);
             }
         });
 
