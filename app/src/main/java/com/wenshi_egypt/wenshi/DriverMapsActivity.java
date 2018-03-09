@@ -272,15 +272,22 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    if(cutomerMod != null && cutomerMod.getID().contains(dataSnapshot.getKey()) && onRout){
+                        cutomerMod = null;
+                        onRout = false;
+                        displayLocation();
+
+                    }
                     if (requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
                         mBottomSheet.setVisibility(View.INVISIBLE);
                         monlineOfflineLayout.setVisibility(View.VISIBLE);
                         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                         requestsMap.remove(dataSnapshot.getKey());
-                        onRout = false;
-                        cutomerMod = null;
+
+
                         hidePopup();
                     }
+
                 }
 
                 @Override
@@ -321,7 +328,7 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
             mBottomTextView.setText(R.string.online);
             displayLocation();
         } else {
-            if (driverAvalbl != null) driverAvalbl.removeEventListener(geoFireDriverRequests);
+            if (driverAvalbl != null && geoFireDriverRequests != null) driverAvalbl.removeEventListener(geoFireDriverRequests);
             offline();
 
         }
@@ -522,11 +529,12 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
 
     private void offline() {
         driverLocation.child(userId).removeValue();
-        swtch_onlineOffline.setChecked(false);
+
         clearMarkers();
         mBottomTextView.setText(R.string.offline);
         onRout = false;
     }
+
     private void clearMarkers(){
         if (this.markers != null) {
             for (Marker marker : this.markers.values()) {
@@ -711,8 +719,9 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
                         height : the popup's height
                 */
         // Initialize a new instance of popup window
+        Log.i("Pramas",""+ ViewGroup.LayoutParams.MATCH_PARENT);
         if (mPopupWindow == null)
-            mPopupWindow = new PopupWindow(popupLayout, ViewGroup.LayoutParams.MATCH_PARENT , ViewGroup.LayoutParams.WRAP_CONTENT );
+            mPopupWindow = new PopupWindow(popupLayout, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT );
 
         // Set an elevation value for popup window
         // Call requires API level 21
@@ -782,6 +791,11 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
             onRout = true;
         }
     }
+
+    private void declineOtherRequests(){
+        
+    }
+
     private void clearOtherRequests(){
      //   driverAvalbl.ch
     }
