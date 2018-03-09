@@ -106,5 +106,6 @@
     <string name="button_new_vehicle">Add Vehicle</string>
     <string name="textView_vehicle_saved_label">New Vehicle saved successfully</string>
 
+    <string name="textView_family_addNew">Add Family Member</string>
 
 </resources>
