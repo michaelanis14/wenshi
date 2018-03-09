@@ -117,6 +117,9 @@ public class LoginActivity extends AppCompatActivity {
                  //   currentUser.setValue(true); // to allow changes to happen
                     DatabaseReference reqInit = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("Requests").child("FirstConstant");
                     reqInit.setValue(true); // to allow changes to happen
+                    DatabaseReference currentLocInit = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("Requests").child("CurrentLocation");
+                    currentLocInit.setValue(true); // to allow changes to happen
+
 
 
                     Intent driverIntent = new Intent(LoginActivity.this, DriverMapsActivity.class);

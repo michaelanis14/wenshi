@@ -81,10 +81,10 @@ import java.util.Map;
 
 public class CustomerMapActivity extends AppCompatActivity implements View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptions.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
-    private static final long UPDATE_INTERVAL = 5000;
-    private static final long FASTEST_INTERVAL = 3000;
-    private static final float DISPLACMENT = 10;
-    static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
+    private static final long UPDATE_INTERVAL = 500000;
+    private static final long FASTEST_INTERVAL = 300000;
+    private static final float DISPLACMENT = 100;
+    //static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
     private GoogleMap mMap;
     private Marker mDriverMarker;
 
@@ -302,7 +302,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         mLocationRequest.setSmallestDisplacement(DISPLACMENT);
 
     }

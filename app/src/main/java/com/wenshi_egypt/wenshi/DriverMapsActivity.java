@@ -1,131 +1,116 @@
 package com.wenshi_egypt.wenshi;
 
-        import android.Manifest;
-        import android.content.Context;
-        import android.content.Intent;
-        import android.content.pm.PackageManager;
-        import android.location.Location;
-        import android.net.Uri;
-        import android.os.Build;
-        import android.os.Bundle;
-        import android.support.annotation.NonNull;
-        import android.support.annotation.Nullable;
-        import android.support.design.widget.BottomSheetBehavior;
-        import android.support.design.widget.NavigationView;
-        import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
-        import android.support.v4.app.ActivityCompat;
-        import android.support.v4.app.Fragment;
-        import android.support.v4.app.FragmentTransaction;
-        import android.support.v4.view.GravityCompat;
-        import android.support.v4.widget.DrawerLayout;
-        import android.support.v7.app.ActionBarDrawerToggle;
-        import android.support.v7.app.AppCompatActivity;
-        import android.support.v7.widget.Toolbar;
-        import android.util.Log;
-        import android.view.Gravity;
-        import android.view.LayoutInflater;
-        import android.view.Menu;
-        import android.view.MenuItem;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.Button;
-        import android.widget.CompoundButton;
-        import android.widget.LinearLayout;
-        import android.widget.PopupWindow;
-        import android.widget.Switch;
-        import android.widget.TextView;
-        import android.widget.Toast;
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
-        import com.firebase.geofire.GeoFire;
-        import com.firebase.geofire.GeoLocation;
-        import com.firebase.geofire.GeoQuery;
-        import com.firebase.geofire.LocationCallback;
-        import com.google.android.gms.common.ConnectionResult;
-        import com.google.android.gms.common.GooglePlayServicesUtil;
-        import com.google.android.gms.common.api.GoogleApiClient;
-        import com.google.android.gms.location.LocationRequest;
-        import com.google.android.gms.location.LocationServices;
-        import com.google.android.gms.maps.CameraUpdate;
-        import com.google.android.gms.maps.CameraUpdateFactory;
-        import com.google.android.gms.maps.GoogleMap;
-        import com.google.android.gms.maps.OnMapReadyCallback;
-        import com.google.android.gms.maps.SupportMapFragment;
-        import com.google.android.gms.maps.model.LatLng;
-        import com.google.android.gms.maps.model.LatLngBounds;
-        import com.google.android.gms.maps.model.Marker;
-        import com.google.android.gms.maps.model.MarkerOptions;
-        import com.google.firebase.auth.FirebaseAuth;
-        import com.google.firebase.database.DataSnapshot;
-        import com.google.firebase.database.DatabaseError;
-        import com.google.firebase.database.DatabaseReference;
-        import com.google.firebase.database.FirebaseDatabase;
-        import com.google.firebase.database.ValueEventListener;
-        import com.wenshi_egypt.wenshi.model.UserModel;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.LocationCallback;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.wenshi_egypt.wenshi.model.UserModel;
 
-        import java.util.Collections;
-        import java.util.HashMap;
-        import java.util.List;
-        import java.util.Map;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class DriverMapsActivity extends AppCompatActivity implements
-        OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        DriverProfileFragment.OnFragmentInteractionListener,
-        HistoricFragment.OnFragmentInteractionListener,
-        OnNavigationItemSelectedListener,
-        com.google.android.gms.location.LocationListener {
+public class DriverMapsActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DriverProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, OnNavigationItemSelectedListener, com.google.android.gms.location.LocationListener {
 
     private static final long UPDATE_INTERVAL = 5000;
     private static final long FASTEST_INTERVAL = 3000;
     private static final float DISPLACMENT = 10;
-    static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
-
-    private GoogleMap mMap;
-    private SupportMapFragment mapFragment;
+    //static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
+    final int MY_PERMISSION_REQ_CODE = 1234;
+    final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
-    private DatabaseReference driverLocation;
-    private GeoFire geoFireDriverLocation;
-
-    final int MY_PERMISSION_REQ_CODE = 1234;
-    final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
-
-    private String userId = "D_";
-
-  private String assignedCustomer = "";
-
-    private Boolean makeRequest = false;
-
-    private DatabaseReference assignedCustomerPickupLocationRef;
-    private ValueEventListener assignedCustomerPickupLocationRefEventListner;
     DrawerLayout drawer;
-
     View mBottomSheet;
     TextView mBottomTextView;
     BottomSheetBehavior mBottomSheetBehavior;
-
+    DatabaseReference driverAvalbl;
+    DatabaseReference driver;
+    UserModel driverMod;
+    Map<String, String> requestsMap;
+    private GoogleMap mMap;
+    private SupportMapFragment mapFragment;
+    private DatabaseReference driverLocation;
+    private GeoFire geoFireDriverLocation;
+    private GeoFire geoFireOnRoutLocation;
+    private String userId = "D_";
+    private String assignedCustomer = "";
+    private Boolean makeRequest = false;
+    private DatabaseReference assignedCustomerPickupLocationRef;
+    private ValueEventListener assignedCustomerPickupLocationRefEventListner;
     private Marker myCurrent;
     private Map<String, Marker> markers;
-
     private GeoQuery geoQuery;
-
     private ValueEventListener geoFireDriverRequests;
-
     private Switch swtch_onlineOffline;
-    DatabaseReference driver;
-
     private LinearLayout mRelativeLayout;
     private LinearLayout monlineOfflineLayout;
-    private Button mButton;
-
+    private Button accept_btn;
     private PopupWindow mPopupWindow;
+    private UserModel cutomerMod;
     private Context mContext;
 
-    UserModel driverMod;
+    boolean onRout;
 
-    Map<String,String> requestsMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,17 +125,17 @@ public class DriverMapsActivity extends AppCompatActivity implements
         mRelativeLayout = (LinearLayout) findViewById(R.id.drive_main_layout);
         monlineOfflineLayout = (LinearLayout) findViewById(R.id.onlineOfflineLayout);
         swtch_onlineOffline = findViewById(R.id.onlineOffline_swtch);
+        accept_btn = (Button) findViewById(R.id.accept_to_wenshi);
+        accept_btn.setOnClickListener(this);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.driver_map);
         mapFragment.getMapAsync(this);
         driverLocation = FirebaseDatabase.getInstance().getReference("DriversAvailable");
-        geoFireDriverLocation = new GeoFire(driverLocation);
-        setupLocation();
+          setupLocation();
 
-
+        onRout = false;
 
         drawer = (DrawerLayout) findViewById(R.id.driver_drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -161,15 +146,18 @@ public class DriverMapsActivity extends AppCompatActivity implements
         navigationView.requestLayout();
 
         //hide the accept request buttons
-      //
+        //
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        driverAvalbl = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests");
+        driver = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId);
+        geoFireDriverLocation = new GeoFire(driverLocation);
+        geoFireOnRoutLocation = new GeoFire(driver);
+
         markers = new HashMap<String, Marker>();
 
 
-        requestsMap = Collections.synchronizedMap(new HashMap<String,String>());
-
-
+        requestsMap = Collections.synchronizedMap(new HashMap<String, String>());
 
 
         mBottomTextView = findViewById(R.id.driver_bottom_view_lbl);
@@ -187,19 +175,19 @@ public class DriverMapsActivity extends AppCompatActivity implements
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if(newState == BottomSheetBehavior.STATE_COLLAPSED){
-                  //  mRequest.setVisibility(View.VISIBLE);
-                //    if(mCancel.getVisibility() == View.VISIBLE){
-                   //     mRequest.setText(R.string.cancelTrip);
-                 //   }
-             //       else{
-                     //   mRequest.setText(R.string.request_winsh_btn);
-               //     }
-                }
-                else if(newState == BottomSheetBehavior.STATE_EXPANDED){
-                 //   mRequest.setVisibility(View.GONE);
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    //  mRequest.setVisibility(View.VISIBLE);
+                    //    if(mCancel.getVisibility() == View.VISIBLE){
+                    //     mRequest.setText(R.string.cancelTrip);
+                    //   }
+                    //       else{
+                    //   mRequest.setText(R.string.request_winsh_btn);
+                    //     }
+                } else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    //   mRequest.setVisibility(View.GONE);
                 }
             }
+
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
             }
@@ -207,19 +195,15 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
 
         //   mCancel = (Button) findViewById(R.id.cancelTrip);
-      //  mCancel.setVisibility(View.GONE);
-      //  getAssignedCustomer();
+        //  mCancel.setVisibility(View.GONE);
+        //  getAssignedCustomer();
 
         navigationView.bringToFront();
         navigationView.requestLayout();
 
-    findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+        findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
 
         getSupportActionBar().setTitle("Wenshi Driver");
-
-
-
-
 
 
         swtch_onlineOffline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -229,64 +213,98 @@ public class DriverMapsActivity extends AppCompatActivity implements
             }
 
         });
-        Log.i("mBottomSheetBehavio",""+mBottomSheetBehavior.getPeekHeight());
+        Log.i("mBottomSheetBehavio", "" + mBottomSheetBehavior.getPeekHeight());
     }
 
-    private void reciveRequests(boolean state){
 
-        if(state) {
-            driver = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests");
-            geoFireDriverRequests = driver.addValueEventListener(new ValueEventListener() {
+    private void reciveRequests(boolean state) {
+
+        if (state) {
+            driverAvalbl = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests");
+
+            driverAvalbl.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+
+                    if (!requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
+                        mBottomSheet.setVisibility(View.VISIBLE);
+                        monlineOfflineLayout.setVisibility(View.GONE);
+                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        clearMarkers();
+                        GeoFire geoDriverLocation = new GeoFire(driverAvalbl.child(dataSnapshot.getKey()));
+                        geoDriverLocation.getLocation("Location", new LocationCallback() {
+                            @Override
+                            public void onLocationResult(String key, GeoLocation location) {
+                                if (location != null) {
+                                    Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).title("Wenshi"));
+                                    markers.put(key, mDriverMarker);
+                                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                                    marksCameraUpdate();
+                                    //    getDistanceBetweenPickUpToDriver(new LatLng(location.latitude, location.longitude));
+                                } else {
+                                    System.out.println(String.format("customer uid for %s", userId));
+
+                                    System.out.println(String.format("There is no location for key %s in GeoFire", key));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                System.err.println("There was an error getting the GeoFire location: " + databaseError);
+                            }
+                        });
+                        requestsMap.put(dataSnapshot.getKey(),dataSnapshot.getKey());
+                      //  break;
+                        String name = (String) dataSnapshot.child("Customer").child("name").getValue();
+                        String email = (String) dataSnapshot.child("Customer").child("email").getValue();
+                        String id = (String) dataSnapshot.child("Customer").child("id").getValue();
+                        String mobile = (String) dataSnapshot.child("Customer").child("mobile").getValue();
+                        String address = (String) dataSnapshot.child("Customer").child("address").getValue();
+
+                        cutomerMod = new UserModel(id,name,email,mobile,address);
+                        showPopup(getResources().getString(R.string.new_request), "Name : "+name, "Name : "+name, "Name : "+name, "Name : "+name);
+
+                    }
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {}
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    if (requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
+                        mBottomSheet.setVisibility(View.INVISIBLE);
+                        monlineOfflineLayout.setVisibility(View.VISIBLE);
+                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        requestsMap.remove(dataSnapshot.getKey());
+                        onRout = false;
+                        cutomerMod = null;
+                        hidePopup();
+                    }
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {}
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {}
+            });
+
+
+
+
+
+
+          /*
+
+
+            geoFireDriverRequests = driverAvalbl.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    mBottomSheet.setVisibility(View.INVISIBLE);
-                    monlineOfflineLayout.setVisibility(View.VISIBLE);
-                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    hidePopup();
-                    displayLocation();
-                    for (DataSnapshot customerSnapshot : dataSnapshot.getChildren()) {
+                          for (DataSnapshot customerSnapshot : dataSnapshot.getChildren()) {
                         Log.d("TAG Driverr", "changeee: " + customerSnapshot.getKey());
 
-                        if (!requestsMap.containsKey(customerSnapshot.getKey()) && !customerSnapshot.getKey().equals("FirstConstant")) {
-                            mBottomSheet.setVisibility(View.VISIBLE);
-                            monlineOfflineLayout.setVisibility(View.GONE);
-                            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-
-                            GeoFire geoDriverLocation = new GeoFire(driver.child(customerSnapshot.getKey()));
-
-                            geoDriverLocation.getLocation("Location", new LocationCallback() {
-                                @Override
-                                public void onLocationResult(String key, GeoLocation location) {
-                                    if (location != null) {
-                                        Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng( location.latitude, location.longitude)).title("Wenshi"));
-                                        markers.put(key,mDriverMarker);
-                                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                                        marksCameraUpdate();
-                                    //    getDistanceBetweenPickUpToDriver(new LatLng(location.latitude, location.longitude));
-                                    } else {
-                                        System.out.println(String.format("customer uid for %s", userId));
-
-                                        System.out.println(String.format("There is no location for key %s in GeoFire", key));
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    System.err.println("There was an error getting the GeoFire location: " + databaseError);
-                                }
-                            });
-
-
-
-                            //requestsMap.put(customerSnapshot.getKey(),customerSnapshot.getKey());
-                            showPopup(getResources().getString(R.string.new_request),
-                                    customerSnapshot.getValue().toString(),
-                                    "",
-                                    "",
-                                    "");
-                            break;
-                        }
 
                     }
 
@@ -298,18 +316,19 @@ public class DriverMapsActivity extends AppCompatActivity implements
 
                 }
             });
+
+            */
             mBottomTextView.setText(R.string.online);
             displayLocation();
-        }
-        else{
-            if(driver != null)
-                driver.removeEventListener(geoFireDriverRequests);
+        } else {
+            if (driverAvalbl != null) driverAvalbl.removeEventListener(geoFireDriverRequests);
             offline();
 
         }
 
     }
-    private void marksCameraUpdate(){
+
+    private void marksCameraUpdate() {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
         builder.include(myCurrent.getPosition());
@@ -317,7 +336,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
             builder.include(marker.getPosition());
         }
         LatLngBounds bounds = builder.build();
-        int padding =200 ; // offset from edges of the map in pixels
+        int padding = 200; // offset from edges of the map in pixels
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
         //mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
         mMap.animateCamera(cu);
@@ -347,21 +366,31 @@ public class DriverMapsActivity extends AppCompatActivity implements
         if (mGoogleApiClient != null)
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
+            if (myCurrent != null) myCurrent.remove();  //remove Old Marker
+            LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            myCurrent = mMap.addMarker(new MarkerOptions().position(loc));
+
 
             //update FireBase
-            if(swtch_onlineOffline != null && swtch_onlineOffline.isChecked())
-            geoFireDriverLocation.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
-                @Override
-                public void onComplete(String key, DatabaseError error) {
-                    //Add Marker
-                    if (myCurrent != null) myCurrent.remove();  //remove Old Marker
-                    LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                    myCurrent = mMap.addMarker(new MarkerOptions().position(loc));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 15.0f));
-                }
-            });
+            if (!onRout && swtch_onlineOffline != null && swtch_onlineOffline.isChecked()) {
+                geoFireDriverLocation.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
+                    @Override
+                    public void onComplete(String key, DatabaseError error) {
+                        //Add Marker
+                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 15.0f));
+                    }
+                });
 
+            }else if(onRout){
+                geoFireOnRoutLocation.setLocation("CurrentLocation", new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
+                    @Override
+                    public void onComplete(String key, DatabaseError error) {
+                        //Add Marker
+                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 15.0f));
+                    }
+                });
 
+            }
             //  mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
 
         }
@@ -491,16 +520,22 @@ public class DriverMapsActivity extends AppCompatActivity implements
         }
     }
 
-    private void offline(){
+    private void offline() {
         driverLocation.child(userId).removeValue();
+        swtch_onlineOffline.setChecked(false);
+        clearMarkers();
+        mBottomTextView.setText(R.string.offline);
+        onRout = false;
+    }
+    private void clearMarkers(){
         if (this.markers != null) {
             for (Marker marker : this.markers.values()) {
                 marker.remove();
             }
             this.markers.clear();
         }
-        mBottomTextView.setText(R.string.offline);
     }
+
     /**
      * The driver is no longer available when he is not using the application
      */
@@ -511,12 +546,10 @@ public class DriverMapsActivity extends AppCompatActivity implements
         if (geoQuery != null) this.geoQuery.removeAllListeners();
 
 
-
         // LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this); //to remove the listener
-    // FirebaseDatabase.getInstance().getReference("DriversAvailable").child(userId).removeValue();
+        // FirebaseDatabase.getInstance().getReference("DriversAvailable").child(userId).removeValue();
 
     }
-
 
 
     private void getAssignedCustomer() {
@@ -530,7 +563,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
                 if (dataSnapshot.exists()) {
                     makeRequest = true;
                     assignedCustomer = dataSnapshot.getValue().toString();
-                //    getAssignedCustomerPickUpLocation();
+                    //    getAssignedCustomerPickUpLocation();
                 } else if (makeRequest) {
                     requestCancelled();
                 }
@@ -606,8 +639,7 @@ public class DriverMapsActivity extends AppCompatActivity implements
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }
-        else if(id == R.id.action_signout){
+        } else if (id == R.id.action_signout) {
             FirebaseAuth.getInstance().signOut();
 
         }
@@ -651,18 +683,19 @@ public class DriverMapsActivity extends AppCompatActivity implements
         // NOTE:  Code to replace the toolbar title based current visible fragment
         getSupportActionBar().setTitle(uri.getHost());
     }
+
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         displayLocation();
 
     }
 
-    private void showPopup(String title,String line1,String line2,String line3,String line4){
+    private void showPopup(String title, String line1, String line2, String line3, String line4) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
 
         // Inflate the custom layout/view
-        View popupLayout = inflater.inflate(R.layout.popup_layout,null);
+        View popupLayout = inflater.inflate(R.layout.popup_layout, null);
 
                 /*
                     public PopupWindow (View contentView, int width, int height)
@@ -678,71 +711,86 @@ public class DriverMapsActivity extends AppCompatActivity implements
                         height : the popup's height
                 */
         // Initialize a new instance of popup window
-        if(mPopupWindow == null)
-        mPopupWindow = new PopupWindow(
-                popupLayout,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        );
+        if (mPopupWindow == null)
+            mPopupWindow = new PopupWindow(popupLayout, ViewGroup.LayoutParams.MATCH_PARENT , ViewGroup.LayoutParams.WRAP_CONTENT );
 
         // Set an elevation value for popup window
         // Call requires API level 21
-        if(Build.VERSION.SDK_INT>=21){
+        if (Build.VERSION.SDK_INT >= 21) {
             mPopupWindow.setElevation(5.0f);
         }
 
         // Get a reference for the custom view close button
-       // ImageButton closeButton = (ImageButton) popupLayout.findViewById(R.id.ib_close);
+        // ImageButton closeButton = (ImageButton) popupLayout.findViewById(R.id.ib_close);
 
-        if(!title.trim().isEmpty()) {
+        if (!title.trim().isEmpty()) {
             ((TextView) popupLayout.findViewById(R.id.title_popup)).setVisibility(View.VISIBLE);
             ((TextView) popupLayout.findViewById(R.id.title_popup)).setText(title);
-        }else
+        } else
             ((TextView) popupLayout.findViewById(R.id.title_popup)).setVisibility(View.INVISIBLE);
 
-        if(!line1.trim().isEmpty()) {
+        if (!line1.trim().isEmpty()) {
             ((TextView) popupLayout.findViewById(R.id.body_popup)).setVisibility(View.VISIBLE);
             ((TextView) popupLayout.findViewById(R.id.body_popup)).setText(line1);
-        }else
-            ((TextView) popupLayout.findViewById(R.id.body_popup)).setVisibility(View.INVISIBLE);
+        } else ((TextView) popupLayout.findViewById(R.id.body_popup)).setVisibility(View.INVISIBLE);
 
-        if(!line2.trim().isEmpty()) {
+        if (!line2.trim().isEmpty()) {
             ((TextView) popupLayout.findViewById(R.id.body1_popup)).setText(line2);
-        }else
+        } else
             ((TextView) popupLayout.findViewById(R.id.body1_popup)).setVisibility(View.INVISIBLE);
 
-        if(!line3.trim().isEmpty()) {
+        if (!line3.trim().isEmpty()) {
             ((TextView) popupLayout.findViewById(R.id.body2_popup)).setText(line3);
-        }else
+        } else
             ((TextView) popupLayout.findViewById(R.id.body2_popup)).setVisibility(View.INVISIBLE);
 
-        if(!line4.trim().isEmpty()) {
+        if (!line4.trim().isEmpty()) {
             ((TextView) popupLayout.findViewById(R.id.body3_popup)).setText(line4);
-        }else
+        } else
             ((TextView) popupLayout.findViewById(R.id.body3_popup)).setVisibility(View.INVISIBLE);
-
 
 
         // Set a click listener for the popup window close button
         //closeButton.setOnClickListener(new View.OnClickListener() {
-       //     @Override
-      //      public void onClick(View view) {
-      //          // Dismiss the popup window
-       //         mPopupWindow.dismiss();
+        //     @Override
+        //      public void onClick(View view) {
+        //          // Dismiss the popup window
+        //         mPopupWindow.dismiss();
         //    }
-     //   });
-if(!mPopupWindow.isShowing())
-        mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER,0,0);
+        //   });
+        if (!mPopupWindow.isShowing())
+            mPopupWindow.showAtLocation(mRelativeLayout, Gravity.CENTER, 0, 0);
 
     }
 
-    private void hidePopup(){
+    private void hidePopup() {
 
-        if(mPopupWindow != null && mPopupWindow.isShowing())
-            mPopupWindow.dismiss();
+        if (mPopupWindow != null && mPopupWindow.isShowing()) mPopupWindow.dismiss();
     }
 
-    public UserModel getDriver(){
-        return  driverMod;
+    public UserModel getDriver() {
+        return driverMod;
+    }
+
+    private void acceptRequest() {
+
+        if(cutomerMod != null) {
+            hidePopup();
+            driverLocation.child(userId).removeValue();
+            //driverAvalbl.
+            mBottomSheet.setVisibility(View.INVISIBLE);
+            onRout = true;
+        }
+    }
+    private void clearOtherRequests(){
+     //   driverAvalbl.ch
+    }
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.accept_to_wenshi:
+                acceptRequest();
+                break;
+        }
     }
 }
