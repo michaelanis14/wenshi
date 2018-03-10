@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wenshi_egypt.wenshi.model.UserModel;
+import com.wenshi_egypt.wenshi.model.VehicleModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        final ArrayList<Vehicle> vehicle = getVehicle();
+        final ArrayList<VehicleModel> vehicle = getVehicle();
         //noinspection ConstantConditions
         demoValue = getView().findViewById(R.id.tvValue2);
         addNewVehicle = getView().findViewById(R.id.textView_vehicle_addNew);
@@ -48,7 +49,7 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
 
         final ListView lv1 = getView().findViewById(R.id.listView_vehicles);
 
-        lv1.setAdapter(new MyVehiclesAdapter(getActivity(), vehicle));
+       // lv1.setAdapter(new MyVehiclesAdapter(getActivity(), vehicle));
 
         lv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -82,8 +83,8 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    private ArrayList<Vehicle> getVehicle(){
-        final ArrayList<Vehicle> results = new ArrayList<>();
+    private ArrayList<VehicleModel> getVehicle(){
+        final ArrayList<VehicleModel> results = new ArrayList<>();
         UserModel user = ((CustomerMapActivity) getActivity()).getCustomer();
 
         //database reference pointing to root of database
@@ -102,7 +103,7 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
                     demoValue.setText("");
                     if(!type.isEmpty()) {
                         noVehicle.setVisibility(View.INVISIBLE);
-                        results.add(new Vehicle(type, model));
+                        results.add(new VehicleModel(type, model));
                     }
                 }
                 if(results.size()==0)

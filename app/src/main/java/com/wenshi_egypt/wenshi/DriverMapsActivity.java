@@ -63,6 +63,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wenshi_egypt.wenshi.model.GetDirectionsData;
 import com.wenshi_egypt.wenshi.model.UserModel;
+import com.wenshi_egypt.wenshi.model.VehicleModel;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -117,7 +121,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private LinearLayout monlineOfflineLayout;
     private Button accept_btn;
     private PopupWindow mPopupWindow;
-    private UserModel cutomerMod;
+    private UserModel cutomerMod = null ;
     private Context mContext;
     private GetDirectionsData getDirectionsData;
     private Fragment currentFragment;
@@ -240,13 +244,23 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         buttomSheetVisibility(NEWREQ);
 
                         GeoFire geoDriverLocation = new GeoFire(driverAvalbl.child(dataSnapshot.getKey()));
-                        String name = (String) dataSnapshot.child("Customer").child("name").getValue();
-                        String email = (String) dataSnapshot.child("Customer").child("email").getValue();
-                        String id = (String) dataSnapshot.child("Customer").child("id").getValue();
-                        String mobile = (String) dataSnapshot.child("Customer").child("mobile").getValue();
-                        String address = (String) dataSnapshot.child("Customer").child("address").getValue();
+                        try {
+                            JSONObject cust =  new JSONObject(((String)dataSnapshot.child("Customer").getValue()));
+                            String name = cust.getString("Name");
+                            String email = cust.getString("email");
+                            String id = cust.getString("ID");
+                            String mobile = cust.getString("Mobile");
+                            String address = cust.getString("Address");
+                            VehicleModel defaultVehicle = new VehicleModel(cust.getJSONObject("Vehicle").getString("type"),cust.getJSONObject("Vehicle").getString("model"));
 
-                        cutomerMod = new UserModel(id, name, email, mobile, address);
+                            cutomerMod = new UserModel(id, name, email, mobile, address,defaultVehicle);
+
+                            Log.i("JSON TESTTT",cust.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            cutomerMod = new UserModel("","","","","");
+                        }
+
 
                         geoDriverLocation.getLocation("Location", new LocationCallback() {
                             @Override
@@ -256,7 +270,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                                     cutomerMod.setLatitude(location.latitude);
                                     cutomerMod.setLongitude(location.longitude);
                                     markers.put(key, mDriverMarker);
-                                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                                    buttomSheetVisibility(NEWREQ);
                                     marksCameraUpdate();
                                     //    getDistanceBetweenPickUpToDriver(new LatLng(location.latitude, location.longitude));
                                 } else {
@@ -274,7 +288,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
                         //  break;
 
-                        showPopup(getResources().getString(R.string.new_request), "Name : " + name, "Name : " + name, "Name : " + name, "Name : " + name);
+                        hidePopup();
+                        showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi" );
 
                     } else if (!requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
@@ -287,7 +302,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    if (cutomerMod != null && cutomerMod.getID().equals(dataSnapshot.getKey()) && onRout) {
+                    if (onRout && cutomerMod != null && requestsMap.containsKey(dataSnapshot.getKey()) && cutomerMod.getID().equals(dataSnapshot.getKey()) ) {
                         cutomerMod = null;
                         onRout = false;
                         buttomSheetVisibility(ONLINE);
@@ -300,6 +315,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         requestsMap.remove(nextCustomer.getKey());
                         onChildAdded(nextCustomer, "");
                     } else if (requestsMap.size() == 1) {
+                        cutomerMod = null;
                         buttomSheetVisibility(ONLINE);
                         requestsMap.remove(dataSnapshot.getKey());
                         clearMarkers();

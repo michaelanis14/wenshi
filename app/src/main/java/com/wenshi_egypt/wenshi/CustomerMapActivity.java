@@ -380,6 +380,8 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
+        user.setLongitude(location.getLongitude());
+        user.setLatitude(location.getLatitude());
         displayLocation();
     }
 
@@ -422,7 +424,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
                 HashMap requestDetails = new HashMap();
                 requestDetails.put("Accept", "false");
-                requestDetails.put("Customer",user);
+                requestDetails.put("Customer",user.toString());
                 requestDetails.put("Timestamp", ServerValue.TIMESTAMP);;
 
 

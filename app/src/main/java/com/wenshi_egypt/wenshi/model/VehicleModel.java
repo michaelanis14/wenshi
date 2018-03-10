@@ -8,12 +8,12 @@ import android.os.Parcelable;
  */
 
 public class VehicleModel implements Parcelable {
-    String CarType;
-    String Model;
+    String type;
+    String model;
 
     public VehicleModel(String carType, String model) {
-        this.CarType = carType;
-        this.Model = model;
+        this.type = carType;
+        this.model = model;
     }
 
 
@@ -26,14 +26,14 @@ public class VehicleModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(CarType);
-        parcel.writeString(Model);
+        parcel.writeString(type);
+        parcel.writeString(model);
     }
     @Override
     public String toString() {
-        return "VehicleModel{" +
-                "CarType='" + CarType + '\'' +
-                ", Model='" + Model + '\'' +
+        return "{" +
+                "\"type\":\"" + type + "\"" +
+                ", \"model\":\"" + model + "\"" +
                 '}';
     }
     public static final Parcelable.Creator<VehicleModel> CREATOR
@@ -48,7 +48,25 @@ public class VehicleModel implements Parcelable {
     };
 
     private VehicleModel(Parcel in) {
-        CarType = in.readString();
-        Model = in.readString();
+        type = in.readString();
+        model = in.readString();
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
 }

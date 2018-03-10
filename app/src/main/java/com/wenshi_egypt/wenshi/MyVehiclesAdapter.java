@@ -8,14 +8,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.wenshi_egypt.wenshi.model.VehicleModel;
+
 import java.util.ArrayList;
 
 public class MyVehiclesAdapter extends BaseAdapter {
-        private static ArrayList<Vehicle> searchArrayList;
+        private static ArrayList<VehicleModel> searchArrayList;
 
         private LayoutInflater mInflater;
 
-    MyVehiclesAdapter(Context context, ArrayList<Vehicle> results) {
+    MyVehiclesAdapter(Context context, ArrayList<VehicleModel> results) {
             searchArrayList = results;
             mInflater = LayoutInflater.from(context);
         }

@@ -3,8 +3,6 @@ package com.wenshi_egypt.wenshi.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.wenshi_egypt.wenshi.Vehicle;
-
 import java.util.ArrayList;
 
 /**
@@ -13,9 +11,25 @@ import java.util.ArrayList;
 
 public class UserModel implements Parcelable {
     String ID ="ID";
+    String Name = "FirstLastName";
+    String email= "Email@email.com";
+    String Mobile="00000";
+    String Address = "Addres";
+
+    public VehicleModel getDefaultVehicle() {
+        return defaultVehicle;
+    }
+
+    VehicleModel defaultVehicle;
+    double latitude;
+    double longitude;
+    ArrayList<VehicleModel> Vehicles = new ArrayList<VehicleModel>();
+
 
     public String getID() {
+        if(ID != null)
         return ID;
+        else return "";
     }
 
     public String getName() {
@@ -34,11 +48,6 @@ public class UserModel implements Parcelable {
         return Address;
     }
 
-    String Name = "FirstLastName";
-    String email= "Email@email.com";
-    String Mobile="00000";
-    String Address = "Addres";
-
     public double getLatitude() {
         return latitude;
     }
@@ -55,9 +64,7 @@ public class UserModel implements Parcelable {
         this.longitude = longitude;
     }
 
-    double latitude;
-    double longitude;
-    ArrayList<VehicleModel> Vehicles = new ArrayList<VehicleModel>();
+
 
 
 
@@ -67,6 +74,15 @@ public class UserModel implements Parcelable {
         this.email = email;
         this.Mobile = mobile;
         this.Address = Address;
+        this.defaultVehicle = new VehicleModel("KIA","RIO 2014");
+    }
+    public UserModel(String id,String name, String email, String mobile, String Address,VehicleModel defaultVehicle) {
+        this.ID = id;
+        this.Name = name;
+        this.email = email;
+        this.Mobile = mobile;
+        this.Address = Address;
+        this.defaultVehicle = defaultVehicle;
     }
 
     public ArrayList<VehicleModel> getVehicles() {
@@ -90,18 +106,20 @@ public class UserModel implements Parcelable {
         parcel.writeString(email);
         parcel.writeString(Mobile);
         parcel.writeString(Address);
+        parcel.writeParcelable(defaultVehicle,i);
         parcel.writeTypedList(Vehicles);
 
 
     }
     @Override
     public String toString() {
-        return "UserModel{" +
-                "ID='" + ID + '\'' +
-                ", Name='" + Name + '\'' +
-                ", email='" + email + '\'' +
-                ", Mobile='" + Mobile + '\'' +
-                ", Address='" + Address + '\'' +
+        return "{" +
+                "\"ID\":\"" + ID + "\"" +
+                ", \"Name\":\"" + Name + "\"" +
+                ", \"email\":\"" + email + "\"" +
+                ", \"Mobile\":\"" + Mobile + "\"" +
+                ", \"Address\":\"" + Address + "\"" +
+                ", \"Vehicle\":" + defaultVehicle.toString() + "" +
                 '}';
     }
     // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
@@ -122,6 +140,7 @@ public class UserModel implements Parcelable {
         email = in.readString();
         Mobile = in.readString();
         Address = in.readString();
+        defaultVehicle = in.readParcelable(VehicleModel.class.getClassLoader());
         in.readTypedList(Vehicles, VehicleModel.CREATOR);
     }
 }
