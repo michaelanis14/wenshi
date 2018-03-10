@@ -76,18 +76,16 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
     private static final long UPDATE_INTERVAL = 5000;
     private static final long FASTEST_INTERVAL = 3000;
     private static final float DISPLACMENT = 10;
-    //static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
-    final int MY_PERMISSION_REQ_CODE = 1234;
-    final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
-    int PROXIMITY_RADIUS = 10000;
-
     private static final int ONLINE = 0;
     private static final int NEWREQ = 1;
     private static final int ONROUT = 2;
     private static final int ARRIVE = 3;
     private static final int OFFLINE = 5;
-
-
+    private static final int SIDENAV = 6;
+    //static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
+    final int MY_PERMISSION_REQ_CODE = 1234;
+    final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
+    int PROXIMITY_RADIUS = 10000;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
@@ -122,6 +120,8 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
     private UserModel cutomerMod;
     private Context mContext;
     private GetDirectionsData getDirectionsData;
+    private Fragment currentFragment;
+    private int CURRENTSTATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -303,7 +303,7 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
 
                         buttomSheetVisibility(ONLINE);
 
-                         requestsMap.remove(dataSnapshot.getKey());
+                        requestsMap.remove(dataSnapshot.getKey());
                         clearMarkers();
                         hidePopup();
                         displayLocation();
@@ -651,9 +651,12 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.driver_drawer_layout);
         if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (currentFragment != null) {
+            buttomSheetVisibility(CURRENTSTATE);
+            currentFragment = null;
         } else {
             super.onBackPressed();
         }
@@ -689,24 +692,19 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
-        findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
-        findViewById(R.id.mainFrame).bringToFront();
-        findViewById(R.id.mainFrame).requestLayout();
-        // Handle navigation view item clicks here.
+
         int id = item.getItemId();
-        Fragment fragment = null;
+        currentFragment = null;
 
         if (id == R.id.nav_profile) {
-            fragment = new DriverProfileFragment();
+            currentFragment = new DriverProfileFragment();
         } else if (id == R.id.nav_history) {
-            fragment = new HistoricFragment(false, getDriver().getID());
+            currentFragment = new HistoricFragment(false, getDriver().getID());
         }
-
-        //NOTE: Fragment changing code
-        if (fragment != null) {
-            mBottomSheet.setVisibility(View.GONE);
+        if (currentFragment != null) {
+            buttomSheetVisibility(SIDENAV);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.mainFrame, fragment);
+            ft.replace(R.id.mainFrame, currentFragment);
             ft.commit();
         }
 
@@ -819,9 +817,6 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
     private void acceptRequest() {
 
         if (cutomerMod != null) {
-            monlineOfflineLayout.setVisibility(View.VISIBLE);
-            swtch_onlineOffline.setVisibility(View.INVISIBLE);
-            mBottomTextView.setText(getResources().getString(R.string.eta) + "10" + getResources().getString(R.string.min));
             hidePopup();
             driverLocation.child(userId).removeValue();
             //driverAvalbl.
@@ -891,26 +886,50 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
         return (googlePlacesUrl.toString());
     }
 
-    private void buttomSheetVisibility(int driverState){
-       switch (driverState) {
-           case ONLINE:
-               mBottomSheet.setVisibility(View.INVISIBLE);
-               monlineOfflineLayout.setVisibility(View.VISIBLE);
-               mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-               break;
-           case NEWREQ:
-               mBottomSheet.setVisibility(View.VISIBLE);
-               monlineOfflineLayout.setVisibility(View.GONE);
-               mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-               clearMarkers();
-               break;
-           case ONROUT:
-               break;
-           case ARRIVE:
-               break;
-           case OFFLINE:
-               break;
-       }
+    private void buttomSheetVisibility(int driverState) {
+        switch (driverState) {
+            case ONLINE:
+                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                swtch_onlineOffline.setVisibility(View.VISIBLE);
+                mBottomTextView.setText(getResources().getString(R.string.online));
+                mBottomSheet.setVisibility(View.INVISIBLE);
+                monlineOfflineLayout.setVisibility(View.VISIBLE);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                CURRENTSTATE = driverState;
+                break;
+            case NEWREQ:
+                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                mBottomSheet.setVisibility(View.VISIBLE);
+                monlineOfflineLayout.setVisibility(View.GONE);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                clearMarkers();
+                CURRENTSTATE = driverState;
+                break;
+            case ONROUT:
+                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                monlineOfflineLayout.setVisibility(View.VISIBLE);
+                swtch_onlineOffline.setVisibility(View.INVISIBLE);
+                mBottomTextView.setText(getResources().getString(R.string.eta) + "10" + getResources().getString(R.string.min));
+                CURRENTSTATE = driverState;
+                break;
+            case ARRIVE:
+                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                CURRENTSTATE = driverState;
+                break;
+            case OFFLINE:
+                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                swtch_onlineOffline.setVisibility(View.VISIBLE);
+                mBottomTextView.setText(getResources().getString(R.string.offline));
+                CURRENTSTATE = driverState;
+                break;
+            case SIDENAV:
+                findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
+                findViewById(R.id.mainFrame).bringToFront();
+                findViewById(R.id.mainFrame).requestLayout();
+                mBottomSheet.setVisibility(View.GONE);
+                monlineOfflineLayout.setVisibility(View.GONE);
+                break;
+        }
 
 
     }
