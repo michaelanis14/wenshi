@@ -16,13 +16,27 @@ import java.util.List;
 
 
 class DataParser {
+    public String getDuration() {
+        return duration;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    String duration = "";
+    String distance ="";
+    JSONArray jsonArray = null;
+
+
+
 
 
     private HashMap<String,String> getDuration(JSONArray googleDirectionsJson)
     {
+
         HashMap<String,String> googleDirectionsMap = new HashMap<>();
-        String duration = "";
-        String distance ="";
+
 
 
         try {
@@ -129,15 +143,18 @@ class DataParser {
 
     public String[] parseDirections(String jsonData)
     {
-        JSONArray jsonArray = null;
+
         JSONObject jsonObject;
+
 
         try {
             jsonObject = new JSONObject(jsonData);
+            this.jsonArray =jsonObject.getJSONArray("routes");
             jsonArray = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONArray("steps");
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        getDuration(this.jsonArray);
         return getPaths(jsonArray);
     }
 

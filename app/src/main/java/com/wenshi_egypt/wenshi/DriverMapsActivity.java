@@ -71,7 +71,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DriverMapsActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DriverProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, OnNavigationItemSelectedListener, com.google.android.gms.location.LocationListener {
+public class DriverMapsActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DriverProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, OnNavigationItemSelectedListener, com.google.android.gms.location.LocationListener {
 
     private static final long UPDATE_INTERVAL = 5000;
     private static final long FASTEST_INTERVAL = 3000;
@@ -122,6 +122,8 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
     private GetDirectionsData getDirectionsData;
     private Fragment currentFragment;
     private int CURRENTSTATE;
+    private String duration;
+    private String distance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -286,23 +288,19 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     if (cutomerMod != null && cutomerMod.getID().equals(dataSnapshot.getKey()) && onRout) {
-                        Log.i("rem1", "" + requestsMap.size() + "  " + dataSnapshot.getKey());
                         cutomerMod = null;
                         onRout = false;
+                        buttomSheetVisibility(ONLINE);
                         clearMarkers();
                         displayLocation();
                         requestsMap.remove(dataSnapshot.getKey());
                     } else if (requestsMap.containsKey(dataSnapshot.getKey()) && requestsMap.size() > 1) {
-                        Log.i("rem2", "" + requestsMap.size() + "  " + dataSnapshot.getKey());
                         requestsMap.remove(dataSnapshot.getKey());
                         DataSnapshot nextCustomer = (new ArrayList<DataSnapshot>(requestsMap.values())).get(0);
                         requestsMap.remove(nextCustomer.getKey());
                         onChildAdded(nextCustomer, "");
                     } else if (requestsMap.size() == 1) {
-                        Log.i("final check", "" + requestsMap.size() + "  " + dataSnapshot.getKey());
-
                         buttomSheetVisibility(ONLINE);
-
                         requestsMap.remove(dataSnapshot.getKey());
                         clearMarkers();
                         hidePopup();
@@ -319,36 +317,7 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
                 public void onCancelled(DatabaseError databaseError) {
                 }
             });
-
-
-
-
-
-
-          /*
-
-
-            geoFireDriverRequests = driverAvalbl.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                          for (DataSnapshot customerSnapshot : dataSnapshot.getChildren()) {
-                        Log.d("TAG Driverr", "changeee: " + customerSnapshot.getKey());
-
-
-
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.d("TAG ERRRR", "onDataChange V: " + databaseError.toString());
-
-                }
-            });
-
-            */
-            mBottomTextView.setText(getResources().getString(R.string.online));
+            buttomSheetVisibility(ONLINE);
             displayLocation();
         } else {
             if (driverAvalbl != null && geoFireDriverRequests != null)
@@ -555,8 +524,7 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
 
     private void offline() {
         driverLocation.child(userId).removeValue();
-        clearMarkers();
-        mBottomTextView.setText(getResources().getString(R.string.offline));
+        buttomSheetVisibility(OFFLINE);
         onRout = false;
     }
 
@@ -728,7 +696,6 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
 
     private void showPopup(String title, String line1, String line2, String line3, String line4) {
 
-
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
 
         // Inflate the custom layout/view
@@ -819,13 +786,13 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
         if (cutomerMod != null) {
             hidePopup();
             driverLocation.child(userId).removeValue();
-            //driverAvalbl.
-            mBottomSheet.setVisibility(View.INVISIBLE);
+
             onRout = true;
             showRout();
             declineOtherRequests();
             displayLocation();
-        }
+
+            }
     }
 
     private void declineOtherRequests() {
@@ -851,15 +818,19 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
 
     private void showRout() {
         Object dataTransfer[] = new Object[2];
-        dataTransfer = new Object[3];
+        dataTransfer = new Object[5];
         String url = getDirectionsUrl();
-        getDirectionsData = new GetDirectionsData();
+        getDirectionsData = new GetDirectionsData(this);
         dataTransfer[0] = mMap;
         dataTransfer[1] = url;
         if (cutomerMod != null) {
             dataTransfer[2] = new LatLng(cutomerMod.getLatitude(), cutomerMod.getLongitude());
         }
+        dataTransfer[3] = duration;
+        dataTransfer[4] = distance;
         getDirectionsData.execute(dataTransfer);
+
+
     }
 
 
@@ -870,7 +841,7 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
             googleDirectionsUrl.append("&destination=" + cutomerMod.getLatitude() + "," + cutomerMod.getLongitude());
         }
 
-        googleDirectionsUrl.append("&key=" + "AIzaSyCAcfy-02UHSu2F6WeQ1rhQhkCr51eBL9g");
+        googleDirectionsUrl.append("&key=" + "AIzaSyBrVB9O0dT-F7P2NcAnHI-mjWW1sMCISns");
 
         return googleDirectionsUrl.toString();
     }
@@ -881,7 +852,7 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
         googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
         googlePlacesUrl.append("&type=" + nearbyPlace);
         googlePlacesUrl.append("&sensor=true");
-        googlePlacesUrl.append("&key=" + "AIzaSyBj-cnmMUY21M0vnIKz0k3tD3bRdyZea-Y");
+        googlePlacesUrl.append("&key=" + "AIzaSyBrVB9O0dT-F7P2NcAnHI-mjWW1sMCISns");
         Log.d("getUrl", googlePlacesUrl.toString());
         return (googlePlacesUrl.toString());
     }
@@ -907,9 +878,10 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
                 break;
             case ONROUT:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                mBottomSheet.setVisibility(View.INVISIBLE);
                 monlineOfflineLayout.setVisibility(View.VISIBLE);
                 swtch_onlineOffline.setVisibility(View.INVISIBLE);
-                mBottomTextView.setText(getResources().getString(R.string.eta) + "10" + getResources().getString(R.string.min));
+                mBottomTextView.setText(getResources().getString(R.string.eta)+ " "+ getDirectionsData.getDuration());
                 CURRENTSTATE = driverState;
                 break;
             case ARRIVE:
@@ -918,9 +890,11 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
                 break;
             case OFFLINE:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                monlineOfflineLayout.setVisibility(View.VISIBLE);
                 swtch_onlineOffline.setVisibility(View.VISIBLE);
                 mBottomTextView.setText(getResources().getString(R.string.offline));
                 CURRENTSTATE = driverState;
+                clearMarkers();
                 break;
             case SIDENAV:
                 findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
@@ -934,4 +908,9 @@ public class DriverMapsActivity extends AppCompatActivity implements View.OnClic
 
     }
 
+    @Override
+    public void gotDurationDistanceRout(String output) {
+        buttomSheetVisibility(ONROUT); //must be after showRout to get the correct duration
+
+    }
 }

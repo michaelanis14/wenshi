@@ -755,4 +755,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     public UserModel getCustomer() {
         return user;
     }
+
+
+
 }

@@ -14,23 +14,46 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 
-
-public class GetDirectionsData extends AsyncTask<Object,String,String> {
+public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
     GoogleMap mMap;
     String url;
     String googleDirectionsData;
-    String duration, distance;
     LatLng latLng;
     Polyline polylineFinal;
+    String duration = "";
+    String distance ="";
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    // you may separate this or combined to caller class.
+    public interface AsyncResponse {
+        void gotDurationDistanceRout(String output);
+    }
+
+    public AsyncResponse delegate = null;
+
+    public GetDirectionsData(AsyncResponse delegate){
+        this.delegate = delegate;
+    }
+
+
     @Override
     protected String doInBackground(Object... objects) {
-        mMap = (GoogleMap)objects[0];
-        url = (String)objects[1];
-        latLng = (LatLng)objects[2];
-
+        mMap = (GoogleMap) objects[0];
+        url = (String) objects[1];
+        latLng = (LatLng) objects[2];
+        duration = (String) objects[3];
+        distance = (String) objects[4];
 
 
         DownloadUrl downloadUrl = new DownloadUrl();
@@ -49,34 +72,33 @@ public class GetDirectionsData extends AsyncTask<Object,String,String> {
         String[] directionsList;
         DataParser parser = new DataParser();
         directionsList = parser.parseDirections(s);
-       // duration =directionsList.get("duration");
+        distance = parser.getDistance();
+        duration = parser.getDuration();
 
         displayDirection(directionsList);
+        delegate.gotDurationDistanceRout(s);
 
     }
 
-    public void displayDirection(String[] directionsList)
-    {
+    public void displayDirection(String[] directionsList) {
 
         int count = directionsList.length;
-        for(int i = 0;i<count;i++)
-        {
+        for (int i = 0; i < count; i++) {
             PolylineOptions options = new PolylineOptions();
             options.color(Color.BLACK);
             options.width(10);
             options.addAll(PolyUtil.decode(directionsList[i]));
 
-            polylineFinal =  mMap.addPolyline(options);
+            polylineFinal = mMap.addPolyline(options);
 
 
         }
     }
 
-    public void clearDirections(){
+    public void clearDirections() {
         polylineFinal.remove();
 
     }
-
 
 
 }
