@@ -38,7 +38,7 @@ class DataParser {
         HashMap<String,String> googleDirectionsMap = new HashMap<>();
 
 
-
+        if(googleDirectionsJson != null)
         try {
 
             duration = googleDirectionsJson.getJSONObject(0).getJSONObject("duration").getString("text");

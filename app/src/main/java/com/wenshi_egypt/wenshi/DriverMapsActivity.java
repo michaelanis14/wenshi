@@ -250,10 +250,12 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             String email = cust.getString("email");
                             String id = cust.getString("ID");
                             String mobile = cust.getString("Mobile");
+                            String lat = cust.getString("Latitude");
+                            String longt = cust.getString("Longitude");
                             String address = cust.getString("Address");
                             VehicleModel defaultVehicle = new VehicleModel(cust.getJSONObject("Vehicle").getString("type"),cust.getJSONObject("Vehicle").getString("model"));
 
-                            cutomerMod = new UserModel(id, name, email, mobile, address,defaultVehicle);
+                            cutomerMod = new UserModel(id, name, email, mobile, Double.parseDouble(lat), Double.parseDouble(longt), address,defaultVehicle);
 
                             Log.i("JSON TESTTT",cust.toString());
                         } catch (JSONException e) {
@@ -302,7 +304,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    if (onRout && cutomerMod != null && requestsMap.containsKey(dataSnapshot.getKey()) && cutomerMod.getID().equals(dataSnapshot.getKey()) ) {
+                    if (onRout && cutomerMod != null && !cutomerMod.getID().isEmpty() && requestsMap.containsKey(dataSnapshot.getKey()) && cutomerMod.getID().equals(dataSnapshot.getKey()) ) {
                         cutomerMod = null;
                         onRout = false;
                         buttomSheetVisibility(ONLINE);
@@ -320,6 +322,14 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         requestsMap.remove(dataSnapshot.getKey());
                         clearMarkers();
                         hidePopup();
+                        displayLocation();
+                    }
+                    else{
+                        //Error State
+                        cutomerMod = null;
+                        onRout = false;
+                        buttomSheetVisibility(ONLINE);
+                        clearMarkers();
                         displayLocation();
                     }
 
@@ -384,7 +394,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (mLastLocation != null) {
             if (myCurrent != null) myCurrent.remove();  //remove Old Marker
             LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            myCurrent = mMap.addMarker(new MarkerOptions().position(loc));
 
 
             //update FireBase
@@ -403,6 +412,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                     public void onComplete(String key, DatabaseError error) {
                         //Add Marker
                         // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 15.0f));
+                        showRout();
+                        if(cutomerMod != null && !cutomerMod.getID().isEmpty() && markers.get(cutomerMod.getID()) != null)
+                            mMap.addMarker(new MarkerOptions().position(markers.get(cutomerMod.getID()).getPosition()));
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 25.0f));
 
                     }
@@ -410,6 +422,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
             }
             //  mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
+            myCurrent = mMap.addMarker(new MarkerOptions().position(loc));
 
         }
     }
@@ -562,7 +575,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         super.onStop();
         hidePopup();
         //  offline();
-        hidePopup();
+       // hidePopup();
         //  if (geoQuery != null) this.geoQuery.removeAllListeners();
         // LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this); //to remove the listener
         // FirebaseDatabase.getInstance().getReference("DriversAvailable").child(userId).removeValue();
@@ -814,7 +827,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private void declineOtherRequests() {
         if (this.requestsMap != null) {
             for (String customerID : this.requestsMap.keySet()) {
-                if (cutomerMod != null && !cutomerMod.getID().contains(customerID)) {
+                if (cutomerMod != null && !cutomerMod.getID().isEmpty() && !cutomerMod.getID().contains(customerID)) {
                     FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests").child(customerID).removeValue();
                     requestsMap.remove(cutomerMod.getID());
                 }
@@ -833,13 +846,14 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     }
 
     private void showRout() {
+        mMap.clear();
         Object dataTransfer[] = new Object[2];
         dataTransfer = new Object[5];
         String url = getDirectionsUrl();
         getDirectionsData = new GetDirectionsData(this);
         dataTransfer[0] = mMap;
         dataTransfer[1] = url;
-        if (cutomerMod != null) {
+        if (cutomerMod != null && !cutomerMod.getID().isEmpty() ) {
             dataTransfer[2] = new LatLng(cutomerMod.getLatitude(), cutomerMod.getLongitude());
         }
         dataTransfer[3] = duration;
@@ -853,7 +867,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private String getDirectionsUrl() {
         StringBuilder googleDirectionsUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
         googleDirectionsUrl.append("origin=" + mLastLocation.getLatitude() + "," + mLastLocation.getLongitude());
-        if (cutomerMod != null) {
+        if (cutomerMod != null && !cutomerMod.getID().isEmpty() ) {
             googleDirectionsUrl.append("&destination=" + cutomerMod.getLatitude() + "," + cutomerMod.getLongitude());
         }
 

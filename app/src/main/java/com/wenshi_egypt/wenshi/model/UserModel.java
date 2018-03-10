@@ -15,14 +15,17 @@ public class UserModel implements Parcelable {
     String email= "Email@email.com";
     String Mobile="00000";
     String Address = "Addres";
+    VehicleModel defaultVehicle;
+    double latitude;
+    double longitude;
+
+
+
 
     public VehicleModel getDefaultVehicle() {
         return defaultVehicle;
     }
 
-    VehicleModel defaultVehicle;
-    double latitude;
-    double longitude;
     ArrayList<VehicleModel> Vehicles = new ArrayList<VehicleModel>();
 
 
@@ -76,12 +79,14 @@ public class UserModel implements Parcelable {
         this.Address = Address;
         this.defaultVehicle = new VehicleModel("KIA","RIO 2014");
     }
-    public UserModel(String id,String name, String email, String mobile, String Address,VehicleModel defaultVehicle) {
+    public UserModel(String id,String name, String email, String mobile,double latitude, double longitude, String Address,VehicleModel defaultVehicle) {
         this.ID = id;
         this.Name = name;
         this.email = email;
         this.Mobile = mobile;
         this.Address = Address;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.defaultVehicle = defaultVehicle;
     }
 
@@ -119,6 +124,8 @@ public class UserModel implements Parcelable {
                 ", \"email\":\"" + email + "\"" +
                 ", \"Mobile\":\"" + Mobile + "\"" +
                 ", \"Address\":\"" + Address + "\"" +
+                ", \"Latitude\":\"" + latitude + "\"" +
+                ", \"Longitude\":\"" + longitude + "\"" +
                 ", \"Vehicle\":" + defaultVehicle.toString() + "" +
                 '}';
     }
