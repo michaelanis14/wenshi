@@ -105,6 +105,9 @@
     <string name="textView_vehicle_addNew">Add new Vehicle</string>
     <string name="button_new_vehicle">Add Vehicle</string>
     <string name="textView_vehicle_saved_label">New Vehicle saved successfully</string>
+    <string name="eta">ETA</string>
+    <string name="min">min</string>
+    <string name="reqwestingWenshi">Requesting Wenshi..</string>
 
 
 </resources>

@@ -205,9 +205,9 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     mRequest.setVisibility(View.VISIBLE);
                     if (mCancel.getVisibility() == View.VISIBLE) {
-                        mRequest.setText(R.string.cancelTrip);
+                        mRequest.setText(getResources().getString(R.string.cancelTrip));
                     } else {
-                        mRequest.setText(R.string.request_winsh_btn);
+                        mRequest.setText(getResources().getString(R.string.request_winsh_btn));
                     }
                 } else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     mRequest.setVisibility(View.GONE);
@@ -400,7 +400,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
             pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             mMap.addMarker(new MarkerOptions().position(pickUpLocation).title("Your Pickup"));
 
-            mBottomTextView.setText("Requesting Winsh");
+            mBottomTextView.setText(getResources().getString(R.string.reqwestingWenshi));
             ((Button) findViewById(R.id.request_wenshi_bottom_btn)).setVisibility(View.GONE);
             ((Button) findViewById(R.id.cancel_wenshi_btn)).setVisibility(View.VISIBLE);
 
@@ -623,7 +623,6 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
      * @return The Activity's ActionBar, or null if it does not have one.
      */
 
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
@@ -717,10 +716,9 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
     }
 
-
     protected void onStop() {
         super.onStop();
-        cancelTrip();
+       // cancelTrip();
     }
 
     private void marksCameraUpdate(){
