@@ -77,15 +77,17 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
                     //noinspection unchecked
                     HashMap<String, String> value = (HashMap<String, String>) child.getValue();
                     assert value != null;
-                    date = value.get("date");
-                    from = value.get("from");
-                    to = value.get("to");
-                    cost = String.format("%s", value.get("cost"));
+                    if(!child.hasChild("FirstConstantTrip")) {
+                        date = value.get("date");
+                        from = value.get("from");
+                        to = value.get("to");
+                        cost = String.format("%s", value.get("cost"));
 
-                    demoValue.setText("");
-                    if(!date.isEmpty()) {
-                        noHistoric.setVisibility(View.INVISIBLE);
-                        results.add(new HistoricTrip(date, from, to, Double.parseDouble(cost)));
+                        demoValue.setText("");
+                        if (!date.isEmpty()) {
+                            noHistoric.setVisibility(View.INVISIBLE);
+                            results.add(new HistoricTrip(date, from, to, Double.parseDouble(cost)));
+                        }
                     }
                 }
                 if(results.size()==0)

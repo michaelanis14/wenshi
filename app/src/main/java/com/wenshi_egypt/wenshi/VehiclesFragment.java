@@ -49,20 +49,15 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
 
         final ListView lv1 = getView().findViewById(R.id.listView_vehicles);
 
-       // lv1.setAdapter(new MyVehiclesAdapter(getActivity(), vehicle));
+        lv1.setAdapter(new MyVehiclesAdapter(getActivity(), vehicle));
 
         lv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                defaultVehicle = getView().findViewById(R.id.textView_vehicle_default);
-//                defaultVehicle.setVisibility(View.VISIBLE);
-                //Toast.makeText(getActivity(), "position number: " + position, Toast.LENGTH_LONG).show();
                 defType = vehicle.get(position).getType();
                 defModel = vehicle.get(position).getModel();
-        //        Toast.makeText(getActivity(), "Type: " + defType, Toast.LENGTH_SHORT).show();
-        //        Toast.makeText(getActivity(), "Model: " + defModel, Toast.LENGTH_SHORT).show();
 
-                DatabaseReference defVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(((CustomerMapActivity) getActivity()).getCustomer().getID());
+                DatabaseReference defVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(((CustomerMapActivity) getActivity()).getCustomer().getID()).child("Profile");
                 defVehicle.child("carType").setValue(defType);
                 defVehicle.child("model").setValue(defModel);
             }
@@ -77,7 +72,6 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
                 intent.putExtras(b);
                 startActivity(intent);
 
-                //startActivity(new Intent(getContext(), AddNewVehicle.class));
             }
         });
     }
@@ -97,13 +91,15 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
                     //noinspection unchecked
                     HashMap<String, String> value = (HashMap<String, String>) child.getValue();
                     assert value != null;
-                    type = value.get("type");
-                    model = String.format("%s", value.get("model"));
+                    if(!child.hasChild("FirstConstantVehicle")) {
+                        type = value.get("type");
+                        model = String.format("%s", value.get("model"));
 
-                    demoValue.setText("");
-                    if(!type.isEmpty()) {
-                        noVehicle.setVisibility(View.INVISIBLE);
-                        results.add(new VehicleModel(type, model));
+                        demoValue.setText("");
+                        if (!type.isEmpty()) {
+                            noVehicle.setVisibility(View.INVISIBLE);
+                            results.add(new VehicleModel(type, model));
+                        }
                     }
                 }
                 if(results.size()==0)

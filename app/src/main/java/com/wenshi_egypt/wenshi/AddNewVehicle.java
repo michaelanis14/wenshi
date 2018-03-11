@@ -53,7 +53,6 @@ public class AddNewVehicle extends AppCompatActivity {
                         DatabaseReference addVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(value).child("Vehicles").child("newVic" + vicCount);
                         addVehicle.child("type").setValue(newType.getText().toString());
                         addVehicle.child("model").setValue(newModel.getText().toString());
-                        addVehicle.child("defaultVehicle").setValue("False");
                         vicCount++;
 
                         new CountDownTimer(3000, 10) {
@@ -64,7 +63,6 @@ public class AddNewVehicle extends AppCompatActivity {
 
                             @Override
                             public void onFinish() {
-                                startActivity(new Intent(AddNewVehicle.this, WelcomeActivity.class));
                             }
                         }.start();
                     }

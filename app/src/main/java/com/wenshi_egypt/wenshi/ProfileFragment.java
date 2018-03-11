@@ -57,21 +57,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         address = getView().findViewById(R.id.editText_profile_address);
         saveButton = getView().findViewById(R.id.button_profile_saveButton);
 
-
         user = ((CustomerMapActivity)getActivity()).getCustomer();
-        /*
+
         if (user != null) {
-
-            Toast.makeText(getActivity(), "User: " + user.getID(), Toast.LENGTH_SHORT).show();
-
-            Toast.makeText(getActivity(), "Username: " + user.getName(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(getActivity(), "Email: " + user.getEmail(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(getActivity(), "Mobile: " + user.getMobile(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(getActivity(), "Vehicle type: " + user.getVehicles(), Toast.LENGTH_SHORT).show();
-            //Toast.makeText(getActivity(), "Vehicle Model: " + user.getName(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(getActivity(), "Address: " + user.getAddress(), Toast.LENGTH_SHORT).show();
-
-
             username.setText(user.getName());
             email.setText(user.getEmail());
             mobile.setText(user.getMobile());
@@ -79,11 +67,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             //model.setText(String.format("%s", user.get("model")));
             address.setText(user.getAddress());
         }
-        */
+        username.setEnabled(false);
+        email.setEnabled(false);
+        carType.setEnabled(false);
+        model.setEnabled(false);
 
+    /*
 
-
-        rootRef = FirebaseDatabase.getInstance().getReference();
         profRef = rootRef.child("Users").child("Customers").child(user.getID());
 
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
@@ -94,7 +84,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 email.setText(value.get("email"));
                 mobile.setText(value.get("mobile"));
                 carType.setText(value.get("carType"));
-                model.setText(String.format("%s", value.get("model")));
+                model.setText(value.get("model"));
                 address.setText(value.get("address"));
             }
 
@@ -103,19 +93,17 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
             }
         });
+        */
 
+        rootRef = FirebaseDatabase.getInstance().getReference();
         getView().findViewById(R.id.button_profile_saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!String.valueOf(username.getText()).isEmpty() &&
-                   !String.valueOf(email.getText()).isEmpty() &&
-                   !String.valueOf(mobile.getText()).isEmpty() &&
+                if(!String.valueOf(mobile.getText()).isEmpty() &&
                    !String.valueOf(carType.getText()).isEmpty() &&
                    !String.valueOf(model.getText()).isEmpty() &&
                    !String.valueOf(address.getText()).isEmpty()) {
-                        DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID());
-                        profModify.child("userName").setValue(String.valueOf(username.getText()));
-                        profModify.child("email").setValue(String.valueOf(email.getText()));
+                        DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID()).child("Profile");
                         profModify.child("mobile").setValue(String.valueOf(mobile.getText()));
                         profModify.child("carType").setValue(String.valueOf(carType.getText()));
                         profModify.child("model").setValue(String.valueOf(model.getText()));

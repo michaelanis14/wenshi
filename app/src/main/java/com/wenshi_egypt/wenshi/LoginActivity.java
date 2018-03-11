@@ -70,21 +70,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (customer) {
 
                     DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid);
-                    currentUser.child("address").setValue("");
-                    currentUser.child("carType").setValue("");
-                    currentUser.child("email").setValue("");
-                    currentUser.child("mobile").setValue("");
-                    currentUser.child("model").setValue("");
-                    currentUser.child("userName").setValue("");
-
-                    currentUser.child("Trips").child("trip1").child("cost").setValue(" ");
-                    currentUser.child("Trips").child("trip1").child("date").setValue("");
-                    currentUser.child("Trips").child("trip1").child("from").setValue("");
-                    currentUser.child("Trips").child("trip1").child("to").setValue("");
-
-                    currentUser.child("Vehicles").child("vehicle1").child("defaultVehicle").setValue("");
-                    currentUser.child("Vehicles").child("vehicle1").child("model").setValue("");
-                    currentUser.child("Vehicles").child("vehicle1").child("type").setValue("");
+                    currentUser.child("Profile").child("FirstConstantProf").setValue(true);
+                    currentUser.child("Trips").child("trip1").child("FirstConstantTrip").setValue(true);
+                    currentUser.child("Vehicles").child("vehicle1").child("FirstConstantVehicle").setValue(true);
 
                     //currentUser.setValue(true); // to allow changes to happen
 
