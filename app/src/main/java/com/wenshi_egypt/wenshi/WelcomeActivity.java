@@ -41,9 +41,9 @@ public class WelcomeActivity extends AppCompatActivity {
         btn_get_started = findViewById(R.id.get_started_btn);
 
 
-    //getSupportActionBar().hide();
+        //getSupportActionBar().hide();
         FirebaseAuth auth = FirebaseAuth.getInstance();
-       // mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        // mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
 
         if (auth.getCurrentUser() != null) {
@@ -52,7 +52,7 @@ public class WelcomeActivity extends AppCompatActivity {
             String name = user.getDisplayName();
             String email = user.getEmail();
             String mobil = user.getPhoneNumber();
-            currenctUserModel = new UserModel(uid,name,email,mobil,"");
+            currenctUserModel = new UserModel(uid, name, email, mobil, "");
 
 
             isDriverRef = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(uid);
@@ -64,20 +64,19 @@ public class WelcomeActivity extends AppCompatActivity {
                         Intent driverIntent = new Intent(WelcomeActivity.this, DriverMapsActivity.class);
                         driverIntent.putExtra("CurrentUser", currenctUserModel);
                         startActivity(driverIntent);
-                        isDriverRef.removeEventListener(this   );
+                        isDriverRef.removeEventListener(this);
                         finish();
                         return;
-                    }
-                    else{
-                        isDriverRef.removeEventListener(this   );
+                    } else {
+                        isDriverRef.removeEventListener(this);
                     }
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.i("onError",databaseError.toString());
+                    Log.i("onError", databaseError.toString());
                 }
             });
-
 
 
             isUserRef = FirebaseDatabase.getInstance().getReference("Users").child("Customers").child(uid);
@@ -90,10 +89,9 @@ public class WelcomeActivity extends AppCompatActivity {
                         customerIntent.putExtra("CurrentUser", currenctUserModel);
                         startActivity(customerIntent);
                         isUserRef.removeEventListener(this);
-                         finish();
-                         return;
-                    }
-                    else {
+                        finish();
+                        return;
+                    } else {
                         isUserRef.removeEventListener(this);
                         swtch_RiderOrDriver.setVisibility(View.VISIBLE);
                         lbl_Rider.setVisibility(View.VISIBLE);
@@ -104,13 +102,11 @@ public class WelcomeActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.i("onError",databaseError.toString());
+                    Log.i("onError", databaseError.toString());
                 }
             });
 
-        }
-
-        else{
+        } else {
 
             swtch_RiderOrDriver.setVisibility(View.VISIBLE);
             lbl_Rider.setVisibility(View.VISIBLE);
@@ -119,18 +115,15 @@ public class WelcomeActivity extends AppCompatActivity {
         }
 
 
+    }
 
-
+    @Override
+    protected void onStart() {
+        super.onStart();
 
     }
 
-@Override
-protected void onStart(){
-    super.onStart();
-
-}
-
-public void getStarted(View view) {
+    public void getStarted(View view) {
         boolean customer = true;
 
         if (swtch_RiderOrDriver.isChecked()) {

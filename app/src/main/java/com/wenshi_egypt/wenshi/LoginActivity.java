@@ -1,29 +1,30 @@
 package com.wenshi_egypt.wenshi;
 
-        import android.content.Intent;
-        import android.support.annotation.StringRes;
-        import android.support.design.widget.Snackbar;
-        import android.support.v7.app.AppCompatActivity;
-        import android.os.Bundle;
-        import android.util.Log;
-        import android.view.View;
+import android.app.Activity;
+import android.content.Intent;
+import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
 
-        import com.firebase.ui.auth.AuthUI;
-        import com.firebase.ui.auth.ErrorCodes;
-        import com.firebase.ui.auth.IdpResponse;
-        import com.google.firebase.auth.FirebaseAuth;
-        import com.google.firebase.auth.FirebaseUser;
-        import com.google.firebase.database.DatabaseReference;
-        import com.google.firebase.database.FirebaseDatabase;
-        import com.wenshi_egypt.wenshi.model.UserModel;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.wenshi_egypt.wenshi.model.UserModel;
 
-        import java.util.Arrays;
+import java.util.Arrays;
 
-        import javax.xml.validation.Validator;
+import javax.xml.validation.Validator;
 
-        import butterknife.BindView;
-        import retrofit2.http.HEAD;
+import butterknife.BindView;
+import retrofit2.http.HEAD;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -32,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.root)
     View mRootView;
     FirebaseAuth auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,20 +41,13 @@ public class LoginActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         customer = extras.getBoolean("customer");
 
-        Log.i("RIDER",""+customer);
+        Log.i("RIDER", "" + customer);
         auth = FirebaseAuth.getInstance();
 
-            startActivityForResult(
-                    AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setAvailableProviders(Arrays.asList(
-                                    new AuthUI.IdpConfig.EmailBuilder().build(),
-                                    //   new AuthUI.IdpConfig.PhoneBuilder().build(),
-                                   // new AuthUI.IdpConfig.GoogleBuilder().build(),
-                                    new AuthUI.IdpConfig.FacebookBuilder().build(),
-                                    new AuthUI.IdpConfig.TwitterBuilder().build()))
-                            .build(),
-                    RC_SIGN_IN);
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
+                //   new AuthUI.IdpConfig.PhoneBuilder().build(),
+                // new AuthUI.IdpConfig.GoogleBuilder().build(),
+                new AuthUI.IdpConfig.FacebookBuilder().build(), new AuthUI.IdpConfig.TwitterBuilder().build())).build(), RC_SIGN_IN);
 
     }
 
@@ -69,10 +64,10 @@ public class LoginActivity extends AppCompatActivity {
                 String name = user.getDisplayName();
                 String email = user.getEmail();
                 String mobil = user.getPhoneNumber();
-                UserModel currenctUserModel = new UserModel(uid,name,email,mobil,"");
+                UserModel currenctUserModel = new UserModel(uid, name, email, mobil, "");
 
 
-                if(customer) {
+                if (customer) {
 
                     DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid);
                     currentUser.child("address").setValue("");
@@ -94,11 +89,10 @@ public class LoginActivity extends AppCompatActivity {
                     //currentUser.setValue(true); // to allow changes to happen
 
 
-
                     Intent customerIntent = new Intent(LoginActivity.this, CustomerMapActivity.class);
                     customerIntent.putExtra("CurrentUser", currenctUserModel);
                     startActivity(customerIntent);
-                }else{
+                } else {
 
 
                     DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid);
@@ -114,12 +108,11 @@ public class LoginActivity extends AppCompatActivity {
                     currentUser.child("Trips").child("trip1").child("to").setValue("");
 
 
-                 //   currentUser.setValue(true); // to allow changes to happen
+                    //   currentUser.setValue(true); // to allow changes to happen
                     DatabaseReference reqInit = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("Requests").child("FirstConstant");
                     reqInit.setValue(true); // to allow changes to happen
                     DatabaseReference currentLocInit = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("CurrentLocation");
                     currentLocInit.setValue(true); // to allow changes to happen
-
 
 
                     Intent driverIntent = new Intent(LoginActivity.this, DriverMapsActivity.class);
@@ -133,17 +126,17 @@ public class LoginActivity extends AppCompatActivity {
                 // Sign in failed
                 if (response == null) {
                     // User pressed back button
-                       showSnackbar(R.string.sign_in_cancelled);
+                    showSnackbar(R.string.sign_in_cancelled);
                     return;
                 }
 
                 if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-                        showSnackbar(R.string.no_internet_connection);
+                    showSnackbar(R.string.no_internet_connection);
                     return;
                 }
 
                 if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                        showSnackbar(R.string.unknown_error);
+                    showSnackbar(R.string.unknown_error);
                     return;
                 }
             }
@@ -153,11 +146,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isFacebookMisconfigured() {
-      return AuthUI.UNCONFIGURED_CONFIG_VALUE.equals(("FACEBOOK_ERR112"));
+        return AuthUI.UNCONFIGURED_CONFIG_VALUE.equals(("FACEBOOK_ERR112"));
     }
 
 
     private void showSnackbar(@StringRes int errorMessageRes) {
-        Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_LONG).show();
+        if(this != null)
+         Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_LONG).show();
     }
+
 }

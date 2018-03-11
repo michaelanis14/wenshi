@@ -257,7 +257,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
                             cutomerMod = new UserModel(id, name, email, mobile, Double.parseDouble(lat), Double.parseDouble(longt), address,defaultVehicle);
 
-                            Log.i("JSON TESTTT",cust.toString());
+                            Log.i("UserModel JSON",cust.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                             cutomerMod = new UserModel("","","","","");
@@ -290,7 +290,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
                         //  break;
 
-                        hidePopup();
+                       // hidePopup();
+                       // showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi" );
                         showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi" );
 
                     } else if (!requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {

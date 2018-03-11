@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.location.Criteria;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -81,56 +82,64 @@ import java.util.Map;
 
 public class CustomerMapActivity extends AppCompatActivity implements View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptions.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
-    private static final long UPDATE_INTERVAL = 500000;
-    private static final long FASTEST_INTERVAL = 300000;
+    static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
+    private static final long UPDATE_INTERVAL = 50000;
+    private static final long FASTEST_INTERVAL = 30000;
     private static final float DISPLACMENT = 100;
-    //static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
-    private GoogleMap mMap;
-    private Marker mDriverMarker;
-
-    private SupportMapFragment mapFragment;
     static GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    LocationRequest mLocationRequest;
-
     final int MY_PERMISSION_REQ_CODE = 1234;
     final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
-
-    private Button mRequest, mCancel;
-    private LatLng pickUpLocation;
-
-    private boolean driverFound = false;
-    private float radius = 200;
-    private String requestedDriverID = "";
-
-    private GeoQuery geoQuery;
-    private DatabaseReference driverLocationRef;
-    private ValueEventListener driverLocationRefListener;
-
-    private String userId = "_";
-
-
-    private AppCompatDelegate mDelegate;
-    private int mThemeId = 0;
-    private Resources mResources;
+    Location mLastLocation;
+    LocationRequest mLocationRequest;
     DrawerLayout drawer;
     View mBottomSheet;
     TextView mBottomTextView;
     BottomSheetBehavior mBottomSheetBehavior;
     Button mButton;
-
+    UserModel user;
+    DatabaseReference driversAvlbl;
+    private GoogleMap mMap;
+    private Marker mDriverMarker;
+    private SupportMapFragment mapFragment;
+    private Button mRequest, mCancel;
+    private LatLng pickUpLocation;
+    private boolean driverFound = false;
+    private float radius = 2;
+    private String requestedDriverID = "";
+    private GeoQuery geoQuery;
+    private DatabaseReference driverLocationRef;
+    private ValueEventListener driverLocationRefListener;
+    private String userId = "_";
+    private AppCompatDelegate mDelegate;
+    private int mThemeId = 0;
+    private Resources mResources;
     private GeoFire geoFireCustomerLocation;
     private DatabaseReference customerLocation;
-
     private DatabaseReference requestDriver;
     private Marker myCurrent;
-
     private Map<String, Marker> markers;
-
     private List<String> driversID;
-    UserModel user;
 
-    DatabaseReference driversAvlbl;
+    TextView timerTextView;
+    long startTime = 0;
+
+    //runs without a timer by reposting this handler at the end of the runnable
+    Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis() - startTime;
+            int seconds = (int) (millis / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+
+            mBottomTextView.setText(String.format("%d:%02d", minutes, seconds));
+
+            timerHandler.postDelayed(this, 500);
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,7 +200,12 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
                 cancelTrip();
             }
         });
-
+        if (mLastLocation == null) {
+            // avoid unessecary crashes on new devices !!
+            mLastLocation = new Location("dummyprovider");
+            mLastLocation.setLatitude(CAIRO.latitude);
+            mLastLocation.setLongitude(CAIRO.longitude);
+        }
 
         //get the bottom sheet view
         mBottomSheet = findViewById(R.id.bottom_sheet);
@@ -233,7 +247,36 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
         // sendNotification("Michael", "This is a message to tell clients stop eating your feet");
 
+/*
+        Button b = (Button) findViewById(R.id.cancel_wenshi_btn);
+        b.setText("start");
+        b.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Button b = (Button) v;
+                if (b.getText().equals("stop")) {
+                    timerHandler.removeCallbacks(timerRunnable);
+                    b.setText("start");
+                } else {
+                    startTime = System.currentTimeMillis();
+                    timerHandler.postDelayed(timerRunnable, 0);
+                    b.setText("stop");
+                }
+            }
+        });
+
+
+*/
+
+
+
+
+
+
     }
+
+
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -272,6 +315,8 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
     private void displayLocation() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Location can't be accessed - displayLocation", Toast.LENGTH_SHORT).show();
+
             return;
         }
         if (mGoogleApiClient != null)
@@ -302,7 +347,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setSmallestDisplacement(DISPLACMENT);
 
     }
@@ -389,6 +434,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     private void requestButtonClicked() {
 
 
+        driverFound = false;
         if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             mRequest.setVisibility(View.GONE);
@@ -411,21 +457,23 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void getClosestDriver() {
-        
+
         GeoFire geoFire = new GeoFire(driversAvlbl);
         geoQuery = geoFire.queryAtLocation(new GeoLocation(pickUpLocation.latitude, pickUpLocation.longitude), radius);
+
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
+                driverFound = true;
 
                 driversID.add(key);
                 DatabaseReference driver = requestDriver.child(key).child("Requests").child(userId);
 
                 HashMap requestDetails = new HashMap();
                 requestDetails.put("Accept", "false");
-                requestDetails.put("Customer",user.toString());
-                requestDetails.put("Timestamp", ServerValue.TIMESTAMP);;
+                requestDetails.put("Customer", user.toString());
+                requestDetails.put("Timestamp", ServerValue.TIMESTAMP);
 
 
                 driver.updateChildren(requestDetails);
@@ -438,8 +486,8 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onLocationResult(String key, GeoLocation location) {
                         if (location != null) {
-                            Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng( location.latitude, location.longitude)).title("Wenshi"));
-                            markers.put(key,mDriverMarker);
+                            Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).title("Wenshi"));
+                            markers.put(key, mDriverMarker);
                             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                             marksCameraUpdate();
                             getDistanceBetweenPickUpToDriver(new LatLng(location.latitude, location.longitude));
@@ -465,14 +513,14 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
                             Log.d("TAG Customer", "onDataChange V: " + imageSnapshot.getValue());
 
 
-                  //              HashMap<Object> map = (HashMap<Object>) dataSnapshot.getValue();
+                            //              HashMap<Object> map = (HashMap<Object>) dataSnapshot.getValue();
 
 
-                  //           if (map.get(0) != null)
-                   //              mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(map.get(0).toString()), Double.parseDouble(map.get(1).toString()))).title("Driver location"));
-                   //             if (map.get(0) != null)
-                                     // Log.i("Driverr",""+map.get(0));
-                    //          getDistanceBetweenPickUpToDriver(new LatLng(Double.parseDouble(map.get(0).toString()), Double.parseDouble(map.get(1).toString())));
+                            //           if (map.get(0) != null)
+                            //              mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(map.get(0).toString()), Double.parseDouble(map.get(1).toString()))).title("Driver location"));
+                            //             if (map.get(0) != null)
+                            // Log.i("Driverr",""+map.get(0));
+                            //          getDistanceBetweenPickUpToDriver(new LatLng(Double.parseDouble(map.get(0).toString()), Double.parseDouble(map.get(1).toString())));
 
                         }
                     }
@@ -501,8 +549,9 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
             @Override
             public void onGeoQueryReady() {
-                if (!driverFound) {
-                    // radius++;
+
+                if (!driverFound && radius < (8587.0 / 35)) {
+                    geoQuery.setRadius(radius++);
                     Log.i("Radius", "" + radius);
                     // ==  getClosestDriver();
                 }
@@ -565,7 +614,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
     private void cancelTrip() {
 
-       // mMap.clear();
+        // mMap.clear();
         if (driverLocationRef != null)
             driverLocationRef.removeEventListener(driverLocationRefListener);
 
@@ -582,22 +631,21 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
             requestDriver.child(driverID).child("Requests").child(userId).removeValue();
         }
         //Intialize nearest driver query variables
-        if (geoQuery != null)
-        geoQuery.removeAllListeners();
-      //  driverFound = false;
-       // radius = 1;
+        if (geoQuery != null) geoQuery.removeAllListeners();
+        driverFound = false;
+        radius = 1;
 
         mBottomTextView.setText("Request Winsh");
         //Remove request from DB
-       // for (String driverID : driversID) {
-         //   customerLocation.child(driverID).removeValue();
-       // }
+        // for (String driverID : driversID) {
+        //   customerLocation.child(driverID).removeValue();
+        // }
 
         if (this.markers != null) {
             for (Marker marker : this.markers.values()) {
                 marker.remove();
             }
-           this.markers.clear();
+            this.markers.clear();
         }
         ((Button) findViewById(R.id.request_wenshi_bottom_btn)).setVisibility(View.VISIBLE);
         ((Button) findViewById(R.id.cancel_wenshi_btn)).setVisibility(View.GONE);
@@ -720,17 +768,25 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
 
     protected void onStop() {
         super.onStop();
-       // cancelTrip();
+        // cancelTrip();
     }
 
-    private void marksCameraUpdate(){
+    @Override
+    public void onPause() {
+        super.onPause();
+        timerHandler.removeCallbacks(timerRunnable);
+       // Button b = (Button)findViewById(R.id.button);
+       // b.setText("start");
+    }
+
+    private void marksCameraUpdate() {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(myCurrent.getPosition());
         for (Marker marker : this.markers.values()) {
             builder.include(marker.getPosition());
         }
         LatLngBounds bounds = builder.build();
-        int padding =200 ; // offset from edges of the map in pixels
+        int padding = 200; // offset from edges of the map in pixels
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
         //mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
         mMap.animateCamera(cu);
@@ -757,7 +813,6 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
     public UserModel getCustomer() {
         return user;
     }
-
 
 
 }
