@@ -872,7 +872,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             googleDirectionsUrl.append("&destination=" + cutomerMod.getLatitude() + "," + cutomerMod.getLongitude());
         }
 
-        googleDirectionsUrl.append("&key=" + "AIzaSyBrVB9O0dT-F7P2NcAnHI-mjWW1sMCISns");
+        googleDirectionsUrl.append("&departure_time=now&key=" + "AIzaSyBrVB9O0dT-F7P2NcAnHI-mjWW1sMCISns");
 
         return googleDirectionsUrl.toString();
     }

@@ -145,16 +145,20 @@ class DataParser {
     {
 
         JSONObject jsonObject;
-
+        JSONArray  jsonArrLegs = new JSONArray();
 
         try {
             jsonObject = new JSONObject(jsonData);
+            Log.i("Parsed Data",jsonObject.toString());
             this.jsonArray =jsonObject.getJSONArray("routes");
+            Log.i("Parsed Data Json2",this.jsonArray.toString());
+            jsonArrLegs = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs");
+
             jsonArray = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONArray("steps");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        getDuration(this.jsonArray);
+        getDuration(jsonArrLegs);
         return getPaths(jsonArray);
     }
 
