@@ -3,7 +3,15 @@ package com.wenshi_egypt.wenshi.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.sql.Ref;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by michaelanis on 3/2/18.
@@ -18,8 +26,7 @@ public class UserModel implements Parcelable {
     VehicleModel defaultVehicle;
     double latitude;
     double longitude;
-
-
+    DatabaseReference rootRef, profRef, vehicleRef, historicRef;
 
 
     public VehicleModel getDefaultVehicle() {
@@ -66,9 +73,6 @@ public class UserModel implements Parcelable {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-
-
-
 
 
     public UserModel(String id,String name, String email, String mobile, String Address) {
@@ -131,6 +135,7 @@ public class UserModel implements Parcelable {
     }
     // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
     public static final Parcelable.Creator<UserModel> CREATOR = new Parcelable.Creator<UserModel>() {
+
         public UserModel createFromParcel(Parcel in) {
             return new UserModel(in);
         }
@@ -150,4 +155,79 @@ public class UserModel implements Parcelable {
         defaultVehicle = in.readParcelable(VehicleModel.class.getClassLoader());
         in.readTypedList(Vehicles, VehicleModel.CREATOR);
     }
+
+    void setDBReferences(String id, boolean userOrDriver)    {
+        this.rootRef = FirebaseDatabase.getInstance().getReference();
+        if(userOrDriver) {
+            this.profRef = rootRef.child("Users").child("Customers").child(id).child("Profile");
+            this.vehicleRef = rootRef.child("Users").child("Customers").child(id).child("Vehicles");
+            this.historicRef = rootRef.child("Users").child("Customers").child(id).child("Trips");
+        }
+        else    {
+            this.profRef = rootRef.child("Users").child("Drivers").child(id).child("Profile");
+            this.profRef = rootRef.child("Users").child("Drivers").child(id).child("Trips");
+        }
+    }
+    public ArrayList<String> getProfData(String id, boolean userOrDriver) {
+        setDBReferences(id, userOrDriver);
+        final ArrayList<String> result = new ArrayList<String>();
+
+        profRef.orderByKey().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                @SuppressWarnings("unchecked") HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
+                result.add(value.get("mobile"));
+                result.add(value.get("address"));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return result;
+    }
+
+    ArrayList<VehicleModel> getVehiclesData(String id, boolean userOrDriver) {
+        setDBReferences(id, userOrDriver);
+        final ArrayList<VehicleModel> result = new ArrayList<VehicleModel>();
+
+        vehicleRef.orderByKey().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                @SuppressWarnings("unchecked") HashMap<VehicleModel, VehicleModel> value = (HashMap<VehicleModel, VehicleModel>) dataSnapshot.getValue();
+                result.add(value.get("type"));
+                result.add(value.get("model"));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return result;
+    }
+
+    ArrayList<TripModel> getTripsData(String id, boolean userOrDriver) {
+        setDBReferences(id, userOrDriver);
+        final ArrayList<TripModel> result = new ArrayList<TripModel>();
+
+        historicRef.orderByKey().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                @SuppressWarnings("unchecked") HashMap<TripModel, TripModel> value = (HashMap<TripModel, TripModel>) dataSnapshot.getValue();
+                result.add(value.get("date"));
+                result.add(value.get("from"));
+                result.add(value.get("to"));
+                result.add(value.get("cost"));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return result;
+    }
+
 }

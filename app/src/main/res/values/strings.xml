@@ -94,7 +94,7 @@
     <string name="textView_profile_email_label">Email</string>
     <string name="textView_profile_mobile_label">Mobile</string>
     <string name="textView_profile_carType_label">Car type</string>
-    <string name="textView_profile_model_label">Model</string>
+    <string name="textView_profile_model_label">Car Model</string>
     <string name="textView_profile_address_label">Address</string>
     <string name="new_request">NEW REQUEST</string>
     <string name="textView_driverProfile_carType_label">Wensh type</string>

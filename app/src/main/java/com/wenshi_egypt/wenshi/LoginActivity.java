@@ -76,7 +76,6 @@ public class LoginActivity extends AppCompatActivity {
 
                     //currentUser.setValue(true); // to allow changes to happen
 
-
                     Intent customerIntent = new Intent(LoginActivity.this, CustomerMapActivity.class);
                     customerIntent.putExtra("CurrentUser", currenctUserModel);
                     startActivity(customerIntent);
@@ -85,15 +84,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid);
 
-                    currentUser.child("address").setValue("");
-                    currentUser.child("email").setValue("");
-                    currentUser.child("mobile").setValue("");
-                    currentUser.child("userName").setValue("");
-
-                    currentUser.child("Trips").child("trip1").child("cost").setValue(" ");
-                    currentUser.child("Trips").child("trip1").child("date").setValue("");
-                    currentUser.child("Trips").child("trip1").child("from").setValue("");
-                    currentUser.child("Trips").child("trip1").child("to").setValue("");
+                    currentUser.child("Profile").child("FirstConstantProf").setValue(true);
+                    currentUser.child("Trips").child("trip1").child("FirstConstantTrip").setValue(true);
 
 
                     //   currentUser.setValue(true); // to allow changes to happen

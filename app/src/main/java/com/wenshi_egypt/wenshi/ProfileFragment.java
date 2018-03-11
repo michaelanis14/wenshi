@@ -1,6 +1,7 @@
 package com.wenshi_egypt.wenshi;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +30,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     DatabaseReference rootRef, profRef;
     Button saveButton;
+    ImageButton profAddVehcile;
     private UserModel user;
     private ProfileFragment.OnFragmentInteractionListener mListener;
 
@@ -56,22 +59,54 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         model = getView().findViewById(R.id.editText_profile_model);
         address = getView().findViewById(R.id.editText_profile_address);
         saveButton = getView().findViewById(R.id.button_profile_saveButton);
+        profAddVehcile = getView().findViewById(R.id.button_profile_addVehicle);
 
         user = ((CustomerMapActivity)getActivity()).getCustomer();
 
         if (user != null) {
             username.setText(user.getName());
             email.setText(user.getEmail());
-            mobile.setText(user.getMobile());
+            //mobile.setText(user.getProfData(user.getID(), true).get(0));
             //carType.setText(user.getVehicle);
             //model.setText(String.format("%s", user.get("model")));
-            address.setText(user.getAddress());
+            //address.setText(user.getAddress());
         }
         username.setEnabled(false);
         email.setEnabled(false);
         carType.setEnabled(false);
         model.setEnabled(false);
 
+
+        rootRef = FirebaseDatabase.getInstance().getReference();
+        this.profRef = rootRef.child("Users").child("Customers").child(user.getID()).child("Profile");
+
+        profRef.orderByKey().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                @SuppressWarnings("unchecked") HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
+                mobile.setText(value.get("mobile"));
+                carType.setText(value.get("carType"));
+                model.setText(value.get("model"));
+                address.setText(value.get("address"));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        profAddVehcile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), AddNewVehicle.class);
+                Bundle b = new Bundle();
+                b.putString("uid", ((CustomerMapActivity) getActivity()).getCustomer().getID());
+                intent.putExtras(b);
+                startActivity(intent);
+
+            }
+        });
     /*
 
         profRef = rootRef.child("Users").child("Customers").child(user.getID());

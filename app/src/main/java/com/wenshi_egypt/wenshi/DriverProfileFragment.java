@@ -39,7 +39,7 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
         if (mListener != null) {
             Uri.Builder builder = new Uri.Builder();
             builder.scheme("http")
-                    .authority("www.merply.com")
+                    .authority("Wenshi Driver")
                     .appendPath("winshy")
                     .appendPath("types")
                     .appendQueryParameter("type", "1")
@@ -61,12 +61,20 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
         carType = getView().findViewById(R.id.editText_driverProfile_carType);
         saveButton = getView().findViewById(R.id.button_driverProfile_saveButton);
         assert getActivity() != null;
+
         driver = ((DriverMapsActivity)getActivity()).getDriver();
 
+        if (driver != null) {
+            username.setText(driver.getName());
+            email.setText(driver.getEmail());
+        }
+
+        username.setEnabled(false);
+        email.setEnabled(false);
 
         rootRef = FirebaseDatabase.getInstance().getReference();
     //    Toast.makeText(getActivity(), "ID: " + driver.getID(), Toast.LENGTH_LONG).show();
-        profRef = rootRef.child("Users").child("Drivers").child(driver.getID());
+        profRef = rootRef.child("Users").child("Drivers").child(driver.getID()).child("Profile");
 
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
@@ -74,8 +82,6 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
                 //noinspection unchecked
                 HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
                 assert value != null;
-                username.setText(value.get("userName"));
-                email.setText(value.get("email"));
                 mobile.setText(value.get("mobile"));
                 carType.setText(value.get("carType"));
             }
@@ -93,9 +99,7 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
                         !String.valueOf(email.getText()).isEmpty() &&
                         !String.valueOf(mobile.getText()).isEmpty() &&
                         !String.valueOf(carType.getText()).isEmpty()) {
-                            DatabaseReference profModify = rootRef.child("Users").child("Drivers").child(driver.getID());
-                            profModify.child("userName").setValue(String.valueOf(username.getText()));
-                            profModify.child("email").setValue(String.valueOf(email.getText()));
+                            DatabaseReference profModify = rootRef.child("Users").child("Drivers").child(driver.getID()).child("Profile");
                             profModify.child("mobile").setValue(String.valueOf(mobile.getText()));
                             profModify.child("carType").setValue(String.valueOf(carType.getText()));
                             Toast.makeText(getActivity(), "Changes Saved Successfully", Toast.LENGTH_LONG).show();
