@@ -10,28 +10,185 @@
         android:id="@+id/familyViewInfo"
         android:layout_width="247dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="36dp"
         android:text="@string/textView_family_view"
         android:textColor="@color/colorBlack"
         android:textSize="25sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.116"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/familyViewDemo"
-        android:layout_width="168dp"
-        android:layout_height="116dp"
-        android:layout_marginBottom="244dp"
-        android:text="Family View"
-        android:gravity="center"
-        android:textSize="17sp"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+    <EditText
+        android:id="@+id/editText_family_name1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/textView_family_name_hint"
+        app:layout_constraintBaseline_toBaselineOf="@+id/editText_family_mobile1"
+        app:layout_constraintEnd_toStartOf="@+id/editText_family_mobile1"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/editText_family_mobile1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:layout_marginEnd="23dp"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="11"
+        android:hint="@string/textView_family_mobile_hint"
+        app:layout_constraintBottom_toTopOf="@+id/editText_family_mobile2"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton_family_add1"
+        app:layout_constraintStart_toEndOf="@+id/editText_family_name1"
         app:layout_constraintTop_toBottomOf="@+id/familyViewInfo" />
+
+    <ImageButton
+        android:id="@+id/imageButton_family_add1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/todo"
+        android:src="@drawable/addfamilybuttondrawable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editText_family_mobile1"
+        app:layout_constraintTop_toTopOf="@+id/editText_family_mobile1" />
+
+
+    <ImageButton
+        android:id="@+id/imageButton_family_edit1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/removefamilybuttondrawable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageButton_family_add1"
+        app:layout_constraintTop_toTopOf="@+id/imageButton_family_add1"
+        android:contentDescription="@string/todo" />
+
+    <EditText
+        android:id="@+id/editText_family_name2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="14dp"
+        android:layout_marginStart="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/textView_family_name_hint"
+        app:layout_constraintBaseline_toBaselineOf="@+id/editText_family_mobile2"
+        app:layout_constraintEnd_toStartOf="@+id/editText_family_mobile2"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/editText_family_mobile2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="31dp"
+        android:layout_marginEnd="26dp"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="11"
+        android:hint="@string/textView_family_mobile_hint"
+        app:layout_constraintBottom_toTopOf="@+id/editText_family_mobile3"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton_family_add2"
+        app:layout_constraintStart_toEndOf="@+id/editText_family_name2"
+        app:layout_constraintTop_toBottomOf="@+id/editText_family_mobile1" />
+
+    <ImageButton
+        android:id="@+id/imageButton_family_add2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/addfamilybuttondrawable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editText_family_mobile2"
+        app:layout_constraintTop_toTopOf="@+id/editText_family_mobile2"
+        android:contentDescription="@string/todo" />
+
+    <ImageButton
+        android:id="@+id/imageButton_family_edit2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/removefamilybuttondrawable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageButton_family_add2"
+        app:layout_constraintTop_toTopOf="@+id/imageButton_family_add2"
+        android:contentDescription="@string/todo" />
+
+    <EditText
+        android:id="@+id/editText_family_name3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="21dp"
+        android:layout_marginStart="16dp"
+        android:ems="10"
+        android:hint="@string/textView_family_name_hint"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/editText_family_mobile3"
+        app:layout_constraintEnd_toStartOf="@+id/editText_family_mobile3"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/editText_family_mobile3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="60dp"
+        android:ems="10"
+        android:hint="@string/textView_family_mobile_hint"
+        android:inputType="number"
+        android:maxLength="11"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton_family_add3"
+        app:layout_constraintStart_toEndOf="@+id/editText_family_name3"
+        app:layout_constraintTop_toBottomOf="@+id/editText_family_mobile2" />
+
+    <ImageButton
+        android:id="@+id/imageButton_family_add3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/todo"
+        android:src="@drawable/addfamilybuttondrawable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editText_family_mobile3"
+        app:layout_constraintTop_toTopOf="@+id/editText_family_mobile3" />
+
+    <ImageButton
+        android:id="@+id/imageButton_family_edit3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/todo"
+        android:src="@drawable/removefamilybuttondrawable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageButton_family_add3"
+        app:layout_constraintTop_toTopOf="@+id/imageButton_family_add3" />
+
+    <ImageButton
+        android:id="@+id/imageButton_family_request"
+        android:layout_width="133dp"
+        android:layout_height="69dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="64dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/todo"
+        android:src="@drawable/requestforfamilydrawable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageButton_family_add3" />
+
 
 </android.support.constraint.ConstraintLayout>

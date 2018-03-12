@@ -73,6 +73,8 @@ public class LoginActivity extends AppCompatActivity {
                     currentUser.child("Profile").child("FirstConstantProf").setValue(true);
                     currentUser.child("Trips").child("trip1").child("FirstConstantTrip").setValue(true);
                     currentUser.child("Vehicles").child("vehicle1").child("FirstConstantVehicle").setValue(true);
+                    currentUser.child("Family").child("FirstConstantFamily").setValue(true);
+
 
                     //currentUser.setValue(true); // to allow changes to happen
 

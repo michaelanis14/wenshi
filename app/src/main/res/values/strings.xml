@@ -111,5 +111,10 @@
 
     <string name="textView_family_addNew">Add Family Member</string>
     <string name="arrived">ARRIVED</string>
-
+    <string name="textView_family_name_hint">Name</string>
+    <string name="textView_family_mobile_hint">Mobile</string>
+    <string name="textView_family_member_label">Family Member</string>
+    <string name="textView_family_member_location">Member Location</string>
+    <string name="editText_family_member_location">Current Location</string>
+    <string name="textView_family_payment">Payment Method</string>
 </resources>
