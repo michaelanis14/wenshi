@@ -122,7 +122,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private LinearLayout monlineOfflineLayout;
     private Button accept_btn;
     private PopupWindow mPopupWindow;
-    private UserModel cutomerMod = null ;
+    private UserModel cutomerMod = null;
     private Context mContext;
     private GetDirectionsData getDirectionsData;
     private Fragment currentFragment;
@@ -247,7 +247,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
                         GeoFire geoDriverLocation = new GeoFire(driverAvalbl.child(dataSnapshot.getKey()));
                         try {
-                            JSONObject cust =  new JSONObject(((String)dataSnapshot.child("Customer").getValue()));
+                            JSONObject cust = new JSONObject(((String) dataSnapshot.child("Customer").getValue()));
                             String name = cust.getString("Name");
                             String email = cust.getString("email");
                             String id = cust.getString("ID");
@@ -255,14 +255,12 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             String lat = cust.getString("Latitude");
                             String longt = cust.getString("Longitude");
                             String address = cust.getString("Address");
-                            VehicleModel defaultVehicle = new VehicleModel(cust.getJSONObject("Vehicle").getString("type"),cust.getJSONObject("Vehicle").getString("model"));
+                            VehicleModel defaultVehicle = new VehicleModel(cust.getJSONObject("Vehicle").getString("type"), cust.getJSONObject("Vehicle").getString("model"));
 
-                            cutomerMod = new UserModel(id, name, email, mobile, Double.parseDouble(lat), Double.parseDouble(longt), address,defaultVehicle);
-
-                            Log.i("UserModel JSON",cust.toString());
+                            cutomerMod = new UserModel(id, name, email, mobile, Double.parseDouble(lat), Double.parseDouble(longt), address, defaultVehicle);
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            cutomerMod = new UserModel("","","","","");
+                            cutomerMod = new UserModel("", "", "", "", "");
                         }
 
 
@@ -277,26 +275,30 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                                     cutomerMod.setLongitude(location.longitude);
                                     markers.put(key, mDriverMarker);
                                     marksCameraUpdate();
-                                   }
+                                }
                             }
+
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
                                 System.err.println("There was an error getting the GeoFire location: " + databaseError);
                             }
                         });
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
-                        showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi" );
+                        hidePopup();
+                        showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi");
 
                     } else if (!requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
                     }
                 }
+
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
                 }
+
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    if (onRout && cutomerMod != null && !cutomerMod.getID().isEmpty() && requestsMap.containsKey(dataSnapshot.getKey()) && cutomerMod.getID().equals(dataSnapshot.getKey()) ) {
+                    if (onRout && cutomerMod != null && !cutomerMod.getID().isEmpty() && requestsMap.containsKey(dataSnapshot.getKey()) && cutomerMod.getID().equals(dataSnapshot.getKey())) {
                         cutomerMod = null;
                         onRout = false;
                         driverViewStateControler(ONLINE);
@@ -316,14 +318,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         hidePopup();
                         displayLocation();
                     }
-                    else{
-                        //Error State
-                        cutomerMod = null;
-                        onRout = false;
-                        driverViewStateControler(ONLINE);
-                        clearMarkers();
-                        displayLocation();
-                    }
+
 
                 }
 
@@ -355,8 +350,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         }
         LatLngBounds bounds = builder.build();
         int padding = 200; // offset from edges of the map in pixels
-        if(onRout)
-            padding = 100;
+        if (onRout) padding = 100;
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
         //mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
         mMap.animateCamera(cu);
@@ -551,7 +545,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         super.onStop();
         hidePopup();
         //  offline();
-       // hidePopup();
+        // hidePopup();
         //  if (geoQuery != null) this.geoQuery.removeAllListeners();
         // LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this); //to remove the listener
         // FirebaseDatabase.getInstance().getReference("DriversAvailable").child(userId).removeValue();
@@ -702,36 +696,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private void showPopup(String title, String line1, String line2, String line3, String line4) {
 
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-
-        // Inflate the custom layout/view
         View popupLayout = inflater.inflate(R.layout.popup_layout, null);
-
-                /*
-                    public PopupWindow (View contentView, int width, int height)
-                        Create a new non focusable popup window which can display the contentView.
-                        The dimension of the window must be passed to this constructor.
-
-                        The popup does not provide any background. This should be handled by
-                        the content view.
-
-                    Parameters
-                        contentView : the popup's content
-                        width : the popup's width
-                        height : the popup's height
-                */
-        // Initialize a new instance of popup window
-        Log.i("Pramas", "" + ViewGroup.LayoutParams.MATCH_PARENT);
-        if (mPopupWindow == null)
-            mPopupWindow = new PopupWindow(popupLayout, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        // Set an elevation value for popup window
-        // Call requires API level 21
+        mPopupWindow = new PopupWindow(popupLayout, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         if (Build.VERSION.SDK_INT >= 21) {
             mPopupWindow.setElevation(5.0f);
         }
-
-        // Get a reference for the custom view close button
-        // ImageButton closeButton = (ImageButton) popupLayout.findViewById(R.id.ib_close);
 
         if (!title.trim().isEmpty()) {
             ((TextView) popupLayout.findViewById(R.id.title_popup)).setVisibility(View.VISIBLE);
@@ -745,30 +714,22 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         } else ((TextView) popupLayout.findViewById(R.id.body_popup)).setVisibility(View.INVISIBLE);
 
         if (!line2.trim().isEmpty()) {
+            ((TextView) popupLayout.findViewById(R.id.body1_popup)).setVisibility(View.VISIBLE);
             ((TextView) popupLayout.findViewById(R.id.body1_popup)).setText(line2);
         } else
             ((TextView) popupLayout.findViewById(R.id.body1_popup)).setVisibility(View.INVISIBLE);
 
         if (!line3.trim().isEmpty()) {
+            ((TextView) popupLayout.findViewById(R.id.body2_popup)).setVisibility(View.VISIBLE);
             ((TextView) popupLayout.findViewById(R.id.body2_popup)).setText(line3);
         } else
             ((TextView) popupLayout.findViewById(R.id.body2_popup)).setVisibility(View.INVISIBLE);
 
         if (!line4.trim().isEmpty()) {
+            ((TextView) popupLayout.findViewById(R.id.body3_popup)).setVisibility(View.VISIBLE);
             ((TextView) popupLayout.findViewById(R.id.body3_popup)).setText(line4);
         } else
             ((TextView) popupLayout.findViewById(R.id.body3_popup)).setVisibility(View.INVISIBLE);
-
-
-        // Set a click listener for the popup window close button
-        //closeButton.setOnClickListener(new View.OnClickListener() {
-        //     @Override
-        //      public void onClick(View view) {
-        //          // Dismiss the popup window
-        //         mPopupWindow.dismiss();
-        //    }
-        //   });
-
         mRelativeLayout.post(new Runnable() {
             public void run() {
                 if (!mPopupWindow.isShowing())
@@ -796,7 +757,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             declineOtherRequests();
 
 
-            }
+        }
     }
 
     private void declineOtherRequests() {
@@ -823,13 +784,20 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private void showRout() {
         mMap.clear();
         clearMarkers();
+        if (cutomerMod != null && !cutomerMod.getID().isEmpty()) {
+            Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(cutomerMod.getLatitude(), cutomerMod.getLongitude())).title(cutomerMod.getName()));
+            markers.put(cutomerMod.getID(), mDriverMarker);
+        }
+        displayLocation();
+
+
         Object dataTransfer[] = new Object[2];
         dataTransfer = new Object[5];
         String url = getDirectionsUrl();
         getDirectionsData = new GetDirectionsData(this);
         dataTransfer[0] = mMap;
         dataTransfer[1] = url;
-        if (cutomerMod != null && !cutomerMod.getID().isEmpty() ) {
+        if (cutomerMod != null && !cutomerMod.getID().isEmpty()) {
             dataTransfer[2] = new LatLng(cutomerMod.getLatitude(), cutomerMod.getLongitude());
         }
         dataTransfer[3] = duration;
@@ -843,7 +811,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private String getDirectionsUrl() {
         StringBuilder googleDirectionsUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
         googleDirectionsUrl.append("origin=" + mLastLocation.getLatitude() + "," + mLastLocation.getLongitude());
-        if (cutomerMod != null && !cutomerMod.getID().isEmpty() ) {
+        if (cutomerMod != null && !cutomerMod.getID().isEmpty()) {
             googleDirectionsUrl.append("&destination=" + cutomerMod.getLatitude() + "," + cutomerMod.getLongitude());
         }
 
@@ -887,7 +855,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 mBottomSheet.setVisibility(View.INVISIBLE);
                 monlineOfflineLayout.setVisibility(View.VISIBLE);
                 swtch_onlineOffline.setVisibility(View.INVISIBLE);
-                mBottomTextView.setText(getResources().getString(R.string.eta)+ " "+ getDirectionsData.getDuration());
+                mBottomTextView.setText(getResources().getString(R.string.eta) + " " + getDirectionsData.getDuration());
                 CURRENTSTATE = driverState;
                 break;
             case ARRIVE:
@@ -917,14 +885,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     @Override
     public void gotDurationDistanceRout(String output) {
         driverViewStateControler(ONROUT); //must be after showRout to get the correct duration
-       if(cutomerMod != null && !cutomerMod.getID().isEmpty()) {
-           Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(cutomerMod.getLatitude(), cutomerMod.getLongitude())).title(cutomerMod.getName()));
-           markers.put(cutomerMod.getID(), mDriverMarker);
-       }
-        displayLocation();
-
     }
-
 
 
 }
