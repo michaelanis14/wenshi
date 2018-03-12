@@ -77,10 +77,18 @@ public class LoginActivity extends AppCompatActivity {
 
 
                     //currentUser.setValue(true); // to allow changes to happen
+                    try {
+                        Intent customerIntent = new Intent(LoginActivity.this, CustomerMapActivity.class);
+                        customerIntent.putExtra("CurrentUser", currenctUserModel);
+                        startActivity(customerIntent);
+                    } catch (Exception e) {
+                        Log.i("Exception @ Customer", e.toString());
+                        Intent customerIntent = new Intent(LoginActivity.this, CustomerMapActivity.class);
+                        customerIntent.putExtra("CurrentUser", currenctUserModel);
+                        startActivity(customerIntent);
+                    }
 
-                    Intent customerIntent = new Intent(LoginActivity.this, CustomerMapActivity.class);
-                    customerIntent.putExtra("CurrentUser", currenctUserModel);
-                    startActivity(customerIntent);
+
                 } else {
 
 
@@ -95,11 +103,17 @@ public class LoginActivity extends AppCompatActivity {
                     reqInit.setValue(true); // to allow changes to happen
                     DatabaseReference currentLocInit = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("CurrentLocation");
                     currentLocInit.setValue(true); // to allow changes to happen
+                    try {
 
-
-                    Intent driverIntent = new Intent(LoginActivity.this, DriverMapsActivity.class);
-                    driverIntent.putExtra("CurrentUser", currenctUserModel);
-                    startActivity(driverIntent);
+                        Intent driverIntent = new Intent(LoginActivity.this, DriverMapsActivity.class);
+                        driverIntent.putExtra("CurrentUser", currenctUserModel);
+                        startActivity(driverIntent);
+                    } catch (Exception e) {
+                        Log.i("Exception @ Driver", e.toString());
+                        Intent driverIntent = new Intent(LoginActivity.this, DriverMapsActivity.class);
+                        driverIntent.putExtra("CurrentUser", currenctUserModel);
+                        startActivity(driverIntent);
+                    }
                 }
                 finish();
                 return;
@@ -133,8 +147,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void showSnackbar(@StringRes int errorMessageRes) {
-        if(this != null)
-         Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_LONG).show();
+        if (this != null) Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_LONG).show();
     }
 
 }
