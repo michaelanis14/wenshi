@@ -9,5 +9,6 @@
 
     <!-- Michael Abadir -->
     <color name="colorBlack">#000000</color>
+    <color name="colorGrey">#d4d4d4</color>
 
 </resources>
