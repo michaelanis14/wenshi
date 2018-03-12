@@ -110,5 +110,6 @@
     <string name="reqwestingWenshi">Requesting Wenshi..</string>
 
     <string name="textView_family_addNew">Add Family Member</string>
+    <string name="arrived">ARRIVED</string>
 
 </resources>

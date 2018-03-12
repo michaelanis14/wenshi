@@ -81,12 +81,20 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private static final long UPDATE_INTERVAL = 5000;
     private static final long FASTEST_INTERVAL = 3000;
     private static final float DISPLACMENT = 10;
+
     private static final int ONLINE = 0;
     private static final int NEWREQ = 1;
     private static final int ONROUT = 2;
     private static final int ARRIVE = 3;
     private static final int OFFLINE = 5;
     private static final int SIDENAV = 6;
+    private static final int NEARCUSTOMER = 7;
+    private static final int ARRIVED = 8;
+    private static final int TODISTINATION = 9;
+    private static final int ENDTRIP = 10;
+    private static final int RATE = 11;
+
+
     //static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
     final int MY_PERMISSION_REQ_CODE = 1234;
     final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
@@ -121,6 +129,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private LinearLayout mRelativeLayout;
     private LinearLayout monlineOfflineLayout;
     private Button accept_btn;
+    private Button bottomButton2_btn;
     private PopupWindow mPopupWindow;
     private UserModel cutomerMod = null;
     private Context mContext;
@@ -145,8 +154,13 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         mRelativeLayout = (LinearLayout) findViewById(R.id.drive_main_layout);
         monlineOfflineLayout = (LinearLayout) findViewById(R.id.onlineOfflineLayout);
         swtch_onlineOffline = findViewById(R.id.onlineOffline_swtch);
+
         accept_btn = (Button) findViewById(R.id.accept_to_wenshi);
+        bottomButton2_btn = (Button) findViewById(R.id.btn_2);
         accept_btn.setOnClickListener(this);
+        bottomButton2_btn.setOnClickListener(this);
+
+
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.driver_map);
         mapFragment.getMapAsync(this);
         driverLocation = FirebaseDatabase.getInstance().getReference("DriversAvailable");
@@ -236,15 +250,12 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private void reciveRequests(boolean state) {
 
         if (state) {
+            driverViewStateControler(ONLINE);
             driverAvalbl = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests");
-
             driverAvalbl.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                     if (requestsMap.size() == 0 && !requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
-
-                        driverViewStateControler(NEWREQ);
-
                         GeoFire geoDriverLocation = new GeoFire(driverAvalbl.child(dataSnapshot.getKey()));
                         try {
                             JSONObject cust = new JSONObject(((String) dataSnapshot.child("Customer").getValue()));
@@ -269,24 +280,27 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             public void onLocationResult(String key, GeoLocation location) {
                                 if (location != null) {
 
-                                    driverViewStateControler(NEWREQ);
+
                                     Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).title(cutomerMod.getName()));
                                     cutomerMod.setLatitude(location.latitude);
                                     cutomerMod.setLongitude(location.longitude);
                                     markers.put(key, mDriverMarker);
+
+                                    driverViewStateControler(NEWREQ);
                                     marksCameraUpdate();
+                                    hidePopup();
+                                    showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi");
+
                                 }
                             }
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
+                                driverViewStateControler(ONLINE);
                                 System.err.println("There was an error getting the GeoFire location: " + databaseError);
                             }
                         });
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
-                        hidePopup();
-                        showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi");
-
                     } else if (!requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
                     }
@@ -299,24 +313,31 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     if (onRout && cutomerMod != null && !cutomerMod.getID().isEmpty() && requestsMap.containsKey(dataSnapshot.getKey()) && cutomerMod.getID().equals(dataSnapshot.getKey())) {
+                        Log.i("REMOVE CURRENT CUSTOMER", cutomerMod.getID());
+                        Toast.makeText(mContext, cutomerMod.getName() + " CANCELLED", Toast.LENGTH_SHORT).show();
+
                         cutomerMod = null;
                         onRout = false;
-                        driverViewStateControler(ONLINE);
-                        clearMarkers();
-                        displayLocation();
                         requestsMap.remove(dataSnapshot.getKey());
+                        driverViewStateControler(ONLINE);
+                        displayLocation();
+
                     } else if (requestsMap.containsKey(dataSnapshot.getKey()) && requestsMap.size() > 1) {
                         requestsMap.remove(dataSnapshot.getKey());
                         DataSnapshot nextCustomer = (new ArrayList<DataSnapshot>(requestsMap.values())).get(0);
                         requestsMap.remove(nextCustomer.getKey());
+
                         onChildAdded(nextCustomer, "");
                     } else if (requestsMap.size() == 1) {
-                        cutomerMod = null;
-                        driverViewStateControler(ONLINE);
+                        Log.i("REMOVingg", dataSnapshot.getKey());
+                        Log.i("REMOVingg", cutomerMod.getID());
+                        if (cutomerMod.getID().equals(dataSnapshot.getKey())) cutomerMod = null;
+                        if (!onRout) driverViewStateControler(ONLINE);
                         requestsMap.remove(dataSnapshot.getKey());
-                        clearMarkers();
                         hidePopup();
                         displayLocation();
+                        // if (onRout && dataSnapshot.getKey().equals(cutomerMod.getID()))
+                        //    Toast.makeText(mContext, cutomerMod.getName() + " CANCELLED", Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -330,7 +351,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 public void onCancelled(DatabaseError databaseError) {
                 }
             });
-            driverViewStateControler(ONLINE);
+
             displayLocation();
         } else {
             if (driverAvalbl != null && geoFireDriverRequests != null)
@@ -469,37 +490,12 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
-        displayLocation();
-/*
-        Log.i("TEXT", "onLocationChanged: " + location.toString());
-        if (getApplicationContext() != null) {
-
-            mLastLocation = location;
-            LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15));
-            //mMap.animateCamera(CameraUpdateFactory.zoomTo(11)); //to focus on the center could be changed later
-
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            DatabaseReference driversAvailableRef = FirebaseDatabase.getInstance().getReference("DriversAvailable");
-            GeoFire geoFireDriversAvailable = new GeoFire(driversAvailableRef);
-            DatabaseReference driversWorkingRef = FirebaseDatabase.getInstance().getReference("DriversOnTrips");
-            GeoFire geoFireDriversOnTrip = new GeoFire(driversWorkingRef);
-
-            switch (assignedCustomer) {
-                case "":
-                    geoFireDriversOnTrip.removeLocation(userId);
-                    geoFireDriversAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
-                    break;
-
-                default:
-                    geoFireDriversAvailable.removeLocation(userId);
-                    geoFireDriversOnTrip.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
-                    break;
-            }
-
+        if (driverMod != null) {
+            driverMod.setLatitude(location.getLatitude());
+            driverMod.setLongitude(location.getLongitude());
         }
-*/
-
+        displayLocation();
+        if (onRout && nearCustomer()) driverViewStateControler(NEARCUSTOMER);
     }
 
 
@@ -750,9 +746,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private void acceptRequest() {
 
         if (cutomerMod != null) {
+
+            driverViewStateControler(ONROUT);
             hidePopup();
             driverLocation.child(userId).removeValue();
-            onRout = true;
+
             showRout();
             declineOtherRequests();
 
@@ -777,6 +775,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         switch (view.getId()) {
             case R.id.accept_to_wenshi:
                 acceptRequest();
+            case R.id.btn_2:
+                if (CURRENTSTATE == NEARCUSTOMER)
+                    Toast.makeText(this, "NEAR CUSTOMER", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -785,8 +786,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         mMap.clear();
         clearMarkers();
         if (cutomerMod != null && !cutomerMod.getID().isEmpty()) {
-            Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(cutomerMod.getLatitude(), cutomerMod.getLongitude())).title(cutomerMod.getName()));
-            markers.put(cutomerMod.getID(), mDriverMarker);
+            Marker customerMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(cutomerMod.getLatitude(), cutomerMod.getLongitude())).title(cutomerMod.getName()));
+            markers.put(cutomerMod.getID(), customerMarker);
         }
         displayLocation();
 
@@ -834,41 +835,58 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private void driverViewStateControler(int driverState) {
         switch (driverState) {
             case ONLINE:
+                Log.i("STATE", "ONLINE");
+                clearMarkers();
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 swtch_onlineOffline.setVisibility(View.VISIBLE);
                 mBottomTextView.setText(getResources().getString(R.string.online));
                 mBottomSheet.setVisibility(View.INVISIBLE);
                 monlineOfflineLayout.setVisibility(View.VISIBLE);
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                bottomButton2_btn.setVisibility(View.INVISIBLE);
+                accept_btn.setVisibility(View.VISIBLE);
                 CURRENTSTATE = driverState;
                 break;
             case NEWREQ:
+                Log.i("STATE", "NEWREQ");
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 monlineOfflineLayout.setVisibility(View.GONE);
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                clearMarkers();
+                // clearMarkers();
+                bottomButton2_btn.setVisibility(View.INVISIBLE);
+                accept_btn.setVisibility(View.VISIBLE);
                 CURRENTSTATE = driverState;
                 break;
             case ONROUT:
+                Log.i("STATE", "ONROUT");
+                onRout = true;
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.INVISIBLE);
                 monlineOfflineLayout.setVisibility(View.VISIBLE);
                 swtch_onlineOffline.setVisibility(View.INVISIBLE);
-                mBottomTextView.setText(getResources().getString(R.string.eta) + " " + getDirectionsData.getDuration());
+
+                accept_btn.setVisibility(View.INVISIBLE);
+                bottomButton2_btn.setVisibility(View.INVISIBLE);
                 CURRENTSTATE = driverState;
                 break;
             case ARRIVE:
+                Log.i("STATE", "ARR");
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 CURRENTSTATE = driverState;
+                bottomButton2_btn.setVisibility(View.INVISIBLE);
+                accept_btn.setVisibility(View.VISIBLE);
                 break;
             case OFFLINE:
+                Log.i("STATE", "OFF");
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 monlineOfflineLayout.setVisibility(View.VISIBLE);
                 swtch_onlineOffline.setVisibility(View.VISIBLE);
                 mBottomTextView.setText(getResources().getString(R.string.offline));
-                CURRENTSTATE = driverState;
+                accept_btn.setVisibility(View.VISIBLE);
+                bottomButton2_btn.setVisibility(View.INVISIBLE);
                 clearMarkers();
+                CURRENTSTATE = driverState;
                 break;
             case SIDENAV:
                 findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
@@ -877,6 +895,18 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 mBottomSheet.setVisibility(View.GONE);
                 monlineOfflineLayout.setVisibility(View.GONE);
                 break;
+
+            case NEARCUSTOMER:
+                Log.i("STATE", "NEAR");
+                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                mBottomSheet.setVisibility(View.VISIBLE);
+                monlineOfflineLayout.setVisibility(View.GONE);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                accept_btn.setVisibility(View.GONE);
+                bottomButton2_btn.setVisibility(View.VISIBLE);
+                bottomButton2_btn.setText(getString(R.string.arrived));
+                CURRENTSTATE = driverState;
+                break;
         }
 
 
@@ -884,8 +914,26 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
     @Override
     public void gotDurationDistanceRout(String output) {
-        driverViewStateControler(ONROUT); //must be after showRout to get the correct duration
+        mBottomTextView.setText(getResources().getString(R.string.eta) + " " + getDirectionsData.getDuration());
+        //   driverViewStateControler(ONROUT); //must be after showRout to get the correct duration
     }
 
+    private boolean nearCustomer() {
+        Log.i("NEAR CUSTOMER", "" + (cutomerMod != null) + (driverMod != null));
+        if (cutomerMod != null && driverMod != null) {
 
+            Location driversAvlbl = new Location("");
+            driversAvlbl.setLatitude(driverMod.getLatitude());
+            driversAvlbl.setLongitude(driverMod.getLongitude());
+
+            Location pickupLoc = new Location("");
+            pickupLoc.setLatitude(cutomerMod.getLatitude());
+            pickupLoc.setLongitude(cutomerMod.getLongitude());
+            Log.i("Distancee", "" + driversAvlbl.distanceTo(pickupLoc));
+            if (driversAvlbl.distanceTo(pickupLoc) < 300) {
+                return true;
+            } else return false;
+        }
+        else return false;
+    }
 }

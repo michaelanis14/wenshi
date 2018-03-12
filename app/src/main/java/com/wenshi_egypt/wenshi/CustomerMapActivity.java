@@ -468,6 +468,7 @@ public class CustomerMapActivity extends AppCompatActivity implements View.OnCli
                 driverFound = true;
 
                 driversID.add(key);
+                geoQuery.removeAllListeners();
                 DatabaseReference driver = requestDriver.child(key).child("Requests").child(userId);
 
                 HashMap requestDetails = new HashMap();

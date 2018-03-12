@@ -107,7 +107,7 @@ class DataParser {
         int count = jsonArray.length();
         List<HashMap<String,String>> placesList = new ArrayList<>();
         HashMap<String,String> placeMap = null;
-        Log.d("Places", "getPlaces");
+       // Log.d("Places", "getPlaces");
 
         for(int i = 0;i<count;i++)
         {
@@ -129,7 +129,7 @@ class DataParser {
         JSONObject jsonObject;
 
         try {
-            Log.d("Places", "parse");
+           // Log.d("Places", "parse");
 
             jsonObject = new JSONObject(jsonData);
             jsonArray = jsonObject.getJSONArray("results");
@@ -149,9 +149,9 @@ class DataParser {
 
         try {
             jsonObject = new JSONObject(jsonData);
-            Log.i("Parsed Data",jsonObject.toString());
+            //Log.i("Parsed Data",jsonObject.toString());
             this.jsonArray =jsonObject.getJSONArray("routes");
-            Log.i("Parsed Data Json2",this.jsonArray.toString());
+            //Log.i("Parsed Data Json2",this.jsonArray.toString());
             jsonArrLegs = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs");
 
             jsonArray = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONArray("steps");
