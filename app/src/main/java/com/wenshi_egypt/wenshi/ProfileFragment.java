@@ -83,11 +83,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                @SuppressWarnings("unchecked") HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
-                mobile.setText(value.get("mobile"));
-                carType.setText(value.get("carType"));
-                model.setText(value.get("model"));
-                address.setText(value.get("address"));
+                if(dataSnapshot.getChildrenCount() > 2) {
+                    @SuppressWarnings("unchecked") HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
+                    mobile.setText(value.get("mobile"));
+                    carType.setText(value.get("carType"));
+                    model.setText(value.get("model"));
+                    address.setText(value.get("address"));
+                }
             }
 
             @Override

@@ -3,6 +3,7 @@ package com.wenshi_egypt.wenshi;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -135,6 +136,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         setContentView(R.layout.activity_driver_maps);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
         Intent i = getIntent();
         driverMod = (UserModel) i.getParcelableExtra("CurrentUser");
@@ -241,7 +243,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                     if (requestsMap.size() == 0 && !requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
 
-                        buttomSheetVisibility(NEWREQ);
+                        driverViewStateControler(NEWREQ);
 
                         GeoFire geoDriverLocation = new GeoFire(driverAvalbl.child(dataSnapshot.getKey()));
                         try {
@@ -268,47 +270,36 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             @Override
                             public void onLocationResult(String key, GeoLocation location) {
                                 if (location != null) {
-                                    Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).title("Wenshi"));
+
+                                    driverViewStateControler(NEWREQ);
+                                    Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).title(cutomerMod.getName()));
                                     cutomerMod.setLatitude(location.latitude);
                                     cutomerMod.setLongitude(location.longitude);
                                     markers.put(key, mDriverMarker);
-                                    buttomSheetVisibility(NEWREQ);
                                     marksCameraUpdate();
-                                    //    getDistanceBetweenPickUpToDriver(new LatLng(location.latitude, location.longitude));
-                                } else {
-                                    System.out.println(String.format("customer uid for %s", userId));
-
-                                    System.out.println(String.format("There is no location for key %s in GeoFire", key));
-                                }
+                                   }
                             }
-
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
                                 System.err.println("There was an error getting the GeoFire location: " + databaseError);
                             }
                         });
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
-                        //  break;
-
-                       // hidePopup();
-                       // showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi" );
                         showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi" );
 
                     } else if (!requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
                     }
                 }
-
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
                 }
-
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
                     if (onRout && cutomerMod != null && !cutomerMod.getID().isEmpty() && requestsMap.containsKey(dataSnapshot.getKey()) && cutomerMod.getID().equals(dataSnapshot.getKey()) ) {
                         cutomerMod = null;
                         onRout = false;
-                        buttomSheetVisibility(ONLINE);
+                        driverViewStateControler(ONLINE);
                         clearMarkers();
                         displayLocation();
                         requestsMap.remove(dataSnapshot.getKey());
@@ -319,7 +310,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         onChildAdded(nextCustomer, "");
                     } else if (requestsMap.size() == 1) {
                         cutomerMod = null;
-                        buttomSheetVisibility(ONLINE);
+                        driverViewStateControler(ONLINE);
                         requestsMap.remove(dataSnapshot.getKey());
                         clearMarkers();
                         hidePopup();
@@ -329,7 +320,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         //Error State
                         cutomerMod = null;
                         onRout = false;
-                        buttomSheetVisibility(ONLINE);
+                        driverViewStateControler(ONLINE);
                         clearMarkers();
                         displayLocation();
                     }
@@ -344,7 +335,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 public void onCancelled(DatabaseError databaseError) {
                 }
             });
-            buttomSheetVisibility(ONLINE);
+            driverViewStateControler(ONLINE);
             displayLocation();
         } else {
             if (driverAvalbl != null && geoFireDriverRequests != null)
@@ -364,6 +355,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         }
         LatLngBounds bounds = builder.build();
         int padding = 200; // offset from edges of the map in pixels
+        if(onRout)
+            padding = 100;
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
         //mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
         mMap.animateCamera(cu);
@@ -395,7 +388,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (mLastLocation != null) {
             if (myCurrent != null) myCurrent.remove();  //remove Old Marker
             LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-
+            myCurrent = mMap.addMarker(new MarkerOptions().position(loc));
 
             //update FireBase
             if (!onRout && swtch_onlineOffline != null && swtch_onlineOffline.isChecked()) {
@@ -411,19 +404,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 geoFireOnRoutLocation.setLocation("CurrentLocation", new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
                     @Override
                     public void onComplete(String key, DatabaseError error) {
-                        //Add Marker
-                        // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 15.0f));
-                        showRout();
-                        if(cutomerMod != null && !cutomerMod.getID().isEmpty() && markers.get(cutomerMod.getID()) != null)
-                            mMap.addMarker(new MarkerOptions().position(markers.get(cutomerMod.getID()).getPosition()));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), 25.0f));
-
+                        marksCameraUpdate();
                     }
                 });
 
             }
-            //  mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
-            myCurrent = mMap.addMarker(new MarkerOptions().position(loc));
 
         }
     }
@@ -457,16 +442,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         }
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -554,7 +529,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
     private void offline() {
         driverLocation.child(userId).removeValue();
-        buttomSheetVisibility(OFFLINE);
+        driverViewStateControler(OFFLINE);
         onRout = false;
     }
 
@@ -653,7 +628,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (currentFragment != null) {
-            buttomSheetVisibility(CURRENTSTATE);
+            driverViewStateControler(CURRENTSTATE);
             currentFragment = null;
         } else {
             super.onBackPressed();
@@ -700,7 +675,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             currentFragment = new HistoricFragment(false, getDriver().getID());
         }
         if (currentFragment != null) {
-            buttomSheetVisibility(SIDENAV);
+            driverViewStateControler(SIDENAV);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, currentFragment);
             ft.commit();
@@ -816,11 +791,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (cutomerMod != null) {
             hidePopup();
             driverLocation.child(userId).removeValue();
-
             onRout = true;
             showRout();
             declineOtherRequests();
-            displayLocation();
+
 
             }
     }
@@ -848,6 +822,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
     private void showRout() {
         mMap.clear();
+        clearMarkers();
         Object dataTransfer[] = new Object[2];
         dataTransfer = new Object[5];
         String url = getDirectionsUrl();
@@ -888,7 +863,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         return (googlePlacesUrl.toString());
     }
 
-    private void buttomSheetVisibility(int driverState) {
+    private void driverViewStateControler(int driverState) {
         switch (driverState) {
             case ONLINE:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
@@ -941,7 +916,15 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
     @Override
     public void gotDurationDistanceRout(String output) {
-        buttomSheetVisibility(ONROUT); //must be after showRout to get the correct duration
+        driverViewStateControler(ONROUT); //must be after showRout to get the correct duration
+       if(cutomerMod != null && !cutomerMod.getID().isEmpty()) {
+           Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(cutomerMod.getLatitude(), cutomerMod.getLongitude())).title(cutomerMod.getName()));
+           markers.put(cutomerMod.getID(), mDriverMarker);
+       }
+        displayLocation();
 
     }
+
+
+
 }
