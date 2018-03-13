@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,12 +102,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         profAddVehcile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), AddNewVehicle.class);
-                Bundle b = new Bundle();
-                b.putString("uid", ((CustomerMapActivity) getActivity()).getCustomer().getID());
-                intent.putExtras(b);
-                startActivity(intent);
-
+                //noinspection ConstantConditions
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.mainFrame, new AddNewVehicle());
+                ft.commit();
             }
         });
     /*
