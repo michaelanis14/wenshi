@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +29,8 @@ import java.util.HashMap;
 public class VehiclesFragment extends Fragment implements View.OnClickListener{
 
     DatabaseReference rootRef, vehicleRef;
-    TextView demoValue, addNewVehicle, noVehicle;
+    TextView demoValue, noVehicle;
+    ImageButton addNewVehicle;
     static String type, model;
     static String defType, defModel;
 
