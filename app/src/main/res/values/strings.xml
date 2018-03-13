@@ -117,4 +117,6 @@
     <string name="textView_family_member_location">Member Location</string>
     <string name="editText_family_member_location">Current Location</string>
     <string name="textView_family_payment">Payment Method</string>
+    <string name="takePhoto">TAKE PHOTOS</string>
+    <string name="start">START</string>
 </resources>

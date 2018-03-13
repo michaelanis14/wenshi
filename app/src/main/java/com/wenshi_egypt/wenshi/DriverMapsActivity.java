@@ -90,9 +90,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private static final int SIDENAV = 6;
     private static final int NEARCUSTOMER = 7;
     private static final int ARRIVED = 8;
-    private static final int TODISTINATION = 9;
-    private static final int ENDTRIP = 10;
-    private static final int RATE = 11;
+    private static final int TOOKPHOTOS = 9;
+    private static final int TODISTINATION = 10;
+    private static final int ENDTRIP = 11;
+    private static final int RATE = 12;
 
 
     //static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
@@ -128,7 +129,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private Switch swtch_onlineOffline;
     private LinearLayout mRelativeLayout;
     private LinearLayout monlineOfflineLayout;
-    private Button accept_btn;
+    private Button bottomButton1_btn;
     private Button bottomButton2_btn;
     private PopupWindow mPopupWindow;
     private UserModel cutomerMod = null;
@@ -155,9 +156,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         monlineOfflineLayout = (LinearLayout) findViewById(R.id.onlineOfflineLayout);
         swtch_onlineOffline = findViewById(R.id.onlineOffline_swtch);
 
-        accept_btn = (Button) findViewById(R.id.accept_to_wenshi);
+        bottomButton1_btn = (Button) findViewById(R.id.btn_1);
         bottomButton2_btn = (Button) findViewById(R.id.btn_2);
-        accept_btn.setOnClickListener(this);
+        bottomButton1_btn.setOnClickListener(this);
         bottomButton2_btn.setOnClickListener(this);
 
 
@@ -243,7 +244,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             }
 
         });
-        Log.i("mBottomSheetBehavio", "" + mBottomSheetBehavior.getPeekHeight());
+ //       Log.i("mBottomSheetBehavio", "" + mBottomSheetBehavior.getPeekHeight());
     }
 
 
@@ -380,12 +381,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
     private void setupLocation() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQ_CODE);
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_REQ_CODE);
         } else {
-            Log.i("else if", "@");
             if (checkPlayServices()) {
-                Log.i("in if", "@");
-
                 buildGoogleApiClient();
                 createLocationRequest();
                 displayLocation();
@@ -773,11 +772,17 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.accept_to_wenshi:
-                acceptRequest();
+            case R.id.btn_1:
+                if (CURRENTSTATE ==NEWREQ)
+                     acceptRequest();
+                if (CURRENTSTATE == ARRIVED)
+                    startActivity(new Intent(DriverMapsActivity.this, PostImageActivity.class));
+
+
+                break;
             case R.id.btn_2:
                 if (CURRENTSTATE == NEARCUSTOMER)
-                    Toast.makeText(this, "NEAR CUSTOMER", Toast.LENGTH_SHORT).show();
+                   driverViewStateControler(ARRIVED);
                 break;
         }
     }
@@ -844,7 +849,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 monlineOfflineLayout.setVisibility(View.VISIBLE);
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
-                accept_btn.setVisibility(View.VISIBLE);
+                bottomButton1_btn.setVisibility(View.INVISIBLE);
                 CURRENTSTATE = driverState;
                 break;
             case NEWREQ:
@@ -855,7 +860,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 // clearMarkers();
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
-                accept_btn.setVisibility(View.VISIBLE);
+                bottomButton1_btn.setVisibility(View.VISIBLE);
+                bottomButton1_btn.setText(getString(R.string.accept));
                 CURRENTSTATE = driverState;
                 break;
             case ONROUT:
@@ -866,7 +872,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 monlineOfflineLayout.setVisibility(View.VISIBLE);
                 swtch_onlineOffline.setVisibility(View.INVISIBLE);
 
-                accept_btn.setVisibility(View.INVISIBLE);
+                bottomButton1_btn.setVisibility(View.INVISIBLE);
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
                 CURRENTSTATE = driverState;
                 break;
@@ -875,15 +881,16 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 CURRENTSTATE = driverState;
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
-                accept_btn.setVisibility(View.VISIBLE);
+                bottomButton1_btn.setVisibility(View.VISIBLE);
                 break;
             case OFFLINE:
                 Log.i("STATE", "OFF");
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                mBottomSheet.setVisibility(View.INVISIBLE);
                 monlineOfflineLayout.setVisibility(View.VISIBLE);
                 swtch_onlineOffline.setVisibility(View.VISIBLE);
                 mBottomTextView.setText(getResources().getString(R.string.offline));
-                accept_btn.setVisibility(View.VISIBLE);
+                bottomButton1_btn.setVisibility(View.VISIBLE);
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
                 clearMarkers();
                 CURRENTSTATE = driverState;
@@ -902,9 +909,36 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 mBottomSheet.setVisibility(View.VISIBLE);
                 monlineOfflineLayout.setVisibility(View.GONE);
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                accept_btn.setVisibility(View.GONE);
+                bottomButton1_btn.setVisibility(View.GONE);
                 bottomButton2_btn.setVisibility(View.VISIBLE);
                 bottomButton2_btn.setText(getString(R.string.arrived));
+                CURRENTSTATE = driverState;
+                break;
+            case ARRIVED:
+                Log.i("STATE", "ARRIVED");
+                showPopup(getResources().getString(R.string.arrived), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi");
+                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                mBottomSheet.setVisibility(View.VISIBLE);
+                monlineOfflineLayout.setVisibility(View.GONE);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                bottomButton1_btn.setVisibility(View.VISIBLE);
+                bottomButton1_btn.setText(getString(R.string.takePhoto));
+                bottomButton2_btn.setVisibility(View.VISIBLE);
+                bottomButton2_btn.setText(getString(R.string.start));
+                bottomButton2_btn.setEnabled(false);
+                CURRENTSTATE = driverState;
+                break;
+            case TOOKPHOTOS:
+                Log.i("STATE", "TOOKPHOTOS");
+                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                mBottomSheet.setVisibility(View.VISIBLE);
+                monlineOfflineLayout.setVisibility(View.GONE);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                bottomButton1_btn.setVisibility(View.VISIBLE);
+                bottomButton2_btn.setText(getString(R.string.takePhoto));
+                bottomButton2_btn.setVisibility(View.VISIBLE);
+                bottomButton2_btn.setText(getString(R.string.start));
+                bottomButton2_btn.setEnabled(true);
                 CURRENTSTATE = driverState;
                 break;
         }
