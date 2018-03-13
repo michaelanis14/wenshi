@@ -24,12 +24,10 @@ import java.util.HashMap;
 
 public class FamilyViewFragment extends Fragment implements View.OnClickListener {
 
-    DatabaseReference rootRef, fm, fm1, fm2, fm3;
-    double vicDouble = Math.random() * 1000;
-    int vicCount = (int) vicDouble;
+    DatabaseReference rootRef, fm;
     EditText name1, name2, name3, mobile1, mobile2, mobile3;
     ImageButton add1, add2, add3, edit1, edit2, edit3, requestService;
-    static int count = 1;
+    @SuppressWarnings("unused")
     private FamilyViewFragment.OnFragmentInteractionListener mListener;
 
     @Nullable
@@ -60,37 +58,46 @@ public class FamilyViewFragment extends Fragment implements View.OnClickListener
 
         requestService = getView().findViewById(R.id.imageButton_family_request);
 
-        name1.setEnabled(false);
-        name2.setEnabled(false);
-        name3.setEnabled(false);
-        mobile1.setEnabled(false);
-        mobile2.setEnabled(false);
-        mobile3.setEnabled(false);
-
-        assert ((CustomerMapActivity) getActivity()) != null;
+        assert getActivity() != null;
 
         fm = rootRef.child("Users").child("Customers").child(((CustomerMapActivity) getActivity()).getCustomer().getID()).child("Family");
         fm.addValueEventListener(new ValueEventListener() {
+            @SuppressWarnings("unchecked")
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 HashMap<String, String> value;
-                if(dataSnapshot.hasChild("newMem1"))    {
+                if (dataSnapshot.hasChild("newMem1")) {
                     DataSnapshot mem1 = dataSnapshot.child("newMem1");
                     value = (HashMap<String, String>) mem1.getValue();
+                    assert value != null;
                     name1.setText(value.get("name"));
                     mobile1.setText(value.get("mobile"));
+                    if (!name1.getText().toString().isEmpty()) {
+                        name1.setEnabled(false);
+                        mobile1.setEnabled(false);
+                    }
                 }
-                if(dataSnapshot.hasChild("newMem2"))    {
+                if (dataSnapshot.hasChild("newMem2")) {
                     DataSnapshot mem2 = dataSnapshot.child("newMem2");
                     value = (HashMap<String, String>) mem2.getValue();
+                    assert value != null;
                     name2.setText(value.get("name"));
                     mobile2.setText(value.get("mobile"));
+                    if (!name2.getText().toString().isEmpty()) {
+                        name2.setEnabled(false);
+                        mobile2.setEnabled(false);
+                    }
                 }
-                if(dataSnapshot.hasChild("newMem3"))    {
+                if (dataSnapshot.hasChild("newMem3")) {
                     DataSnapshot mem3 = dataSnapshot.child("newMem3");
                     value = (HashMap<String, String>) mem3.getValue();
+                    assert value != null;
                     name3.setText(value.get("name"));
                     mobile3.setText(value.get("mobile"));
+                    if (!name3.getText().toString().isEmpty()) {
+                        name3.setEnabled(false);
+                        mobile3.setEnabled(false);
+                    }
                 }
             }
 
@@ -99,56 +106,6 @@ public class FamilyViewFragment extends Fragment implements View.OnClickListener
 
             }
         });
-
-
-        /*
-        fm1 = rootRef.child("Users").child("Customers").child(((CustomerMapActivity) getActivity()).getCustomer().getID()).child("Family");
-        fm1.child("newMem1").orderByKey().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
-                name1.setText(value.get("name"));
-                mobile1.setText(value.get("mobile"));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        fm2 = rootRef.child("Users").child("Customers").child(((CustomerMapActivity) getActivity()).getCustomer().getID()).child("Family");
-        fm2.child("newMem2").orderByKey().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
-                name2.setText(value.get("name"));
-                mobile2.setText(value.get("mobile"));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        fm3 = rootRef.child("Users").child("Customers").child(((CustomerMapActivity) getActivity()).getCustomer().getID()).child("Family");
-        fm3.child("newMem3").orderByKey().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
-                name3.setText(value.get("name"));
-                mobile3.setText(value.get("mobile"));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-*/
-
 
 
         add1.setOnClickListener(new View.OnClickListener() {
@@ -197,21 +154,27 @@ public class FamilyViewFragment extends Fragment implements View.OnClickListener
             @Override
             public void onClick(View view) {
                 //noinspection ConstantConditions
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.mainFrame, new FamilyRequestFragment(name1.getText().toString(), name2.getText().toString(), name3.getText().toString()));
-                ft.commit();
+                if(name1.getText().toString().isEmpty() && name2.getText().toString().isEmpty() && name3.getText().toString().isEmpty())    {
+                    Toast.makeText(getActivity(), "Please enter a family member", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.mainFrame, new FamilyRequestFragment(name1.getText().toString(), name2.getText().toString(), name3.getText().toString()));
+                    ft.commit();
+                }
             }
         });
     }
 
     void addFamily(EditText name, EditText mobile, int memNum) {
         if ((!name.getText().toString().isEmpty() && !mobile.getText().toString().isEmpty())
-          || (name.getText().toString().isEmpty() && mobile.getText().toString().isEmpty())) {
+                || (name.getText().toString().isEmpty() && mobile.getText().toString().isEmpty())) {
+            assert getActivity() != null;
             DatabaseReference addFamMem = rootRef.child("Users").child("Customers").child(((CustomerMapActivity) getActivity()).getCustomer().getID()).child("Family").child("newMem" + memNum);
             addFamMem.child("name").setValue(name.getText().toString());
             addFamMem.child("mobile").setValue(mobile.getText().toString());
-        }
-        else Toast.makeText(getActivity(), "Cannot save one field only", Toast.LENGTH_LONG).show();
+        } else
+            Toast.makeText(getActivity(), "Cannot save one field only", Toast.LENGTH_LONG).show();
         if (!name.getText().toString().isEmpty() && !mobile.getText().toString().isEmpty() && name.isEnabled()) {
             name.setEnabled(false);
             mobile.setEnabled(false);
