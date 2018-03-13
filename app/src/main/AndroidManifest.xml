@@ -78,7 +78,6 @@
         <activity
             android:name=".CustomerMapActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".AddNewVehicle" />
 
         <service
             android:name=".MerplyService"

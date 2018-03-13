@@ -24,7 +24,7 @@ import java.util.List;
 public class FamilyRequestFragment extends Fragment implements View.OnClickListener {
 
     DatabaseReference rootRef;
-    Spinner memberName;
+    Spinner memberName, issueReason;
     EditText memberLocation;
     RadioButton rb1;
     RadioGroup radioGroup;
@@ -55,21 +55,33 @@ public class FamilyRequestFragment extends Fragment implements View.OnClickListe
         memberLocation = getView().findViewById(R.id.editText_family_location);
         rb1 = getView().findViewById(R.id.radioButton_family_cash);
         radioGroup = getView().findViewById(R.id.radiogroup);
+        issueReason = getView().findViewById(R.id.spinner_family_reason);
 
-        ArrayAdapter<String> adapter;
-        List<String> list;
+        ArrayAdapter<String> familyAdapter, reasonAdapter;
+        List<String> familyList, reasonList;
 
-        list = new ArrayList<String>();
+        familyList = new ArrayList<String>();
         if(!name1.isEmpty())
-            list.add(name1);
+            familyList.add(name1);
         if(!name2.isEmpty())
-            list.add(name2);
+            familyList.add(name2);
         if(!name3.isEmpty())
-            list.add(name3);
+            familyList.add(name3);
 
-        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        memberName.setAdapter(adapter);
+        familyAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, familyList);
+        familyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        memberName.setAdapter(familyAdapter);
+
+
+        reasonList = new ArrayList<String>();
+        reasonList.add("Empty Fuel");
+        reasonList.add("Accident");
+        reasonList.add("Car Breakdown");
+        reasonList.add("Tire Problem");
+
+        reasonAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, reasonList);
+        reasonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        issueReason.setAdapter(reasonAdapter);
 
         rootRef = FirebaseDatabase.getInstance().getReference();
 

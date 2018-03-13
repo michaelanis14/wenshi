@@ -1,17 +1,19 @@
 package com.wenshi_egypt.wenshi;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,7 +29,8 @@ import java.util.HashMap;
 public class VehiclesFragment extends Fragment implements View.OnClickListener{
 
     DatabaseReference rootRef, vehicleRef;
-    TextView demoValue, addNewVehicle, noVehicle;
+    TextView demoValue, noVehicle;
+    ImageButton addNewVehicle;
     static String type, model;
     static String defType, defModel;
 
@@ -57,21 +60,21 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
                 defType = vehicle.get(position).getType();
                 defModel = vehicle.get(position).getModel();
 
+                assert getActivity() != null;
                 DatabaseReference defVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(((CustomerMapActivity) getActivity()).getCustomer().getID()).child("Profile");
                 defVehicle.child("carType").setValue(defType);
                 defVehicle.child("model").setValue(defModel);
+                Toast.makeText(getActivity(), String.format("%s has become your default car", defType), Toast.LENGTH_SHORT).show();
             }
         });
 
         addNewVehicle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), AddNewVehicle.class);
-                Bundle b = new Bundle();
-                b.putString("uid", ((CustomerMapActivity) getActivity()).getCustomer().getID());
-                intent.putExtras(b);
-                startActivity(intent);
-
+                //noinspection ConstantConditions
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.mainFrame, new AddNewVehicle());
+                ft.commit();
             }
         });
     }
@@ -79,6 +82,7 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
 
     private ArrayList<VehicleModel> getVehicle(){
         final ArrayList<VehicleModel> results = new ArrayList<>();
+        assert getActivity() != null;
         UserModel user = ((CustomerMapActivity) getActivity()).getCustomer();
 
         //database reference pointing to root of database

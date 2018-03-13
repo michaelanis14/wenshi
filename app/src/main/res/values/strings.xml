@@ -104,7 +104,7 @@
     <string name="button_profile_saveButton">Save</string>
     <string name="textView_vehicle_addNew">Add new Vehicle</string>
     <string name="button_new_vehicle">Add Vehicle</string>
-    <string name="textView_vehicle_saved_label">New Vehicle saved successfully</string>
+    <string name="textView_vehicle_saved_label">New car saved successfully</string>
     <string name="eta">ETA</string>
     <string name="min">min</string>
     <string name="reqwestingWenshi">Requesting Wenshi..</string>
@@ -117,6 +117,8 @@
     <string name="textView_family_member_location">Member Location</string>
     <string name="editText_family_member_location">Current Location</string>
     <string name="textView_family_payment">Payment Method</string>
+    <string name="textView_family_reason">Reason of the issue</string>
+
     <string name="takePhoto">TAKE PHOTOS</string>
     <string name="start">START</string>
 </resources>
