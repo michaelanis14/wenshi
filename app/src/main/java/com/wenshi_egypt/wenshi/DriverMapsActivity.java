@@ -1,6 +1,7 @@
 package com.wenshi_egypt.wenshi;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -775,9 +776,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             case R.id.btn_1:
                 if (CURRENTSTATE ==NEWREQ)
                      acceptRequest();
-                if (CURRENTSTATE == ARRIVED)
-                    startActivity(new Intent(DriverMapsActivity.this, PostImageActivity.class));
-
+                if (CURRENTSTATE == ARRIVED) {
+                    //take Photo
+                    Intent i = new Intent(this, PostImageActivity.class);
+                    startActivityForResult(i, TOOKPHOTOS);
+                }
 
                 break;
             case R.id.btn_2:
@@ -969,5 +972,19 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             } else return false;
         }
         else return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == TOOKPHOTOS) {
+            if(resultCode == Activity.RESULT_OK){
+                String result =data.getStringExtra("result");
+                 driverViewStateControler(TOOKPHOTOS);
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
     }
 }

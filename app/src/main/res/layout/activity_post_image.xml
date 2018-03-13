@@ -1,44 +1,69 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start"
     android:orientation="vertical"
-    tools:context="com.wenshi_egypt.wenshi.PostImageActivity">
+    android:background="#f2f2f2">
 
-    <Button
-        android:id="@+id/submitBtn"
-        android:layout_width="wrap_content"
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="446dp" />
+        android:orientation="horizontal"
+        android:background="#ffffff"
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/linearLayout">
 
-    <EditText
-        android:id="@+id/titleField"
-        android:layout_width="wrap_content"
+
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linearLayout">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/imgview"
+
+            />
+
+
+
+
+    </RelativeLayout>
+
+    <!--<ListView-->
+    <!--android:id="@+id/listview"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--/>-->
+
+
+    <!--****buy****-->
+    <TextView
+        android:id="@+id/txtContent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        tools:layout_editor_absoluteX="6dp"
-        tools:layout_editor_absoluteY="16dp" />
-
-    <EditText
-        android:id="@+id/descField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="371dp" />
-
-    <ImageButton
-        android:id="@+id/imageSelect"
-        android:layout_width="112dp"
-        android:layout_height="112dp"
-        tools:layout_editor_absoluteX="256dp"
-        tools:layout_editor_absoluteY="383dp" />
-</android.support.v7.widget.LinearLayoutCompat>
+        android:background="#4c71f5"
+        android:text="Upload Image"
+        android:textSize="16dp"
+        android:textColor="#fff"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_alignParentBottom="true"
+        />
+</RelativeLayout>
