@@ -456,19 +456,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             mGoogleApiClient.connect();
         }
     }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-    }
-
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        displayLocation();
-        startLocationUpdates();
-    }
-
     private void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -476,17 +463,24 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+    }
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        displayLocation();
+        startLocationUpdates();
+    }
     @Override
     public void onConnectionSuspended(int i) {
         mGoogleApiClient.connect();
     }
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
-
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
@@ -495,7 +489,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             driverMod.setLongitude(location.getLongitude());
         }
         displayLocation();
-        if (onRout && nearCustomer()) driverViewStateControler(NEARCUSTOMER);
+        if (CURRENTSTATE == ONROUT && nearCustomer()) driverViewStateControler(NEARCUSTOMER);
     }
 
 
@@ -746,15 +740,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private void acceptRequest() {
 
         if (cutomerMod != null) {
-
             driverViewStateControler(ONROUT);
             hidePopup();
             driverLocation.child(userId).removeValue();
-
             showRout();
             declineOtherRequests();
-
-
         }
     }
 
@@ -784,8 +774,14 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
                 break;
             case R.id.btn_2:
-                if (CURRENTSTATE == NEARCUSTOMER)
-                   driverViewStateControler(ARRIVED);
+                switch(CURRENTSTATE){
+                    case  NEARCUSTOMER:
+                        driverViewStateControler(ARRIVED);
+                        break;
+                    case TOOKPHOTOS:
+                        driverViewStateControler(TODISTINATION);
+                        break;
+                }
                 break;
         }
     }
@@ -874,7 +870,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 mBottomSheet.setVisibility(View.INVISIBLE);
                 monlineOfflineLayout.setVisibility(View.VISIBLE);
                 swtch_onlineOffline.setVisibility(View.INVISIBLE);
-
                 bottomButton1_btn.setVisibility(View.INVISIBLE);
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
                 CURRENTSTATE = driverState;
@@ -885,6 +880,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 CURRENTSTATE = driverState;
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
                 bottomButton1_btn.setVisibility(View.VISIBLE);
+
                 break;
             case OFFLINE:
                 Log.i("STATE", "OFF");
@@ -930,6 +926,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton2_btn.setText(getString(R.string.start));
                 bottomButton2_btn.setEnabled(false);
                 CURRENTSTATE = driverState;
+                onRout = false;
                 break;
             case TOOKPHOTOS:
                 Log.i("STATE", "TOOKPHOTOS");
@@ -942,6 +939,18 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton2_btn.setVisibility(View.VISIBLE);
                 bottomButton2_btn.setText(getString(R.string.start));
                 bottomButton2_btn.setEnabled(true);
+                CURRENTSTATE = driverState;
+                onRout = false;
+                break;
+            case TODISTINATION:
+                Log.i("STATE", "ONROUT");
+                onRout = true;
+                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                mBottomSheet.setVisibility(View.INVISIBLE);
+                monlineOfflineLayout.setVisibility(View.VISIBLE);
+                swtch_onlineOffline.setVisibility(View.INVISIBLE);
+                bottomButton1_btn.setVisibility(View.INVISIBLE);
+                bottomButton2_btn.setVisibility(View.INVISIBLE);
                 CURRENTSTATE = driverState;
                 break;
         }
@@ -979,7 +988,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
         if (requestCode == TOOKPHOTOS) {
             if(resultCode == Activity.RESULT_OK){
-                String result =data.getStringExtra("result");
+//                String result =data.getStringExtra("result");
                  driverViewStateControler(TOOKPHOTOS);
             }
             if (resultCode == Activity.RESULT_CANCELED) {

@@ -7,9 +7,10 @@ package com.wenshi_egypt.wenshi.helpers;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
+
 import com.wenshi_egypt.wenshi.PostImageActivity;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 
 public class Scanner {
@@ -22,16 +23,12 @@ public class Scanner {
         BitmapFactory.decodeStream(ctx.getContentResolver().openInputStream(uri), null, bmOptions);
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
-
         int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-        bmOptions.inJustDecodeBounds = true;
+        bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
 
-        Bitmap bmp = BitmapFactory.decodeStream(ctx.getContentResolver().openInputStream(uri), null, bmOptions);
+        Log.i("IMAGE SIZE",""+photoH +""+ photoW +""+""+scaleFactor);
 
-        return bmp;
-
+        return BitmapFactory.decodeStream(ctx.getContentResolver().openInputStream(uri), null, bmOptions);
     }
-
-
 }
