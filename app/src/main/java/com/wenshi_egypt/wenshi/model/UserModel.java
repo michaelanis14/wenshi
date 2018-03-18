@@ -1,8 +1,11 @@
 package com.wenshi_egypt.wenshi.model;
 
+import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+import com.firebase.ui.auth.data.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,127 +16,65 @@ import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.wenshi_egypt.wenshi.helpers.AppUtils.Defs.CAIRO;
+
 /**
  * Created by michaelanis on 3/2/18.
  */
 
 public class UserModel implements Parcelable {
-    String ID ="ID";
-    String Name = "FirstLastName";
-    String email= "Email@email.com";
-    String Mobile="00000";
-    String Address = "Addres";
-    VehicleModel defaultVehicle;
-    double latitude;
-    double longitude;
-    DatabaseReference rootRef, profRef, vehicleRef, historicRef;
+    // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
 
-
-    public VehicleModel getDefaultVehicle() {
-        return defaultVehicle;
+    public void setID(String ID) {
+        this.ID = ID;
     }
+
+    String ID = "ID";
+    String name = "FirstLastName";
+    String email = "Email@email.com";
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    String mobile = "00000";
+    String address = "Addres";
+
+    public String getServiceType() {
+        return ServiceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        ServiceType = serviceType;
+    }
+
+    String ServiceType;
+    VehicleModel defaultVehicle;
+    Location pickup;
+    String pickupAddress;
+    Location destination;
+    String destinationAddress;
+    Location currentLocation;
+
 
     ArrayList<VehicleModel> Vehicles = new ArrayList<VehicleModel>();
 
-
-    public String getID() {
-        if(ID != null)
-        return ID;
-        else return "";
+    public String getPickupAddress() {
+        return pickupAddress;
     }
 
-    public String getName() {
-        return Name;
+    public void setPickupAddress(String pickupAddress) {
+        this.pickupAddress = pickupAddress;
     }
 
-    public String getEmail() {
-        return email;
+    public String getDestinationAddress() {
+        return destinationAddress;
     }
 
-    public String getMobile() {
-        return Mobile;
+    public void setDestinationAddress(String destinationAddress) {
+        this.destinationAddress = destinationAddress;
     }
 
-    public String getAddress() {
-        return Address;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-
-    public UserModel(String id,String name, String email, String mobile, String Address) {
-        this.ID = id;
-        this.Name = name;
-        this.email = email;
-        this.Mobile = mobile;
-        this.Address = Address;
-        this.defaultVehicle = new VehicleModel("KIA","RIO 2014");
-    }
-    public UserModel(String id,String name, String email, String mobile,double latitude, double longitude, String Address,VehicleModel defaultVehicle) {
-        this.ID = id;
-        this.Name = name;
-        this.email = email;
-        this.Mobile = mobile;
-        this.Address = Address;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.defaultVehicle = defaultVehicle;
-    }
-
-    public ArrayList<VehicleModel> getVehicles() {
-        return Vehicles;
-    }
-
-    public void setVehicle (VehicleModel vehicle) {
-        Vehicles.add(vehicle);
-    }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(ID);
-        parcel.writeString(Name);
-        parcel.writeString(email);
-        parcel.writeString(Mobile);
-        parcel.writeString(Address);
-        parcel.writeParcelable(defaultVehicle,i);
-        parcel.writeTypedList(Vehicles);
-
-
-    }
-    @Override
-    public String toString() {
-        return "{" +
-                "\"ID\":\"" + ID + "\"" +
-                ", \"Name\":\"" + Name + "\"" +
-                ", \"email\":\"" + email + "\"" +
-                ", \"Mobile\":\"" + Mobile + "\"" +
-                ", \"Address\":\"" + Address + "\"" +
-                ", \"Latitude\":\"" + latitude + "\"" +
-                ", \"Longitude\":\"" + longitude + "\"" +
-                ", \"Vehicle\":" + defaultVehicle.toString() + "" +
-                '}';
-    }
-    // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
     public static final Parcelable.Creator<UserModel> CREATOR = new Parcelable.Creator<UserModel>() {
 
         public UserModel createFromParcel(Parcel in) {
@@ -145,89 +86,137 @@ public class UserModel implements Parcelable {
         }
     };
 
+    public UserModel(String id, String name, String email, String mobile, String address) {
+        this.ID = id;
+        this.name = name;
+        this.email = email;
+        this.mobile = mobile;
+        this.address = address;
+        this.defaultVehicle = new VehicleModel("KIA", "RIO 2014");
+
+        Location locationCairo = new Location("");
+        locationCairo.setLatitude(CAIRO.latitude);
+        locationCairo.setLongitude(CAIRO.longitude);
+
+        pickup = locationCairo;
+        destination = locationCairo;
+    }
+    public UserModel(String id, String name, String email, String mobile, Location pickup, Location destination, String address, VehicleModel defaultVehicle) {
+        this.ID = id;
+        this.name = name;
+        this.email = email;
+        this.mobile = mobile;
+        this.address = address;
+        this.pickup = pickup;
+        this.destination = destination;
+        this.defaultVehicle = defaultVehicle;
+    }
     // example constructor that takes a Parcel and gives you an object populated with it's values
     private UserModel(Parcel in) {
         ID = in.readString();
-        Name = in.readString();
+        name = in.readString();
         email = in.readString();
-        Mobile = in.readString();
-        Address = in.readString();
+        mobile = in.readString();
+        address = in.readString();
         defaultVehicle = in.readParcelable(VehicleModel.class.getClassLoader());
+       // pickup = (Location) in.readValue(Location.class.getClassLoader());
+        pickupAddress = in.readString();
+       // destination = (Location) in.readValue(Location.class.getClassLoader());
+        destinationAddress = in.readString();
+        //currentLocation = (Location) in.readValue(Location.class.getClassLoader());
+
+     //   destination =Location.CREATOR.createFromParcel(in);
+      //  pickup = Location.CREATOR.createFromParcel(in);
         in.readTypedList(Vehicles, VehicleModel.CREATOR);
     }
 
-    void setDBReferences(String id, boolean userOrDriver)    {
-        this.rootRef = FirebaseDatabase.getInstance().getReference();
-        if(userOrDriver) {
-            this.profRef = rootRef.child("Users").child("Customers").child(id).child("Profile");
-            this.vehicleRef = rootRef.child("Users").child("Customers").child(id).child("Vehicles");
-            this.historicRef = rootRef.child("Users").child("Customers").child(id).child("Trips");
-        }
-        else    {
-            this.profRef = rootRef.child("Users").child("Drivers").child(id).child("Profile");
-            this.profRef = rootRef.child("Users").child("Drivers").child(id).child("Trips");
-        }
-    }
-    public ArrayList<String> getProfData(String id, boolean userOrDriver) {
-        setDBReferences(id, userOrDriver);
-        final ArrayList<String> result = new ArrayList<String>();
-
-        profRef.orderByKey().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                @SuppressWarnings("unchecked") HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
-                result.add(value.get("mobile"));
-                result.add(value.get("address"));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        return result;
+    public Location getPickup() {
+        return pickup;
     }
 
-    ArrayList<VehicleModel> getVehiclesData(String id, boolean userOrDriver) {
-        setDBReferences(id, userOrDriver);
-        final ArrayList<VehicleModel> result = new ArrayList<VehicleModel>();
-
-        vehicleRef.orderByKey().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                @SuppressWarnings("unchecked") HashMap<VehicleModel, VehicleModel> value = (HashMap<VehicleModel, VehicleModel>) dataSnapshot.getValue();
-                result.add(value.get("type"));
-                result.add(value.get("model"));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        return result;
+    public void setPickup(Location pickup) {
+        this.pickup = pickup;
     }
 
-    ArrayList<TripModel> getTripsData(String id, boolean userOrDriver) {
-        setDBReferences(id, userOrDriver);
-        final ArrayList<TripModel> result = new ArrayList<TripModel>();
-
-        historicRef.orderByKey().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                @SuppressWarnings("unchecked") HashMap<TripModel, TripModel> value = (HashMap<TripModel, TripModel>) dataSnapshot.getValue();
-                result.add(value.get("date"));
-                result.add(value.get("from"));
-                result.add(value.get("to"));
-                result.add(value.get("cost"));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        return result;
+    public Location getDestination() {
+        return destination;
     }
+
+    public void setDestination(Location destination) {
+        this.destination = destination;
+    }
+
+    public Location getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public void setCurrentLocation(Location currentLocation) {
+        this.currentLocation = currentLocation;
+    }
+
+    public VehicleModel getDefaultVehicle() {
+        return defaultVehicle;
+    }
+
+    public String getID() {
+        if (ID != null) return ID;
+        else return "";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public ArrayList<VehicleModel> getVehicles() {
+        return Vehicles;
+    }
+
+    public void setVehicle(VehicleModel vehicle) {
+        this.defaultVehicle = vehicle;
+        Vehicles.add(vehicle);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(ID);
+        parcel.writeString(name);
+        parcel.writeString(email);
+        parcel.writeString(mobile);
+        parcel.writeString(address);
+        //parcel.writeValue(pickup);
+        parcel.writeString(pickupAddress);
+       // parcel.writeValue(destination);
+        parcel.writeString(destinationAddress);
+      //  parcel.writeValue(currentLocation);
+     //   pickup.writeToParcel(parcel, i);
+      //  destination.writeToParcel(parcel, i);
+        parcel.writeParcelable(defaultVehicle, i);
+        parcel.writeTypedList(Vehicles);
+
+
+    }
+
+    @Override
+    public String toString() {
+        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\""+ ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\""  + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"address\":\"" + address + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\"" + ", \"Vehicle\":" + this.defaultVehicle.toString() + "" + '}';
+    }
+
 
 }

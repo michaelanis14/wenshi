@@ -18,16 +18,20 @@ public class Scanner {
     public Bitmap decodeBitmapUri(PostImageActivity ctx, Uri uri) throws FileNotFoundException {
         int targetW = 512;
         int targetH = 512;
+
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(ctx.getContentResolver().openInputStream(uri), null, bmOptions);
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+        int scaleFactor = Math.max(photoW / targetW, photoH / targetH);
+        if(scaleFactor < 2)
+            scaleFactor = 4;
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
 
         Log.i("IMAGE SIZE",""+photoH +""+ photoW +""+""+scaleFactor);
+
 
         return BitmapFactory.decodeStream(ctx.getContentResolver().openInputStream(uri), null, bmOptions);
     }

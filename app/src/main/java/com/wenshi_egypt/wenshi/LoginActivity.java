@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 
 import com.firebase.ui.auth.AuthUI;
@@ -30,8 +31,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
     boolean customer = false;
-    @BindView(R.id.root)
-    View mRootView;
+   // @BindView(R.id.root)
     FirebaseAuth auth;
 
     @Override
@@ -40,7 +40,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         Bundle extras = getIntent().getExtras();
         customer = extras.getBoolean("customer");
-
         Log.i("RIDER", "" + customer);
         auth = FirebaseAuth.getInstance();
 
@@ -147,7 +146,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void showSnackbar(@StringRes int errorMessageRes) {
-        if (this != null) Snackbar.make(mRootView, errorMessageRes, Snackbar.LENGTH_LONG).show();
+        if (this != null)
+            Toast.makeText(this, errorMessageRes, Toast.LENGTH_LONG).show();
     }
 
 }

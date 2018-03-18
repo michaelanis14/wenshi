@@ -62,7 +62,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         saveButton = getView().findViewById(R.id.button_profile_saveButton);
         profAddVehcile = getView().findViewById(R.id.button_profile_addVehicle);
 
-        user = ((CustomerMapActivity)getActivity()).getCustomer();
+        user = ((CustomerMapActivity) getActivity()).getCustomer();
 
         if (user != null) {
             username.setText(user.getName());
@@ -84,7 +84,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         profRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getChildrenCount() > 2) {
+                if (dataSnapshot.getChildrenCount() > 2) {
                     @SuppressWarnings("unchecked") HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
                     mobile.setText(value.get("mobile"));
                     carType.setText(value.get("carType"));
@@ -135,18 +135,15 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         getView().findViewById(R.id.button_profile_saveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!String.valueOf(mobile.getText()).isEmpty() &&
-                   !String.valueOf(carType.getText()).isEmpty() &&
-                   !String.valueOf(model.getText()).isEmpty() &&
-                   !String.valueOf(address.getText()).isEmpty()) {
-                        DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID()).child("Profile");
-                        profModify.child("mobile").setValue(String.valueOf(mobile.getText()));
-                        profModify.child("carType").setValue(String.valueOf(carType.getText()));
-                        profModify.child("model").setValue(String.valueOf(model.getText()));
-                        profModify.child("address").setValue(String.valueOf(address.getText()));
-                        Toast.makeText(getActivity(), "Changes Saved Successfully", Toast.LENGTH_LONG).show();
-                }
-                else Toast.makeText(getActivity(), "Please fill all details", Toast.LENGTH_LONG).show();
+                if (!String.valueOf(mobile.getText()).isEmpty() && !String.valueOf(carType.getText()).isEmpty() && !String.valueOf(model.getText()).isEmpty() && !String.valueOf(address.getText()).isEmpty()) {
+                    DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID()).child("Profile");
+                    profModify.child("mobile").setValue(String.valueOf(mobile.getText()));
+                    profModify.child("carType").setValue(String.valueOf(carType.getText()));
+                    profModify.child("model").setValue(String.valueOf(model.getText()));
+                    profModify.child("address").setValue(String.valueOf(address.getText()));
+                    Toast.makeText(getActivity(), "Changes Saved Successfully", Toast.LENGTH_LONG).show();
+                } else
+                    Toast.makeText(getActivity(), "Please fill all details", Toast.LENGTH_LONG).show();
             }
         });
 

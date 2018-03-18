@@ -8,12 +8,24 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <fragment
-        android:id="@+id/customer_map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.wenshi_egypt.wenshi.CustomerMapActivity" />
+        android:layout_below="@+id/container_toolbar">
+
+        <fragment
+            android:id="@+id/customer_map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.wenshi_egypt.wenshi.CustomerMapActivity" />
+
+
+
+
+
+    </FrameLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/customer_nav_view"
@@ -26,15 +38,19 @@
 
     </android.support.design.widget.NavigationView>
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include
-            layout="@layout/app_bar_main"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            <include
+                layout="@layout/app_bar_main_customer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+
+
     </LinearLayout>
 
     <android.support.design.widget.CoordinatorLayout
@@ -48,7 +64,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="140dp"
             android:background="@android:color/background_light"
             android:orientation="vertical"
             app:behavior_hideable="false"
@@ -67,10 +83,9 @@
                 android:textSize="18sp" />
 
             <Button
-                android:id="@+id/request_wenshi_btn"
+                android:id="@+id/bottom_view_btn1"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:text="@string/choose_service_btn" />
+                android:layout_height="40dp" />
 
 
             <LinearLayout
@@ -135,16 +150,14 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/request_wenshi_bottom_btn"
+                android:id="@+id/bottom_down_btn2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/request_winsh_btn" />
+                android:layout_height="wrap_content" />
 
             <Button
-                android:id="@+id/cancel_wenshi_btn"
+                android:id="@+id/bottom_down_btn3"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/cancelTrip" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>
 

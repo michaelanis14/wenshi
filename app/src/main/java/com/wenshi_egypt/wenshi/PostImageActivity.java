@@ -105,6 +105,7 @@ public class PostImageActivity extends AppCompatActivity {
             try {
                 Scanner scanner = new Scanner();
                 final Bitmap bitmap = scanner.decodeBitmapUri(PostImageActivity.this, imageuri);
+
                 progressDialog.setTitle("Uploading..");
                 progressDialog.show();
                 StorageReference filepath = myrefernce.child("photos").child(imageuri.getLastPathSegment());

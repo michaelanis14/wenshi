@@ -82,7 +82,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private static final long UPDATE_INTERVAL = 5000;
     private static final long FASTEST_INTERVAL = 3000;
     private static final float DISPLACMENT = 10;
-
     private static final int ONLINE = 0;
     private static final int NEWREQ = 1;
     private static final int ONROUT = 2;
@@ -95,8 +94,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private static final int TODISTINATION = 10;
     private static final int ENDTRIP = 11;
     private static final int RATE = 12;
-
-
     //static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
     final int MY_PERMISSION_REQ_CODE = 1234;
     final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
@@ -113,6 +110,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     UserModel driverMod;
     LinkedHashMap<String, DataSnapshot> requestsMap;
     boolean onRout;
+    Marker mCustomerMarker;
+    private int CURRENTSTATE;
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
     private DatabaseReference driverLocation;
@@ -137,7 +136,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private Context mContext;
     private GetDirectionsData getDirectionsData;
     private Fragment currentFragment;
-    private int CURRENTSTATE;
     private String duration;
     private String distance;
 
@@ -245,7 +243,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             }
 
         });
- //       Log.i("mBottomSheetBehavio", "" + mBottomSheetBehavior.getPeekHeight());
+        //       Log.i("mBottomSheetBehavio", "" + mBottomSheetBehavior.getPeekHeight());
     }
 
 
@@ -257,36 +255,48 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             driverAvalbl.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                    if (requestsMap.size() == 0 && !requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
+                    if (requestsMap.size() == 0 && !requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")&& !dataSnapshot.getKey().equals("Accept")) {
+                        //    Log.i("CHILD ADDED",prevChildKey);
                         GeoFire geoDriverLocation = new GeoFire(driverAvalbl.child(dataSnapshot.getKey()));
                         try {
                             JSONObject cust = new JSONObject(((String) dataSnapshot.child("Customer").getValue()));
-                            String name = cust.getString("Name");
+                            String name = cust.getString("name");
                             String email = cust.getString("email");
                             String id = cust.getString("ID");
-                            String mobile = cust.getString("Mobile");
-                            String lat = cust.getString("Latitude");
-                            String longt = cust.getString("Longitude");
-                            String address = cust.getString("Address");
+                            String mobile = cust.getString("mobile");
+                            //  String lat = cust.getString("Latitude");
+                            //  String longt = cust.getString("Longitude");
+                            String address = cust.getString("address");
                             VehicleModel defaultVehicle = new VehicleModel(cust.getJSONObject("Vehicle").getString("type"), cust.getJSONObject("Vehicle").getString("model"));
 
-                            cutomerMod = new UserModel(id, name, email, mobile, Double.parseDouble(lat), Double.parseDouble(longt), address, defaultVehicle);
-                        } catch (JSONException e) {
+
+                            // Location locat = new Location("dummyprovider");
+                            //locat.setLatitude(Double.parseDouble(lat));
+                            //locat.setLongitude(Double.parseDouble(longt));
+
+
+                            cutomerMod = new UserModel(id, name, email, mobile, address);
+                            cutomerMod.setVehicle(defaultVehicle);
+                        } catch (Exception e) {
                             e.printStackTrace();
                             cutomerMod = new UserModel("", "", "", "", "");
                         }
 
 
-                        geoDriverLocation.getLocation("Location", new LocationCallback() {
+                        geoDriverLocation.getLocation("PickupLocation", new LocationCallback() {
                             @Override
                             public void onLocationResult(String key, GeoLocation location) {
                                 if (location != null) {
 
 
-                                    Marker mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).title(cutomerMod.getName()));
-                                    cutomerMod.setLatitude(location.latitude);
-                                    cutomerMod.setLongitude(location.longitude);
-                                    markers.put(key, mDriverMarker);
+                                    Marker mCustomerLocation = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).title(cutomerMod.getName()));
+
+                                    Location locat = new Location("dummyprovider");
+                                    locat.setLatitude(location.latitude);
+                                    locat.setLongitude(location.longitude);
+
+                                    cutomerMod.setPickup(locat);
+                                    markers.put(key, mCustomerLocation);
 
                                     driverViewStateControler(NEWREQ);
                                     marksCameraUpdate();
@@ -302,14 +312,36 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                                 System.err.println("There was an error getting the GeoFire location: " + databaseError);
                             }
                         });
+
+                        geoDriverLocation.getLocation("DropoffLocation", new LocationCallback() {
+                            @Override
+                            public void onLocationResult(String key, GeoLocation location) {
+                                if (location != null) {
+                                    Location locat = new Location("dummyprovider");
+                                    locat.setLatitude(location.latitude);
+                                    locat.setLongitude(location.longitude);
+                                    cutomerMod.setDestination(locat);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                driverViewStateControler(ONLINE);
+                                System.err.println("There was an error getting the GeoFire location: " + databaseError);
+                            }
+                        });
+
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
+
                     } else if (!requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
-                        requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
+                      //  requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
                     }
                 }
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
+
+
                 }
 
                 @Override
@@ -328,8 +360,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         requestsMap.remove(dataSnapshot.getKey());
                         DataSnapshot nextCustomer = (new ArrayList<DataSnapshot>(requestsMap.values())).get(0);
                         requestsMap.remove(nextCustomer.getKey());
-
-                        onChildAdded(nextCustomer, "");
+                        if (CURRENTSTATE == ONLINE) onChildAdded(nextCustomer, "");
                     } else if (requestsMap.size() == 1) {
                         Log.i("REMOVingg", dataSnapshot.getKey());
                         Log.i("REMOVingg", cutomerMod.getID());
@@ -341,7 +372,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         // if (onRout && dataSnapshot.getKey().equals(cutomerMod.getID()))
                         //    Toast.makeText(mContext, cutomerMod.getName() + " CANCELLED", Toast.LENGTH_SHORT).show();
                     }
-
+                    requestsMap.remove(dataSnapshot.getKey());
 
                 }
 
@@ -382,7 +413,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
     private void setupLocation() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQ_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_REQ_CODE);
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSION_REQ_CODE);
         } else {
             if (checkPlayServices()) {
@@ -456,6 +487,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             mGoogleApiClient.connect();
         }
     }
+
     private void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -468,25 +500,28 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
     }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         displayLocation();
         startLocationUpdates();
     }
+
     @Override
     public void onConnectionSuspended(int i) {
         mGoogleApiClient.connect();
     }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
         if (driverMod != null) {
-            driverMod.setLatitude(location.getLatitude());
-            driverMod.setLongitude(location.getLongitude());
+            driverMod.setCurrentLocation(location);
         }
         displayLocation();
         if (CURRENTSTATE == ONROUT && nearCustomer()) driverViewStateControler(NEARCUSTOMER);
@@ -743,6 +778,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             driverViewStateControler(ONROUT);
             hidePopup();
             driverLocation.child(userId).removeValue();
+            driverAvalbl = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests");
+            driverAvalbl.child(cutomerMod.getID()).child("Accept").setValue(true);
+
             showRout();
             declineOtherRequests();
         }
@@ -764,8 +802,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_1:
-                if (CURRENTSTATE ==NEWREQ)
-                     acceptRequest();
+                if (CURRENTSTATE == NEWREQ) acceptRequest();
                 if (CURRENTSTATE == ARRIVED) {
                     //take Photo
                     Intent i = new Intent(this, PostImageActivity.class);
@@ -774,8 +811,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
                 break;
             case R.id.btn_2:
-                switch(CURRENTSTATE){
-                    case  NEARCUSTOMER:
+                switch (CURRENTSTATE) {
+                    case NEARCUSTOMER:
                         driverViewStateControler(ARRIVED);
                         break;
                     case TOOKPHOTOS:
@@ -789,9 +826,21 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private void showRout() {
         mMap.clear();
         clearMarkers();
-        if (cutomerMod != null && !cutomerMod.getID().isEmpty()) {
-            Marker customerMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(cutomerMod.getLatitude(), cutomerMod.getLongitude())).title(cutomerMod.getName()));
-            markers.put(cutomerMod.getID(), customerMarker);
+        try {
+
+            if (cutomerMod != null && !cutomerMod.getID().isEmpty() && cutomerMod.getPickup() != null && cutomerMod.getDestination() != null) {
+
+                if (CURRENTSTATE == ONROUT) {
+                    mCustomerMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(cutomerMod.getPickup().getLatitude(), cutomerMod.getPickup().getLongitude())).title(cutomerMod.getName()));
+                    markers.put(cutomerMod.getID(), mCustomerMarker);
+                } else if (CURRENTSTATE == TODISTINATION) {
+                    mCustomerMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(cutomerMod.getDestination().getLatitude(), cutomerMod.getDestination().getLongitude())).title(cutomerMod.getName()));
+                    markers.put(cutomerMod.getID(), mCustomerMarker);
+                }
+
+            }
+        } catch (Exception e) {
+
         }
         displayLocation();
 
@@ -802,9 +851,17 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         getDirectionsData = new GetDirectionsData(this);
         dataTransfer[0] = mMap;
         dataTransfer[1] = url;
-        if (cutomerMod != null && !cutomerMod.getID().isEmpty()) {
-            dataTransfer[2] = new LatLng(cutomerMod.getLatitude(), cutomerMod.getLongitude());
+
+        if (cutomerMod != null && !cutomerMod.getID().isEmpty() && cutomerMod.getPickup() != null && cutomerMod.getDestination() != null) {
+
+            if (CURRENTSTATE == ONROUT) {
+                dataTransfer[2] = new LatLng(cutomerMod.getPickup().getLatitude(), cutomerMod.getPickup().getLongitude());
+            } else if (CURRENTSTATE == TODISTINATION) {
+                dataTransfer[2] = new LatLng(cutomerMod.getDestination().getLatitude(), cutomerMod.getDestination().getLongitude());
+            }
         }
+
+
         dataTransfer[3] = duration;
         dataTransfer[4] = distance;
         getDirectionsData.execute(dataTransfer);
@@ -816,11 +873,20 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private String getDirectionsUrl() {
         StringBuilder googleDirectionsUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
         googleDirectionsUrl.append("origin=" + mLastLocation.getLatitude() + "," + mLastLocation.getLongitude());
-        if (cutomerMod != null && !cutomerMod.getID().isEmpty()) {
-            googleDirectionsUrl.append("&destination=" + cutomerMod.getLatitude() + "," + cutomerMod.getLongitude());
+
+
+        if (cutomerMod != null && !cutomerMod.getID().isEmpty() && cutomerMod.getPickup() != null && cutomerMod.getDestination() != null) {
+
+            if (CURRENTSTATE == ONROUT) {
+                googleDirectionsUrl.append("&destination=" + cutomerMod.getPickup().getLatitude() + "," + cutomerMod.getPickup().getLongitude());
+            } else if (CURRENTSTATE == TODISTINATION) {
+                googleDirectionsUrl.append("&destination=" + cutomerMod.getDestination().getLatitude() + "," + cutomerMod.getDestination().getLongitude());
+            }
+
         }
 
-        googleDirectionsUrl.append("&departure_time=now&key=" + "AIzaSyBrVB9O0dT-F7P2NcAnHI-mjWW1sMCISns");
+
+        googleDirectionsUrl.append("&departure_time=now&key=" + getResources().getString(R.string.google_geo_maps_key));
 
         return googleDirectionsUrl.toString();
     }
@@ -841,6 +907,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             case ONLINE:
                 Log.i("STATE", "ONLINE");
                 clearMarkers();
+
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 swtch_onlineOffline.setVisibility(View.VISIBLE);
                 mBottomTextView.setText(getResources().getString(R.string.online));
@@ -860,7 +927,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 // clearMarkers();
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
                 bottomButton1_btn.setVisibility(View.VISIBLE);
-                bottomButton1_btn.setText(getString(R.string.accept));
+                bottomButton1_btn.setText(getResources().getString(R.string.accept));
                 CURRENTSTATE = driverState;
                 break;
             case ONROUT:
@@ -892,6 +959,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton1_btn.setVisibility(View.VISIBLE);
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
                 clearMarkers();
+                requestsMap.clear();
                 CURRENTSTATE = driverState;
                 break;
             case SIDENAV:
@@ -910,7 +978,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 bottomButton1_btn.setVisibility(View.GONE);
                 bottomButton2_btn.setVisibility(View.VISIBLE);
-                bottomButton2_btn.setText(getString(R.string.arrived));
+                bottomButton2_btn.setText(getResources().getString(R.string.arrived));
                 CURRENTSTATE = driverState;
                 break;
             case ARRIVED:
@@ -921,9 +989,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 monlineOfflineLayout.setVisibility(View.GONE);
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 bottomButton1_btn.setVisibility(View.VISIBLE);
-                bottomButton1_btn.setText(getString(R.string.takePhoto));
+                bottomButton1_btn.setText(getResources().getString(R.string.takePhoto));
                 bottomButton2_btn.setVisibility(View.VISIBLE);
-                bottomButton2_btn.setText(getString(R.string.start));
+                bottomButton2_btn.setText(getResources().getString(R.string.start));
                 bottomButton2_btn.setEnabled(false);
                 CURRENTSTATE = driverState;
                 onRout = false;
@@ -935,15 +1003,15 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 monlineOfflineLayout.setVisibility(View.GONE);
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 bottomButton1_btn.setVisibility(View.VISIBLE);
-                bottomButton2_btn.setText(getString(R.string.takePhoto));
+                bottomButton2_btn.setText(getResources().getString(R.string.takePhoto));
                 bottomButton2_btn.setVisibility(View.VISIBLE);
-                bottomButton2_btn.setText(getString(R.string.start));
+                bottomButton2_btn.setText(getResources().getString(R.string.start));
                 bottomButton2_btn.setEnabled(true);
                 CURRENTSTATE = driverState;
                 onRout = false;
                 break;
             case TODISTINATION:
-                Log.i("STATE", "ONROUT");
+                Log.i("STATE", "TODISTINATION");
                 onRout = true;
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.INVISIBLE);
@@ -951,7 +1019,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 swtch_onlineOffline.setVisibility(View.INVISIBLE);
                 bottomButton1_btn.setVisibility(View.INVISIBLE);
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
                 CURRENTSTATE = driverState;
+                showRout();
                 break;
         }
 
@@ -969,31 +1040,32 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (cutomerMod != null && driverMod != null) {
 
             Location driversAvlbl = new Location("");
-            driversAvlbl.setLatitude(driverMod.getLatitude());
-            driversAvlbl.setLongitude(driverMod.getLongitude());
+            driversAvlbl.setLatitude(driverMod.getCurrentLocation().getLatitude());
+            driversAvlbl.setLongitude(driverMod.getCurrentLocation().getLongitude());
 
             Location pickupLoc = new Location("");
-            pickupLoc.setLatitude(cutomerMod.getLatitude());
-            pickupLoc.setLongitude(cutomerMod.getLongitude());
+            pickupLoc.setLatitude(cutomerMod.getPickup().getLatitude());
+            pickupLoc.setLongitude(cutomerMod.getPickup().getLongitude());
             Log.i("Distancee", "" + driversAvlbl.distanceTo(pickupLoc));
             if (driversAvlbl.distanceTo(pickupLoc) < 300) {
                 return true;
             } else return false;
-        }
-        else return false;
+        } else return false;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == TOOKPHOTOS) {
-            if(resultCode == Activity.RESULT_OK){
+            if (resultCode == Activity.RESULT_OK) {
 //                String result =data.getStringExtra("result");
-                 driverViewStateControler(TOOKPHOTOS);
+                driverViewStateControler(TOOKPHOTOS);
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
         }
     }
+
+
 }
