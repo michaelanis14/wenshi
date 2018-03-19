@@ -120,7 +120,7 @@ import com.wenshi_egypt.wenshi.model.VehicleModel;
 
 import static com.wenshi_egypt.wenshi.helpers.AppUtils.Defs.CAIRO;
 
-public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptions.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener,RateDriverFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptions.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
 
     private static final long UPDATE_INTERVAL = 50000;
@@ -376,7 +376,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         }
         if (mGoogleApiClient != null)
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
+        if (mLastLocation != null && mMap != null) {
 
             /*
             //update FireBase
@@ -803,7 +803,12 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     if (map.get(0) != null && map.get(1) != null)
                         mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(map.get(0).toString()), Double.parseDouble(map.get(1).toString()))).title("Driver location"));
 
-                    getDistanceBetweenPickUpToDriver(new LatLng(Double.parseDouble(map.get(0).toString()), Double.parseDouble(map.get(1).toString())));
+                    Location locat = new Location("dummyprovider");
+                    locat.setLatitude(Double.parseDouble(map.get(0).toString()));
+                    locat.setLongitude(Double.parseDouble(map.get(1).toString()));
+
+                    driverModel.setCurrentLocation(locat);
+                    getDistanceBetweenPickUpToDriver();
 
                     marksCameraUpdate();
                 }
@@ -818,21 +823,20 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
     }
 
-    private void getDistanceBetweenPickUpToDriver(LatLng driverLatLang) {            //Convert it to time
+    private void getDistanceBetweenPickUpToDriver() {            //Convert it to time
 
-        Location driversAvlbl = new Location("");
-        driversAvlbl.setLatitude(driverLatLang.latitude);
-        driversAvlbl.setLongitude(driverLatLang.longitude);
-
-        Location pickupLoc = new Location("");
-        //   pickupLoc.setLatitude(pickUpLocation.latitude);
-        //   pickupLoc.setLongitude(pickUpLocation.longitude);
-
-        if (driversAvlbl.distanceTo(pickupLoc) < 100) {
-            mbtn1.setText("Your driver is here"); //Send a notification
-        } else
-
-            mbtn1.setText(String.valueOf(driversAvlbl.distanceTo(pickupLoc)));
+        if(CURRENTSTATE == PICKUP) {
+            if (driverModel.getCurrentLocation().distanceTo(user.getPickup()) < 400) {
+                mBottomTextView.setText("Your driver is here"); //Send a notification
+                customerViewStateControler(TODESTINATION);
+            }
+        }
+        else if(CURRENTSTATE == TODESTINATION){
+            if (driverModel.getCurrentLocation().distanceTo(user.getPickup()) < 400) {
+                mBottomTextView.setText("You have arrived"); //Send a notification
+                customerViewStateControler(RATEDRIVER);
+            }
+        }
     }
 
     private void cancelTrip() {
@@ -1199,6 +1203,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
 
+                changeMap(user.getDestination());
                 mPickupText.setEnabled(false);
 
                 findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
@@ -1285,7 +1290,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mBottomTextView.setText(getResources().getString(R.string.driver_confirmed_onrout));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 mbtn1.setVisibility(View.VISIBLE);
-                mbtn1.setText(getResources().getString(R.string.call_driver));
+                mbtn1.setText(getResources().getString(R.string.callDriver));
                 mbtn2.setVisibility(View.VISIBLE);
                 mbtn2.setText(getResources().getString(R.string.cancelTrip));
 
@@ -1295,6 +1300,65 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 marksCameraUpdate();
                 if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
                 traceDriver();
+                break;
+            case TODESTINATION:
+                //   getClosestDriver();
+
+                if (mDestination != null) mDestination.remove();
+
+
+                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
+                findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
+                mDestinationText.setEnabled(false);
+                mPickupText.setEnabled(false);
+
+                mBottomTextView.setText(getResources().getString(R.string.driver_confirmed_onrout));
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                mbtn1.setVisibility(View.VISIBLE);
+                mbtn1.setText(getResources().getString(R.string.callDriver));
+                mbtn2.setVisibility(View.VISIBLE);
+                mbtn2.setText(getResources().getString(R.string.cancelTrip));
+
+
+                CURRENTSTATE = customerState;
+                showRout();
+                marksCameraUpdate();
+                if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
+                traceDriver();
+                break;
+            case RATEDRIVER:
+                //   getClosestDriver();
+
+                if (mDestination != null) mDestination.remove();
+
+                findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
+                findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
+                findViewById(R.id.DestinationLayout).setVisibility(View.INVISIBLE);
+                mDestinationText.setEnabled(false);
+                mPickupText.setEnabled(false);
+                Fragment rateDriver = new ReviewRequestFragment();
+
+                FragmentTransaction ftt = getSupportFragmentManager().beginTransaction();
+                ftt.replace(R.id.mainFrame, rateDriver);
+                ftt.commit();
+
+
+                mDestinationText.setEnabled(false);
+                mPickupText.setEnabled(false);
+
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                mbtn1.setVisibility(View.INVISIBLE);
+                mbtn2.setVisibility(View.INVISIBLE);
+
+
+                CURRENTSTATE = customerState;
+
+
+               // showRout();
+                //marksCameraUpdate();
+               // if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
+               // traceDriver();
                 break;
         }
     }

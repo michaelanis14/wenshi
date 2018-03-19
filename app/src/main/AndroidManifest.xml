@@ -4,7 +4,7 @@
     package="com.wenshi_egypt.wenshi">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature
@@ -52,7 +52,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/wenshi_logo_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/MerplyAppTheme"
         tools:replace="android:icon">
         <activity
             android:name=".WelcomeActivity"
@@ -63,7 +63,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/Login"
+            android:theme="@style/MerplyAppTheme.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -72,10 +75,10 @@
         <activity
             android:name=".DriverMapsActivity"
             android:label="@string/title_activity_driver_maps"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/MerplyAppTheme.NoActionBar" />
         <activity
             android:name=".CustomerMapActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/MerplyAppTheme.NoActionBar" />
 
         <service
             android:name=".MerplyService"
@@ -84,7 +87,8 @@
             android:name=".helpers.FetchAddressIntentService"
             android:exported="false" />
 
-        <activity android:name=".PostImageActivity"></activity>
+        <activity android:name=".PostImageActivity"
+            android:theme="@style/MerplyAppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

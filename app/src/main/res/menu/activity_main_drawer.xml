@@ -6,52 +6,42 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_menu_gallery"
             android:title="Profile" />
 
         <item
             android:id="@+id/nav_history"
-            android:icon="@drawable/ic_menu_gallery"
             android:title="History" />
 
         <item
             android:id="@+id/nav_myVehicles"
-            android:icon="@drawable/ic_menu_gallery"
             android:title="My Vehicles" />
 
         <item
             android:id="@+id/nav_payment"
-            android:icon="@drawable/ic_menu_gallery"
             android:title="Payment" />
 
         <item
             android:id="@+id/nav_help"
-            android:icon="@drawable/ic_menu_gallery"
             android:title="Help" />
 
         <item
             android:id="@+id/nav_rateCharges"
-            android:icon="@drawable/ic_menu_gallery"
             android:title="Rate and Charges" />
 
         <item
             android:id="@+id/nav_about"
-            android:icon="@drawable/ic_menu_gallery"
             android:title="About" />
 
         <item
             android:id="@+id/nav_invite"
-            android:icon="@drawable/ic_menu_gallery"
             android:title="Invite" />
 
         <item
             android:id="@+id/nav_family"
-            android:icon="@drawable/ic_menu_gallery"
             android:title="Family View" />
 
         <item
             android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_gallery"
             android:title="Settings" />
 
     </group>

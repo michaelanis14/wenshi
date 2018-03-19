@@ -141,4 +141,6 @@
     <string name="find_driver">FIND DRIVER</string>
     <string name="driver_confirmed_onrout">Driver Confirmed and on Rout</string>
     <string name="call_driver">Call Driver</string>
+    <string name="callDriver">Call the Driver</string>
+    <string name="Login">Login</string>
 </resources>

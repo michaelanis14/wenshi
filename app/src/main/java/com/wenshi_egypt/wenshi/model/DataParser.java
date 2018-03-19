@@ -157,6 +157,7 @@ class DataParser {
             jsonArray = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONArray("steps");
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.i("ERR",jsonData);
         }
         getDuration(jsonArrLegs);
         return getPaths(jsonArray);

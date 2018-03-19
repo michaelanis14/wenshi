@@ -233,7 +233,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
         findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
 
-        getSupportActionBar().setTitle("Wenshi Driver");
+       // getSupportActionBar().setTitle("Wenshi Driver");
 
 
         swtch_onlineOffline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -429,12 +429,17 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
         if (mGoogleApiClient != null)
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
+            if(CURRENTSTATE == ONROUT || CURRENTSTATE == TODISTINATION)  // need more optimizations TODO: remove
+                showRout();
+
             if (myCurrent != null) myCurrent.remove();  //remove Old Marker
             LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             myCurrent = mMap.addMarker(new MarkerOptions().position(loc));
+
 
             //update FireBase
             if (!onRout && swtch_onlineOffline != null && swtch_onlineOffline.isChecked()) {
@@ -842,7 +847,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         } catch (Exception e) {
 
         }
-        displayLocation();
+     //   displayLocation();
 
 
         Object dataTransfer[] = new Object[2];
