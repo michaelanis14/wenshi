@@ -808,12 +808,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         switch (view.getId()) {
             case R.id.btn_1:
                 if (CURRENTSTATE == NEWREQ) acceptRequest();
-                if (CURRENTSTATE == ARRIVED) {
-                    //take Photo
-                    Intent i = new Intent(this, PostImageActivity.class);
-                    startActivityForResult(i, TOOKPHOTOS);
-                }
-
+                if (CURRENTSTATE == ARRIVED)
+                    driverViewStateControler(TODISTINATION);
                 break;
             case R.id.btn_2:
                 switch (CURRENTSTATE) {

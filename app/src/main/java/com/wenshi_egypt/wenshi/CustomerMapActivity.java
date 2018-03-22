@@ -517,7 +517,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        displayLocation();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.customer_map);
         mapView = mapFragment.getView();
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
@@ -890,9 +890,38 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
         if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE) {
-            customerViewStateControler(CURRENTSTATE);
-        } else {
+        }  else if(CURRENTSTATE != PICKUP){
+            switch (CURRENTSTATE) {
+                case SERVICECHOICE:
+                    customerViewStateControler(PICKUP);
+                    break;
+                case DESTINATION:
+                    customerViewStateControler(SERVICECHOICE);
+                    break;
+                case REVIEWREQ:
+                    customerViewStateControler(DESTINATION);
+                    break;
+                case READYTOREQ:
+                    customerViewStateControler(REVIEWREQ);
+                    break;
+                case REQ:
+                    cancelTrip();
+                    customerViewStateControler(DESTINATION);
+                    break;
+                case TRACEDRIVER:
+                    cancelTrip();
+                    customerViewStateControler(DESTINATION);
+                    break;
+                case TODESTINATION:
+                    Log.i("BACK PRESSED",""+CURRENTSTATE);
+                    break;
+                case RATEDRIVER:
+                    customerViewStateControler(PICKUP);
+                    break;
+            }
+        }
+
+        else {
             super.onBackPressed();
         }
     }
