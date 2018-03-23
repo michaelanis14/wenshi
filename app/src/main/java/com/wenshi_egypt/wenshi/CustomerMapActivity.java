@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.net.Uri;
 import android.os.Build;
@@ -154,7 +155,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     Location mLastLocation;
     LocationRequest mLocationRequest;
     View mBottomSheet;
-    TextView mBottomTextView;
     BottomSheetBehavior mBottomSheetBehavior;
     UserModel user;
     UserModel driverModel;
@@ -173,7 +173,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             int seconds = (int) (millis / 1000);
             int minutes = seconds / 60;
             seconds = seconds % 60;
-            mBottomTextView.setText(String.format("%d:%02d", minutes, seconds));
+            getSupportActionBar().setTitle(String.format("%d:%02d", minutes, seconds));
             timerHandler.postDelayed(this, 500);
         }
     };
@@ -255,15 +255,18 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         markers = new HashMap<String, Marker>();
 
-        mBottomTextView = findViewById(R.id.bottom_view_lbl);
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         mbtn1 = (Button) findViewById(R.id.bottom_view_btn1);
+        mbtn1.setBackgroundColor(Color.BLACK);
         mbtn1.setOnClickListener(this);
+
         mbtn2 = (Button) findViewById(R.id.bottom_down_btn2);
+        mbtn2.setBackgroundColor(Color.BLACK);
         mbtn2.setOnClickListener(this);
 
         mbtn3 = (Button) findViewById(R.id.bottom_down_btn3);
+        mbtn3.setBackgroundColor(Color.BLACK);
         mbtn3.setOnClickListener(this);
 
 
@@ -289,7 +292,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             }
         });
 
-        getSupportActionBar().setTitle("Wenshi Customer");
+
 
         findViewById(R.id.toolbar).bringToFront();
         findViewById(R.id.toolbar).requestLayout();
@@ -612,7 +615,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 
         try {
-            if (location != null) changeMap(location);
+            if (location != null)
+                changeMap(location);
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 
         } catch (Exception e) {
@@ -827,13 +831,13 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         if(CURRENTSTATE == PICKUP) {
             if (driverModel.getCurrentLocation().distanceTo(user.getPickup()) < 400) {
-                mBottomTextView.setText("Your driver is here"); //Send a notification
+                getSupportActionBar().setTitle("Your driver is here"); //Send a notification
                 customerViewStateControler(TODESTINATION);
             }
         }
         else if(CURRENTSTATE == TODESTINATION){
             if (driverModel.getCurrentLocation().distanceTo(user.getPickup()) < 400) {
-                mBottomTextView.setText("You have arrived"); //Send a notification
+                getSupportActionBar().setTitle("You have arrived"); //Send a notification
                 customerViewStateControler(RATEDRIVER);
             }
         }
@@ -890,7 +894,12 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
         if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }  else if(CURRENTSTATE != PICKUP){
+        } else if(CURRENTSTATE != REVIEWREQ && findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE ){
+            customerViewStateControler(CURRENTSTATE);
+        }
+
+
+        else if(CURRENTSTATE != PICKUP){
             switch (CURRENTSTATE) {
                 case SERVICECHOICE:
                     customerViewStateControler(PICKUP);
@@ -1190,12 +1199,12 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         switch (customerState) {
             case PICKUP:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
-
+                mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 mPickupText.setEnabled(true);
                 findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
                 mDestinationText.setEnabled(false);
-                mBottomTextView.setText(getResources().getString(R.string.confirm_pickup));
+                getSupportActionBar().setTitle(getResources().getString(R.string.confirm_pickup));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 mbtn2.setVisibility(View.GONE);
                 mbtn3.setVisibility(View.GONE);
@@ -1208,13 +1217,13 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             case SERVICECHOICE:
 
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
-
+                mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 mPickupText.setEnabled(false);
                 findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
                 mDestinationText.setEnabled(false);
 
-                mBottomTextView.setText(getString(R.string.choose_service_btn));
+                getSupportActionBar().setTitle(getString(R.string.choose_service_btn));
 
                 findViewById(R.id.request_wenshi_info).setVisibility(View.GONE);
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -1231,18 +1240,18 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             case DESTINATION:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
-
+                mBottomSheet.setVisibility(View.VISIBLE);
                 changeMap(user.getDestination());
                 mPickupText.setEnabled(false);
 
                 findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
                 mDestinationText.setEnabled(true);
-                mBottomTextView.setText(getResources().getString(R.string.confirm_destination));
+                getSupportActionBar().setTitle(getResources().getString(R.string.confirm_destination));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 mbtn2.setVisibility(View.GONE);
                 mbtn3.setVisibility(View.GONE);
                 mbtn1.setVisibility(View.VISIBLE);
-                mbtn1.setText(getResources().getString(R.string.confirm));
+                mbtn1.setText(getResources().getString(R.string.confirm_destination));
                 setMarker(false); // delay the set Marker one step behind
                 if (mChoiceMarker != null) mChoiceMarker.setVisible(true);
                 CURRENTSTATE = customerState;
@@ -1251,6 +1260,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.INVISIBLE);
+                mBottomSheet.setVisibility(View.VISIBLE);
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
                 Fragment fragment = new ReviewRequestFragment();
@@ -1259,7 +1269,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 ft.replace(R.id.mainFrame, fragment);
                 ft.commit();
 
-                mBottomTextView.setText(getString(R.string.request_wenshi));
+                getSupportActionBar().setTitle(getString(R.string.request_wenshi));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 mbtn1.setVisibility(View.VISIBLE);
                 mbtn1.setText(getResources().getString(R.string.find_driver));
@@ -1270,12 +1280,13 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 break;
             case READYTOREQ:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
 
-                mBottomTextView.setText(getResources().getString(R.string.reqwestingWenshi));
+                getSupportActionBar().setTitle(getResources().getString(R.string.reqwestingWenshi));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 mbtn1.setVisibility(View.GONE);
                 mbtn2.setVisibility(View.VISIBLE);
@@ -1289,12 +1300,14 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             case REQ:
                 getClosestDriver();
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                mBottomSheet.setVisibility(View.VISIBLE);
+
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
 
-                mBottomTextView.setText(getResources().getString(R.string.reqwestingWenshi));
+                getSupportActionBar().setTitle(getResources().getString(R.string.reqwestingWenshi));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 mbtn1.setVisibility(View.GONE);
                 mbtn2.setVisibility(View.VISIBLE);
@@ -1309,14 +1322,14 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                 if (mDestination != null) mDestination.remove();
 
-
+                mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
 
-                mBottomTextView.setText(getResources().getString(R.string.driver_confirmed_onrout));
+                getSupportActionBar().setTitle(getResources().getString(R.string.driver_confirmed_onrout));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 mbtn1.setVisibility(View.VISIBLE);
                 mbtn1.setText(getResources().getString(R.string.callDriver));
@@ -1335,14 +1348,14 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                 if (mDestination != null) mDestination.remove();
 
-
+                mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
 
-                mBottomTextView.setText(getResources().getString(R.string.driver_confirmed_onrout));
+                getSupportActionBar().setTitle(getResources().getString(R.string.driver_confirmed_onrout));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 mbtn1.setVisibility(View.VISIBLE);
                 mbtn1.setText(getResources().getString(R.string.callDriver));
@@ -1360,7 +1373,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 //   getClosestDriver();
 
                 if (mDestination != null) mDestination.remove();
-
+                mBottomSheet.setVisibility(View.INVISIBLE);
                 findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.INVISIBLE);

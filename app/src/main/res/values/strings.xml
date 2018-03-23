@@ -46,12 +46,12 @@
     <string name="request_winsh">Request Wenshi</string>
     <string name="order_now">Order Now</string>
     <string name="request_wenshi">Request Wenshi</string>
-    <string name="bottom_sheet_content">Contentt</string>
+    <string name="bottom_sheet_content">Content</string>
     <string name="request_winsh_btn">Request Now!</string>
     <string name="vehicle">Vehicle</string>
     <string name="service">Service</string>
     <string name="drop_off_location">DROP OFF</string>
-    <string name="choose_service_btn">Choose Service</string>
+    <string name="choose_service_btn">CHOOSE SERVICE</string>
 
 
     <!-- Michael Abadir -->
@@ -121,18 +121,18 @@
 
     <string name="takePhoto">TAKE PHOTOS</string>
     <string name="start">START</string>
-    <string name="no_location_data_provided">No Location Provoider Available</string>
-    <string name="service_not_available">No Service Avaiable</string>
+    <string name="no_location_data_provided">No Location Provider Available</string>
+    <string name="service_not_available">No Service Available</string>
     <string name="invalid_lat_long_used">Invalid Location Data</string>
     <string name="no_address_found">No Address Found</string>
     <string name="confirm_pickup">Confirm Pickup Location</string>
     <string name="choose">Choose</string>
     <string name="confirm">Confirm</string>
-    <string name="confirm_destination">Confrim Destination Location</string>
+    <string name="confirm_destination">CONFIRM DROP OFF</string>
     <string name="pickup">PICK UP</string>
     <string name="destination">Destination</string>
     <string name="carbroke">Car Broke-down</string>
-    <string name="accedent">Accedent</string>
+    <string name="accedent">Accident</string>
     <string name="CarType">Car Type</string>
     <string name="carModel">Car Model</string>
     <string name="distance">Distance</string>
