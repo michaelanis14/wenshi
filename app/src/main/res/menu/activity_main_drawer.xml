@@ -5,40 +5,21 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_profile"
-            android:title="Profile" />
+            android:id="@+id/nav_payment"
+            android:title="Payment" />
 
         <item
             android:id="@+id/nav_history"
-            android:title="History" />
+            android:title="Your Trips" />
 
-        <item
-            android:id="@+id/nav_myVehicles"
-            android:title="My Vehicles" />
-
-        <item
-            android:id="@+id/nav_payment"
-            android:title="Payment" />
 
         <item
             android:id="@+id/nav_help"
             android:title="Help" />
 
         <item
-            android:id="@+id/nav_rateCharges"
-            android:title="Rate and Charges" />
-
-        <item
-            android:id="@+id/nav_about"
-            android:title="About" />
-
-        <item
             android:id="@+id/nav_invite"
             android:title="Invite" />
-
-        <item
-            android:id="@+id/nav_family"
-            android:title="Family View" />
 
         <item
             android:id="@+id/nav_settings"

@@ -121,7 +121,7 @@ import com.wenshi_egypt.wenshi.model.VehicleModel;
 
 import static com.wenshi_egypt.wenshi.helpers.AppUtils.Defs.CAIRO;
 
-public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener,RateDriverFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptions.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener,SettingsFragment.OnFragmentInteractionListener,RateDriverFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptions.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
 
     private static final long UPDATE_INTERVAL = 50000;
@@ -981,20 +981,22 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             fragment = new ProfileFragment();
         } else if (id == R.id.nav_history) {
             fragment = new HistoricFragment(true, getCustomer().getID());
-        } else if (id == R.id.nav_myVehicles) {
-            fragment = new VehiclesFragment();
+      //  } else if (id == R.id.nav_myVehicles) {
+      //      fragment = new VehiclesFragment();
         } else if (id == R.id.nav_payment) {
             fragment = new PaymentOptions();
         } else if (id == R.id.nav_help) {
             fragment = new HelpFragment();
-        } else if (id == R.id.nav_rateCharges) {
-            fragment = new RateAndChargesFragment();
-        } else if (id == R.id.nav_about) {
-            fragment = new AboutFragment();
+      //  } else if (id == R.id.nav_rateCharges) {
+      //      fragment = new RateAndChargesFragment();
+      //  } else if (id == R.id.nav_about) {
+     //       fragment = new AboutFragment();
         } else if (id == R.id.nav_invite) {
             fragment = new InviteFragment();
-        } else if (id == R.id.nav_family) {
-            fragment = new FamilyViewFragment();
+            //   } else if (id == R.id.nav_family) {
+            //       fragment = new FamilyViewFragment();
+        }else if (id == R.id.nav_settings) {
+            fragment = new SettingsFragment();
         }
 
         //NOTE: Fragment changing code

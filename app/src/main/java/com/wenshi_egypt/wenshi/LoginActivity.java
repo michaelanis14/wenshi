@@ -27,6 +27,8 @@ import javax.xml.validation.Validator;
 import butterknife.BindView;
 import retrofit2.http.HEAD;
 
+import static com.firebase.ui.auth.AuthUI.EXTRA_DEFAULT_COUNTRY_CODE;
+
 public class LoginActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
@@ -43,10 +45,19 @@ public class LoginActivity extends AppCompatActivity {
         Log.i("RIDER", "" + customer);
         auth = FirebaseAuth.getInstance();
 
-        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
-                //   new AuthUI.IdpConfig.PhoneBuilder().build(),
-                // new AuthUI.IdpConfig.GoogleBuilder().build(),
-                new AuthUI.IdpConfig.FacebookBuilder().build(), new AuthUI.IdpConfig.TwitterBuilder().build())).build(), RC_SIGN_IN);
+
+
+
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setTheme(R.style.GreenTheme).setLogo(R.drawable.full_logo)
+                        .setAvailableProviders(Arrays.asList(
+                new AuthUI.IdpConfig.PhoneBuilder().build(),
+                new AuthUI.IdpConfig.EmailBuilder().build(),
+                new AuthUI.IdpConfig.FacebookBuilder().build(),
+                new AuthUI.IdpConfig.GoogleBuilder().build()
+
+               // new AuthUI.IdpConfig.TwitterBuilder().build()
+                )).build(),
+                RC_SIGN_IN);
 
     }
 

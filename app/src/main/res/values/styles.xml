@@ -71,4 +71,16 @@
         </item>
     </style>
 
+
+
+    <style name="GreenTheme" parent="FirebaseUI">
+        <item name="colorPrimaryDark">#f9f9f9</item>
+        <!-- Required for sign-in flow styling -->
+        <item name="colorAccent">@color/colorBlack</item>
+        <item name="android:windowBackground">@color/tw__solid_white</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
 </resources>
