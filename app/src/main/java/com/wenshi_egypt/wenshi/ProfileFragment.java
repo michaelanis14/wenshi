@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,7 +153,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof HelpFragment.OnFragmentInteractionListener) {
+        if (context instanceof ProfileFragment.OnFragmentInteractionListener) {
             mListener = (ProfileFragment.OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
@@ -168,6 +169,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
+    }
+
+  //  @Override
+    public void onFragmentInteraction(Uri uri) {
+        Log.i("UIR",uri.toString());
     }
 
     public interface OnFragmentInteractionListener {

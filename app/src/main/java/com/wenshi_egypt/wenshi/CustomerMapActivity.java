@@ -7,17 +7,12 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.service.chooser.ChooserTargetService;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
@@ -26,25 +21,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.*;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,10 +41,8 @@ import android.widget.Toast;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
-import com.firebase.geofire.GeoQueryDataEventListener;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.firebase.geofire.LocationCallback;
-import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -77,7 +64,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -96,32 +82,13 @@ import java.util.List;
 import java.util.Map;
 
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.GeoDataClient;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.PlaceDetectionClient;
 
-import android.os.Bundle;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
 import com.wenshi_egypt.wenshi.model.VehicleModel;
 
-import static com.wenshi_egypt.wenshi.helpers.AppUtils.Defs.CAIRO;
-
-public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener,SettingsFragment.OnFragmentInteractionListener,RateDriverFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptions.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, CustomerSettingsFragment.OnFragmentInteractionListener, RateDriverFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptions.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
 
     private static final long UPDATE_INTERVAL = 50000;
@@ -291,7 +258,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
             }
         });
-
 
 
         findViewById(R.id.toolbar).bringToFront();
@@ -466,10 +432,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                         break;
                     case TRACEDRIVER:
 
-                        if(driverModel != null && driverModel.getMobile() != null)
-                        startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", driverModel.getMobile(), null)));
+                        if (driverModel != null && driverModel.getMobile() != null)
+                            startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", driverModel.getMobile(), null)));
 
-                       // customerViewStateControler(REQ);
+                        // customerViewStateControler(REQ);
                         break;
                 }
                 // mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -615,8 +581,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 
         try {
-            if (location != null)
-                changeMap(location);
+            if (location != null) changeMap(location);
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 
         } catch (Exception e) {
@@ -742,7 +707,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                                 driverAccept.removeEventListener(driverLocationRefListener);
                                 model.linkProfData(false, driverModel);
                                 //   driverModel.linkProfData(false);
-                                Log.i("DRIVER MODEL",driverModel.toString());
+                                Log.i("DRIVER MODEL", driverModel.toString());
                                 customerViewStateControler(TRACEDRIVER);
 
                                 break;
@@ -790,7 +755,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     }
 
     private void traceDriver() {
-        Log.i("TRACE BEFORE",driverModel.getID());
+        Log.i("TRACE BEFORE", driverModel.getID());
         //Drivers on Trips location will be updated automatically from OnLocationChanged function in DriverMapAcitvity
         driverLocationRef = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(driverModel.getID()).child("CurrentLocation").child("l");
         driverLocationRefListener = driverLocationRef.addValueEventListener(new ValueEventListener() {
@@ -799,7 +764,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                 if (dataSnapshot.exists()) {
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
-                    Log.i("TRACE IN",map.get(0).toString());
+                    Log.i("TRACE IN", map.get(0).toString());
 
                     if (mDriverMarker != null)    //To check if it is not first time to add marker
                         mDriverMarker.remove();
@@ -829,13 +794,12 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
     private void getDistanceBetweenPickUpToDriver() {            //Convert it to time
 
-        if(CURRENTSTATE == PICKUP) {
+        if (CURRENTSTATE == PICKUP) {
             if (driverModel.getCurrentLocation().distanceTo(user.getPickup()) < 400) {
                 getSupportActionBar().setTitle("Your driver is here"); //Send a notification
                 customerViewStateControler(TODESTINATION);
             }
-        }
-        else if(CURRENTSTATE == TODESTINATION){
+        } else if (CURRENTSTATE == TODESTINATION) {
             if (driverModel.getCurrentLocation().distanceTo(user.getPickup()) < 400) {
                 getSupportActionBar().setTitle("You have arrived"); //Send a notification
                 customerViewStateControler(RATEDRIVER);
@@ -894,12 +858,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
         if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if(CURRENTSTATE != REVIEWREQ && findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE ){
+        } else if (CURRENTSTATE != REVIEWREQ && findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE) {
             customerViewStateControler(CURRENTSTATE);
-        }
-
-
-        else if(CURRENTSTATE != PICKUP){
+        } else if (CURRENTSTATE != PICKUP) {
             switch (CURRENTSTATE) {
                 case SERVICECHOICE:
                     customerViewStateControler(PICKUP);
@@ -922,15 +883,13 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     customerViewStateControler(DESTINATION);
                     break;
                 case TODESTINATION:
-                    Log.i("BACK PRESSED",""+CURRENTSTATE);
+                    Log.i("BACK PRESSED", "" + CURRENTSTATE);
                     break;
                 case RATEDRIVER:
                     customerViewStateControler(PICKUP);
                     break;
             }
-        }
-
-        else {
+        } else {
             super.onBackPressed();
         }
     }
@@ -981,29 +940,34 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             fragment = new ProfileFragment();
         } else if (id == R.id.nav_history) {
             fragment = new HistoricFragment(true, getCustomer().getID());
-      //  } else if (id == R.id.nav_myVehicles) {
-      //      fragment = new VehiclesFragment();
+            //  } else if (id == R.id.nav_myVehicles) {
+            //      fragment = new VehiclesFragment();
         } else if (id == R.id.nav_payment) {
             fragment = new PaymentOptions();
         } else if (id == R.id.nav_help) {
             fragment = new HelpFragment();
-      //  } else if (id == R.id.nav_rateCharges) {
-      //      fragment = new RateAndChargesFragment();
-      //  } else if (id == R.id.nav_about) {
-     //       fragment = new AboutFragment();
+            //  } else if (id == R.id.nav_rateCharges) {
+            //      fragment = new RateAndChargesFragment();
+            //  } else if (id == R.id.nav_about) {
+            //       fragment = new AboutFragment();
         } else if (id == R.id.nav_invite) {
             fragment = new InviteFragment();
             //   } else if (id == R.id.nav_family) {
             //       fragment = new FamilyViewFragment();
-        }else if (id == R.id.nav_settings) {
-            fragment = new SettingsFragment();
+        } else if (id == R.id.nav_settings) {
+            fragment = new CustomerSettingsFragment();
+            getSupportActionBar().setTitle(getResources().getString(R.string.action_settings));
+
         }
 
         //NOTE: Fragment changing code
         if (fragment != null) {
             mBottomSheet.setVisibility(View.GONE);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            // ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+            ft.setCustomAnimations(R.anim.slide_in, R.anim.slide_out);
             ft.replace(R.id.mainFrame, fragment);
+            ft.addToBackStack(item.getItemId() + "");
             ft.commit();
         }
 
@@ -1011,6 +975,30 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void showSettingsTabs(String tab) {
+
+        Fragment fragment = null;
+
+        if (tab.equals("Profile")) {
+            fragment = new ProfileFragment();
+
+        }
+
+        if (fragment != null) {
+            mBottomSheet.setVisibility(View.GONE);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();// ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+            ft.setCustomAnimations(R.anim.slide_out, R.anim.fade_in);
+            ft.replace(R.id.mainFrame, fragment);
+            // ft.addToBackStack(item.getItemId()+"");
+            ft.commit();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
+
     }
 
     @Override
@@ -1041,9 +1029,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         }
         LatLngBounds bounds = builder.build();
         int padding = 350;
-        if(CURRENTSTATE == TRACEDRIVER)
-            padding = 200;
-        // offset from edges of the map in pixels
+        if (CURRENTSTATE == TRACEDRIVER) padding = 200;
+        // offset from edRges of the map in pixels
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
         //mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
         mMap.animateCamera(cu);
@@ -1399,10 +1386,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 CURRENTSTATE = customerState;
 
 
-               // showRout();
+                // showRout();
                 //marksCameraUpdate();
-               // if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
-               // traceDriver();
+                // if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
+                // traceDriver();
                 break;
         }
     }

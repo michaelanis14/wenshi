@@ -4,7 +4,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +16,12 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SettingsFragment.OnFragmentInteractionListener} interface
+ * {@link CustomerSettingsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link SettingsFragment#newInstance} factory method to
+ * Use the {@link CustomerSettingsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SettingsFragment extends Fragment implements View.OnClickListener {
+public class CustomerSettingsFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -30,7 +33,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     private OnFragmentInteractionListener mListener;
 
-    public SettingsFragment() {
+    public CustomerSettingsFragment() {
         // Required empty public constructor
     }
 
@@ -40,11 +43,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment SettingsFragment.
+     * @return A new instance of fragment CustomerSettingsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SettingsFragment newInstance(String param1, String param2) {
-        SettingsFragment fragment = new SettingsFragment();
+    public static CustomerSettingsFragment newInstance(String param1, String param2) {
+        CustomerSettingsFragment fragment = new CustomerSettingsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -60,12 +63,17 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             mListener.onFragmentInteraction(builder.build());
         }
 
+
         return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        getView().findViewById(R.id.profile_btn).setOnClickListener(this);
 
+    }
 
-    // TODO: Rename method, update argument and hook method into UI event
+        // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -90,6 +98,18 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+
+        Log.i("ViewClick","   "+view.getId()+R.id.profile_btn);
+        if(view.getId() == R.id.profile_btn){
+           // mBottomSheet.setVisibility(View.GONE);
+            Fragment
+                fragment = new ProfileFragment();
+            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();// ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+            ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
+            ft.replace(R.id.mainFrame, fragment);
+            // ft.addToBackStack(item.getItemId()+"");
+            ft.commit();
+        }
 
     }
 

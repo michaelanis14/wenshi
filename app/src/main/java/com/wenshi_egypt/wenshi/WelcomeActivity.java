@@ -107,7 +107,7 @@ public class WelcomeActivity extends AppCompatActivity {
             });
 
         } else {
-
+            findViewById(R.id.progress_wheel).setVisibility(View.INVISIBLE);
             swtch_RiderOrDriver.setVisibility(View.VISIBLE);
             lbl_Rider.setVisibility(View.VISIBLE);
             lbl_Driver.setVisibility(View.VISIBLE);

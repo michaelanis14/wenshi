@@ -1,20 +1,77 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.wenshi_egypt.wenshi.SettingsFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    android:animateLayoutChanges="true"
+    android:animationCache="true"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:showDividers="middle"
+    android:divider="@drawable/empty_tall_divider"
+    tools:context="com.wenshi_egypt.wenshi.CustomerSettingsFragment">
 
     <Button
+        android:id="@+id/profile_btn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         android:background="@android:color/background_light"
         android:drawableRight="@drawable/arrow"
-        android:layout_height="40dp"
-        android:layout_width="match_parent"
-        android:text="@string/Profile"/>
+        android:text="@string/Profile" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/payment_btn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/background_light"
+        android:drawableRight="@drawable/arrow"
+        android:text="@string/PaymentMethod" />
+
+    <Button
+        android:id="@+id/family_btn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/background_light"
+        android:drawableRight="@drawable/arrow"
+        android:text="@string/textView_family_member_label" />
+
+    <Button
+        android:id="@+id/history_btn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/background_light"
+        android:drawableRight="@drawable/arrow"
+        android:text="@string/history" />
+
+    <Button
+        android:id="@+id/promoCode_btn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/background_light"
+        android:drawableRight="@drawable/arrow"
+        android:text="@string/Promo_code" />
+
+    <Button
+        android:id="@+id/vehicles_btn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/background_light"
+        android:drawableRight="@drawable/arrow"
+        android:text="@string/vehicle" />
+
+    <Button
+        android:id="@+id/inviteFriends_btn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/background_light"
+        android:drawableRight="@drawable/arrow"
+        android:text="@string/textView_invite" />
+
+    <Button
+        android:id="@+id/about_btn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/background_light"
+        android:drawableRight="@drawable/arrow"
+        android:text="@string/textView_about" />
+
+</LinearLayout>
