@@ -88,7 +88,7 @@ import com.google.android.gms.common.api.Status;
 
 import com.wenshi_egypt.wenshi.model.VehicleModel;
 
-public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, CustomerSettingsFragment.OnFragmentInteractionListener, RateDriverFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptions.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, CustomerSettingsFragment.OnFragmentInteractionListener, RateDriverFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptionsFragment.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
 
     private static final long UPDATE_INTERVAL = 50000;
@@ -174,6 +174,20 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     private AddressResultReceiver mResultReceiver;
     private String duration;
     private String distance;
+
+
+    ///SETTINGS TAB ITEMS
+    Fragment settingsFragment;
+    ProfileFragment profileSettingsFragment;
+    PaymentOptionsFragment paymentOptionsSettingsFragment;
+    FamilyViewFragment familyViewSettingsFragment;
+    HistoricFragment historySettingsFragment;
+    VehiclesFragment vehiclesSettingsFragment;
+    InviteFragment inviteSettingsFragment;
+    AboutFragment aboutSettingsFragment;
+    ///
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -845,22 +859,53 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         getDelegate().onPostCreate(savedInstanceState);
     }
 
-    /**
-     * Support library version of {@link android.app.Activity#getActionBar}.
-     * <p>
-     * <p>Retrieve a reference to this activity's ActionBar.
-     *
-     * @return The Activity's ActionBar, or null if it does not have one.
-     */
 
     @Override
     public void onBackPressed() {
+
+       // Log.i("")
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
         if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (CURRENTSTATE != REVIEWREQ && findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE) {
+
+        }
+
+
+        else if(findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE && settingsFragment != null  && (
+                (profileSettingsFragment != null && profileSettingsFragment.isResumed() )
+                        || (paymentOptionsSettingsFragment != null && paymentOptionsSettingsFragment.isResumed() )
+                        || (familyViewSettingsFragment != null && familyViewSettingsFragment.isResumed() )
+                        || (historySettingsFragment != null && historySettingsFragment.isResumed() )
+                        || (vehiclesSettingsFragment != null && vehiclesSettingsFragment.isResumed() )
+                        || (inviteSettingsFragment != null && inviteSettingsFragment.isResumed() )
+                        || (aboutSettingsFragment != null && aboutSettingsFragment.isResumed() )
+                ) ){
+
+
+                if(settingsFragment == null)
+                    settingsFragment = new CustomerSettingsFragment();
+                getSupportActionBar().setTitle(getResources().getString(R.string.action_settings));
+
+
+
+            //NOTE: Fragment changing code
+            if (settingsFragment != null) {
+                mBottomSheet.setVisibility(View.GONE);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                // ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+                ft.setCustomAnimations(R.anim.anim_slide_in_right, R.anim.anim_slide_out_right);
+                ft.replace(R.id.mainFrame, settingsFragment);
+                ft.commit();
+            }
+        }  else if (CURRENTSTATE != REVIEWREQ && findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE) {
             customerViewStateControler(CURRENTSTATE);
-        } else if (CURRENTSTATE != PICKUP) {
+        }
+
+        /// if (currentFragment != null && currentFragment.isVisible()) {
+        //}
+
+       //
+        else if (CURRENTSTATE != PICKUP) {
             switch (CURRENTSTATE) {
                 case SERVICECHOICE:
                     customerViewStateControler(PICKUP);
@@ -943,7 +988,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             //  } else if (id == R.id.nav_myVehicles) {
             //      fragment = new VehiclesFragment();
         } else if (id == R.id.nav_payment) {
-            fragment = new PaymentOptions();
+            fragment = new PaymentOptionsFragment();
         } else if (id == R.id.nav_help) {
             fragment = new HelpFragment();
             //  } else if (id == R.id.nav_rateCharges) {
@@ -955,7 +1000,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             //   } else if (id == R.id.nav_family) {
             //       fragment = new FamilyViewFragment();
         } else if (id == R.id.nav_settings) {
-            fragment = new CustomerSettingsFragment();
+            if(settingsFragment == null)
+                settingsFragment = new CustomerSettingsFragment();
+            fragment = settingsFragment;
             getSupportActionBar().setTitle(getResources().getString(R.string.action_settings));
 
         }
@@ -977,19 +1024,52 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         return true;
     }
 
-    public void showSettingsTabs(String tab) {
+
+    //SETTINGS FRAGMENT CONTROLLER
+    public void showSettingsTabs(int tab) {
 
         Fragment fragment = null;
 
-        if (tab.equals("Profile")) {
-            fragment = new ProfileFragment();
-
+        if (tab == R.id.profile_btn) {
+            if(profileSettingsFragment == null)
+                profileSettingsFragment = new ProfileFragment();
+            fragment = profileSettingsFragment;
+        }
+        else  if (tab == R.id.payment_btn) {
+            if(paymentOptionsSettingsFragment == null)
+                paymentOptionsSettingsFragment = new PaymentOptionsFragment();
+            fragment = paymentOptionsSettingsFragment;
+        }
+        else  if (tab == R.id.family_btn) {
+            if(familyViewSettingsFragment == null)
+                familyViewSettingsFragment = new FamilyViewFragment();
+            fragment = familyViewSettingsFragment;
+        }
+        else  if (tab == R.id.history_btn) {
+            if(historySettingsFragment == null)
+                historySettingsFragment = new HistoricFragment();
+            fragment = historySettingsFragment;
+        }
+        else  if (tab == R.id.vehicles_btn) {
+            if(vehiclesSettingsFragment == null)
+                vehiclesSettingsFragment = new VehiclesFragment();
+            fragment = vehiclesSettingsFragment;
+        }
+        else  if (tab == R.id.inviteFriends_btn) {
+            if(inviteSettingsFragment == null)
+                inviteSettingsFragment = new InviteFragment();
+            fragment = inviteSettingsFragment;
+        }
+        else  if (tab == R.id.about_btn) {
+            if(aboutSettingsFragment == null)
+                aboutSettingsFragment = new AboutFragment();
+            fragment = aboutSettingsFragment;
         }
 
         if (fragment != null) {
             mBottomSheet.setVisibility(View.GONE);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();// ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-            ft.setCustomAnimations(R.anim.slide_out, R.anim.fade_in);
+            ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
             ft.replace(R.id.mainFrame, fragment);
             // ft.addToBackStack(item.getItemId()+"");
             ft.commit();

@@ -44,9 +44,9 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
         rootRef.child("About").orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
-                step1 = value.get("demoAbout");
-                demo.setText(step1);
+         //       HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
+         //       step1 = value.get("demoAbout");
+          //      demo.setText(step1);
             }
 
             @Override

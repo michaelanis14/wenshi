@@ -14,7 +14,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-public class PaymentOptions extends Fragment implements OnClickListener{
+public class PaymentOptionsFragment extends Fragment implements OnClickListener{
 
     private RadioButton rb1;
     private TextView resultText;

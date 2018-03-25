@@ -48,8 +48,9 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        ArrayList<HistoricTrip> trip = GetTrip();
-
+        ArrayList<HistoricTrip> trip ;
+                //= GetTrip();
+/*
         //noinspection ConstantConditions
         demoValue = getView().findViewById(R.id.tvValue);
         noHistoric = getView().findViewById(R.id.textView_no_historic);
@@ -62,11 +63,13 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
             }
         });
+
+        */
     }
 
     private ArrayList<HistoricTrip> GetTrip(){
         final ArrayList<HistoricTrip> results = new ArrayList<>();
-
+/*
         //database reference pointing to root of database
        // rootRef = FirebaseDatabase.getInstance().getReference();
        // histRef = rootRef.child("Users").child("Customers").child("user1").child("Trips");
@@ -98,8 +101,9 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
              //   Toast.makeText(HistoricFragment.this, "Error", Toast.LENGTH_SHORT).show();
             }
         });
-
+  */
         return results;
+
     }
 
     @Override
