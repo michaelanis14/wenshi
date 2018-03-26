@@ -29,11 +29,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,6 +90,8 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.api.Status;
 
 import com.wenshi_egypt.wenshi.model.VehicleModel;
+
+import org.w3c.dom.Text;
 
 public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, CustomerSettingsFragment.OnFragmentInteractionListener, RateDriverFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptions.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
@@ -150,10 +155,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     private GoogleMap mMap;
     private Marker mDriverMarker;
     private Marker mPickupMarker;
+    private Marker mReviewRequestMarker;
     private Marker mDestination;
     private Marker mChoiceMarker;
     private SupportMapFragment mapFragment;
-    private Button mbtn1, mbtn2, mbtn3;
+    private Button mbtn1, mbtn2, mbtn3, mbtnFindDriver;
     private boolean driverFound = false;
     private float radius = 2;
     private GeoQuery geoQuery;
@@ -236,7 +242,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         mbtn3.setBackgroundColor(Color.BLACK);
         mbtn3.setOnClickListener(this);
 
-
+        mbtnFindDriver = (Button) findViewById(R.id.FindDriverBtn);
+        mbtnFindDriver.setOnClickListener(this);
         //get the bottom sheet view
         mBottomSheet = findViewById(R.id.bottom_sheet);
         // init the bottom sheet behavior
@@ -480,6 +487,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 // customerViewStateControler(DESTINATION);
                 openAutocompleteActivity();
                 break;
+
+            case R.id.FindDriverBtn:
+                customerViewStateControler(READYTOREQ);
+                break;
+
         }
     }
 
@@ -1180,6 +1192,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             }
 
         }
+        if(CURRENTSTATE == REVIEWREQ || force){
+            if (mReviewRequestMarker == null)
+                mReviewRequestMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(user.getPickup().getLatitude(), user.getPickup().getLongitude())).title(getDirectionsData.getDuration()));
+
+        }
 
         // marksCameraUpdate();
     }
@@ -1246,29 +1263,26 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 CURRENTSTATE = customerState;
                 break;
             case REVIEWREQ:
-                findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
+                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.INVISIBLE);
-                mBottomSheet.setVisibility(View.VISIBLE);
+                findViewById(R.id.reviewReq).bringToFront();
+                changeMap(user.getDestination());
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
-                Fragment fragment = new ReviewRequestFragment();
-
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.mainFrame, fragment);
-                ft.commit();
-
+                mBottomSheet.setVisibility(View.VISIBLE);
+                setReviewRequestData();
                 getSupportActionBar().setTitle(getString(R.string.request_wenshi));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 mbtn1.setVisibility(View.VISIBLE);
                 mbtn1.setText(getResources().getString(R.string.find_driver));
-
                 //setMarker(false); // delay the set Marker one step behind
                 CURRENTSTATE = customerState;
                 if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
                 break;
             case READYTOREQ:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
@@ -1391,6 +1405,32 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 // if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
                 // traceDriver();
                 break;
+        }
+    }
+
+    private void setReviewRequestData() {
+        TextView carData = (TextView) findViewById(R.id.carData);
+        carData.setText(user.getDefaultVehicle().getType() + " "+ user.getDefaultVehicle().getModel());
+        TextView service = (TextView) findViewById(R.id.Service);
+        service.setText(user.getServiceType());
+        TextView paymentMethod = (TextView) findViewById(R.id.PaymentMethod);
+        paymentMethod.setText(getString(R.string.radioButton_payment_cash));
+        TextView cash = (TextView) findViewById(R.id.Cash);
+
+        TextView pickUp = (TextView) findViewById(R.id.pickUp);
+        pickUp.setText("From: " + user.getPickupAddress());
+        TextView destination = (TextView) findViewById(R.id.Destination);
+        destination.setText("To: "+user.getDestinationAddress());
+        //((TextView)getView().findViewById(R.id.etaValue)).setText( ((CustomerMapActivity)getActivity()).getDirectionsData.getDuration());
+
+
+        try {
+            double distance =Double.parseDouble(getDirectionsData.getDistance().split(" ")[0]);
+            cash.setText("Trip cost: " +distance*15+" LE");
+
+        }catch (Exception e){
+            cash.setText("Contact Driver");
+
         }
     }
 
