@@ -3,18 +3,8 @@ package com.wenshi_egypt.wenshi.model;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
-import com.firebase.ui.auth.data.model.User;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.sql.Ref;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static com.wenshi_egypt.wenshi.helpers.AppUtils.Defs.CAIRO;
 
@@ -30,15 +20,23 @@ public class UserModel implements Parcelable {
     }
 
     String ID = "ID";
-    String name = "FirstLastName";
-    String email = "Email@email.com";
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    String name = "";
+    String email = "";
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
 
-    String mobile = "00000";
-    String address = "Addres";
+    String mobile = "";
 
     public String getServiceType() {
         return ServiceType;
@@ -86,13 +84,12 @@ public class UserModel implements Parcelable {
         }
     };
 
-    public UserModel(String id, String name, String email, String mobile, String address) {
+    public UserModel(String id, String name, String email, String mobile) {
         this.ID = id;
         this.name = name;
         this.email = email;
         this.mobile = mobile;
-        this.address = address;
-        this.defaultVehicle = new VehicleModel("KIA", "RIO 2014");
+        this.defaultVehicle = new VehicleModel("KIA", "RIO 2014",true,"","");
 
         Location locationCairo = new Location("");
         locationCairo.setLatitude(CAIRO.latitude);
@@ -101,12 +98,11 @@ public class UserModel implements Parcelable {
         pickup = locationCairo;
         destination = locationCairo;
     }
-    public UserModel(String id, String name, String email, String mobile, Location pickup, Location destination, String address, VehicleModel defaultVehicle) {
+    public UserModel(String id, String name, String email, String mobile, Location pickup, Location destination,  VehicleModel defaultVehicle) {
         this.ID = id;
         this.name = name;
         this.email = email;
         this.mobile = mobile;
-        this.address = address;
         this.pickup = pickup;
         this.destination = destination;
         this.defaultVehicle = defaultVehicle;
@@ -117,7 +113,6 @@ public class UserModel implements Parcelable {
         name = in.readString();
         email = in.readString();
         mobile = in.readString();
-        address = in.readString();
         defaultVehicle = in.readParcelable(VehicleModel.class.getClassLoader());
        // pickup = (Location) in.readValue(Location.class.getClassLoader());
         pickupAddress = in.readString();
@@ -175,10 +170,6 @@ public class UserModel implements Parcelable {
         return mobile;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
     public ArrayList<VehicleModel> getVehicles() {
         return Vehicles;
     }
@@ -199,7 +190,6 @@ public class UserModel implements Parcelable {
         parcel.writeString(name);
         parcel.writeString(email);
         parcel.writeString(mobile);
-        parcel.writeString(address);
         //parcel.writeValue(pickup);
         parcel.writeString(pickupAddress);
        // parcel.writeValue(destination);
@@ -215,7 +205,7 @@ public class UserModel implements Parcelable {
 
     @Override
     public String toString() {
-        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\""+ ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\""  + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"address\":\"" + address + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\"" + ", \"Vehicle\":" + this.defaultVehicle.toString() + "" + '}';
+        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\""+ ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\""  + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\"" + ", \"Vehicle\":" + this.defaultVehicle.toString() + "" + '}';
     }
 
 

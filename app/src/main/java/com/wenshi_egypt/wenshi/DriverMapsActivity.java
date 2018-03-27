@@ -266,8 +266,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             String mobile = cust.getString("mobile");
                             //  String lat = cust.getString("Latitude");
                             //  String longt = cust.getString("Longitude");
-                            String address = cust.getString("address");
-                            VehicleModel defaultVehicle = new VehicleModel(cust.getJSONObject("Vehicle").getString("type"), cust.getJSONObject("Vehicle").getString("model"));
+                           // String address = cust.getString("address");
+                            VehicleModel defaultVehicle = new VehicleModel(cust.getJSONObject("Vehicle").getString("type"), cust.getJSONObject("Vehicle").getString("model"),true,"","");
 
 
                             // Location locat = new Location("dummyprovider");
@@ -275,11 +275,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             //locat.setLongitude(Double.parseDouble(longt));
 
 
-                            cutomerMod = new UserModel(id, name, email, mobile, address);
+                            cutomerMod = new UserModel(id, name, email, mobile);
                             cutomerMod.setVehicle(defaultVehicle);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            cutomerMod = new UserModel("", "", "", "", "");
+                            cutomerMod = new UserModel("", "", "",  "");
                         }
 
 

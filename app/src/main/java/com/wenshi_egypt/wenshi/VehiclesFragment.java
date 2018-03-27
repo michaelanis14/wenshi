@@ -73,7 +73,7 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
             public void onClick(View view) {
                 //noinspection ConstantConditions
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.mainFrame, new AddNewVehicle());
+                ft.replace(R.id.mainFrame, new AddNewVehicleFragment());
                 ft.commit();
             }
         });
@@ -102,7 +102,7 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
                         demoValue.setText("");
                         if (!type.isEmpty()) {
                             noVehicle.setVisibility(View.INVISIBLE);
-                            results.add(new VehicleModel(type, model));
+                            results.add(new VehicleModel(type, model,true,"",""));
                         }
                     }
                 }

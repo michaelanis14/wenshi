@@ -105,7 +105,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="116dp"
         android:layout_marginEnd="28dp"
-        android:text="@string/button_profile_saveButton"
+        android:text="@string/save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>

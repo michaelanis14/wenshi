@@ -74,16 +74,15 @@ public class LoginActivity extends AppCompatActivity {
                 String name = user.getDisplayName();
                 String email = user.getEmail();
                 String mobil = user.getPhoneNumber();
-                UserModel currenctUserModel = new UserModel(uid, name, email, mobil, "");
+                UserModel currenctUserModel = new UserModel(uid, name, email, mobil);
 
 
                 if (customer) {
-
                     DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid);
-                    currentUser.child("Profile").child("FirstConstantProf").setValue(true);
-                    currentUser.child("Trips").child("trip1").child("FirstConstantTrip").setValue(true);
-                    currentUser.child("Vehicles").child("vehicle1").child("FirstConstantVehicle").setValue(true);
-                    currentUser.child("Family").child("FirstConstantFamily").setValue(true);
+                    currentUser.child("Profile").child("FirstConstant").setValue(true);
+                    currentUser.child("Trips").child("FirstConstant").setValue(true);
+                    currentUser.child("Vehicles").child("FirstConstant").setValue(true);
+                    currentUser.child("Family").child("FirstConstant").setValue(true);
 
 
                     //currentUser.setValue(true); // to allow changes to happen
@@ -104,9 +103,10 @@ public class LoginActivity extends AppCompatActivity {
 
                     DatabaseReference currentUser = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid);
 
-                    currentUser.child("Profile").child("FirstConstantProf").setValue(true);
-                    currentUser.child("Trips").child("trip1").child("FirstConstantTrip").setValue(true);
-
+                    currentUser.child("Profile").child("FirstConstant").setValue(true);
+                    currentUser.child("Trips").child("FirstConstant").setValue(true);
+                    currentUser.child("Vehicles").child("FirstConstant").setValue(true);
+                    currentUser.child("Account").child("FirstConstant").setValue(true);
 
                     //   currentUser.setValue(true); // to allow changes to happen
                     DatabaseReference reqInit = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("Requests").child("FirstConstant");

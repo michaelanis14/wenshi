@@ -1,159 +1,85 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.wenshi_egypt.wenshi.ProfileFragment">
-
-    <!-- TODO: Update blank fragment layout -->
+    android:animateLayoutChanges="true"
+    android:animationCache="true"
+    android:divider="@drawable/empty_tall_divider"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:showDividers="middle">
 
     <TextView
         android:id="@+id/textView_profile_userName_label"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="30dp"
         android:text="@string/textView_profile_userName_label"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView_profile_email_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="100dp"
-        android:text="@string/textView_profile_email_label"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView_profile_mobile_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="312dp"
-        android:text="@string/textView_profile_mobile_label"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView_profile_carType_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="240dp"
-        android:text="@string/textView_profile_carType_label"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView_profile_model_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="180dp"
-        android:text="@string/textView_profile_model_label"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView_profile_address_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="380dp"
-        android:text="@string/textView_profile_address_label"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:labelFor="@id/editText_profile_userName"
+        android:textColor="@color/colorBlack" />
 
     <EditText
         android:id="@+id/editText_profile_userName"
-        android:layout_width="310dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="@+id/textView_profile_userName_label"
-        app:layout_constraintTop_toBottomOf="@+id/textView_profile_userName_label" />
+        android:textColor="@color/colorBlack" />
+
+    <TextView
+        android:id="@+id/textView_profile_email_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/textView_profile_email_label"
+        android:labelFor="@id/editText_profile_email"
+        android:textColor="@color/colorBlack" />
 
     <EditText
         android:id="@+id/editText_profile_email"
-        android:layout_width="310dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textEmailAddress"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="@+id/textView_profile_email_label"
-        app:layout_constraintTop_toBottomOf="@+id/textView_profile_email_label" />
+        android:textColor="@color/colorBlack" />
+
+    <Button
+        android:id="@+id/reset_password_btn"
+        android:layout_width="144dp"
+        android:layout_height="36dp"
+        android:layout_gravity="end"
+        android:text="@string/reset_password" />
+
+    <TextView
+        android:id="@+id/textView_profile_mobile_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/textView_profile_mobile_label"
+        android:labelFor="@id/editText_profile_mobile"
+        android:textColor="@color/colorBlack" />
 
     <EditText
         android:id="@+id/editText_profile_mobile"
-        android:layout_width="310dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="number"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="@+id/textView_profile_mobile_label"
-        app:layout_constraintTop_toBottomOf="@+id/textView_profile_mobile_label" />
+        android:textColor="@color/colorBlack" />
 
-    <EditText
-        android:id="@+id/editText_profile_carType"
-        android:layout_width="228dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="@+id/textView_profile_carType_label"
-        app:layout_constraintTop_toBottomOf="@+id/textView_profile_carType_label" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="center|bottom"
+        android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/editText_profile_model"
-        android:layout_width="228dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:ems="10"
-        android:inputType="text"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_profile_model_label" />
+        <Button
+            android:id="@+id/button_profile_saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="@string/save"
+            android:textColor="@color/tw__solid_white" />
+    </LinearLayout>
 
-    <EditText
-        android:id="@+id/editText_profile_address"
-        android:layout_width="310dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="@+id/textView_profile_address_label"
-        app:layout_constraintTop_toBottomOf="@+id/textView_profile_address_label" />
-
-    <Button
-        android:id="@+id/button_profile_saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/button_profile_saveButton"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <ImageButton
-        android:id="@+id/button_profile_addVehicle"
-        android:layout_width="121dp"
-        android:layout_height="80dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginTop="16dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/addvehicledrawable"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.87"
-        app:layout_constraintStart_toEndOf="@+id/editText_profile_model"
-        app:layout_constraintTop_toTopOf="@+id/editText_profile_model" />
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

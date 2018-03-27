@@ -2,6 +2,7 @@ package com.wenshi_egypt.wenshi;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +18,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,15 +32,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wenshi_egypt.wenshi.model.UserModel;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
 
-    EditText username, email, mobile, carType, model, address;
+    EditText username, email, mobile;
 
-    DatabaseReference rootRef, profRef;
-    Button saveButton;
-    ImageButton profAddVehcile;
+    Button saveButton, resetPassword;
+
     private UserModel user;
     private ProfileFragment.OnFragmentInteractionListener mListener;
 
@@ -50,103 +58,30 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
-    @SuppressWarnings("ConstantConditions")
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         username = getView().findViewById(R.id.editText_profile_userName);
         email = getView().findViewById(R.id.editText_profile_email);
         mobile = getView().findViewById(R.id.editText_profile_mobile);
-        carType = getView().findViewById(R.id.editText_profile_carType);
-        model = getView().findViewById(R.id.editText_profile_model);
-        address = getView().findViewById(R.id.editText_profile_address);
+
         saveButton = getView().findViewById(R.id.button_profile_saveButton);
-        profAddVehcile = getView().findViewById(R.id.button_profile_addVehicle);
+        saveButton.setBackgroundColor(Color.BLACK);
+        saveButton.setOnClickListener(this);
+
+        resetPassword = getView().findViewById(R.id.reset_password_btn);
+        resetPassword.setOnClickListener(this);
 
         user = ((CustomerMapActivity) getActivity()).getCustomer();
 
         if (user != null) {
             username.setText(user.getName());
             email.setText(user.getEmail());
-            //mobile.setText(user.getProfData(user.getID(), true).get(0));
-            //carType.setText(user.getVehicle);
-            //model.setText(String.format("%s", user.get("model")));
-            //address.setText(user.getAddress());
+            mobile.setText(user.getMobile());
         }
-        username.setEnabled(false);
-        email.setEnabled(false);
-        carType.setEnabled(false);
-        model.setEnabled(false);
-
-
-        rootRef = FirebaseDatabase.getInstance().getReference();
-        this.profRef = rootRef.child("Users").child("Customers").child(user.getID()).child("Profile");
-
-        profRef.orderByKey().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getChildrenCount() > 2) {
-                    @SuppressWarnings("unchecked") HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
-                    mobile.setText(value.get("mobile"));
-                    carType.setText(value.get("carType"));
-                    model.setText(value.get("model"));
-                    address.setText(value.get("address"));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        profAddVehcile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //noinspection ConstantConditions
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.mainFrame, new AddNewVehicle());
-                ft.commit();
-            }
-        });
-    /*
-
-        profRef = rootRef.child("Users").child("Customers").child(user.getID());
-
-        profRef.orderByKey().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                @SuppressWarnings("unchecked") HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
-                username.setText(value.get("userName"));
-                email.setText(value.get("email"));
-                mobile.setText(value.get("mobile"));
-                carType.setText(value.get("carType"));
-                model.setText(value.get("model"));
-                address.setText(value.get("address"));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        */
-
-        rootRef = FirebaseDatabase.getInstance().getReference();
-        getView().findViewById(R.id.button_profile_saveButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!String.valueOf(mobile.getText()).isEmpty() && !String.valueOf(carType.getText()).isEmpty() && !String.valueOf(model.getText()).isEmpty() && !String.valueOf(address.getText()).isEmpty()) {
-                    DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID()).child("Profile");
-                    profModify.child("mobile").setValue(String.valueOf(mobile.getText()));
-                    profModify.child("carType").setValue(String.valueOf(carType.getText()));
-                    profModify.child("model").setValue(String.valueOf(model.getText()));
-                    profModify.child("address").setValue(String.valueOf(address.getText()));
-                    Toast.makeText(getActivity(), "Changes Saved Successfully", Toast.LENGTH_LONG).show();
-                } else
-                    Toast.makeText(getActivity(), "Please fill all details", Toast.LENGTH_LONG).show();
-            }
-        });
+        //username.setEnabled(false);
+       // email.setEnabled(false);
 
     }
 
@@ -168,12 +103,87 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        if (view.getId() == R.id.button_profile_saveButton) {
+
+            if (user != null) {
+
+
+
+                if (!String.valueOf(mobile.getText()).isEmpty() && !String.valueOf(username.getText()).isEmpty()) {
+                    DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                    DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID()).child("Profile");
+                    if (!user.getName().equals(username.getText()))
+                        profModify.child("name").setValue(String.valueOf(username.getText()), new DatabaseReference.CompletionListener() {
+                            public void onComplete(DatabaseError error, DatabaseReference ref) {
+                                ((CustomerMapActivity) getActivity()).getCustomer().setName(String.valueOf(username.getText()));
+                                Toast.makeText(getActivity(), "Name " + "Changes Saved Successfully", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    if (!user.getEmail().equals(email.getText()))
+                        profModify.child("email").setValue(String.valueOf(email.getText()), new DatabaseReference.CompletionListener() {
+                            public void onComplete(DatabaseError error, DatabaseReference ref) {
+                                ((CustomerMapActivity) getActivity()).getCustomer().setEmail(String.valueOf(email.getText()));
+                                setFirbaseUSerEmail();
+
+                            }
+                        });
+                    if (!user.getMobile().equals(mobile.getText()))
+                        profModify.child("mobile").setValue(String.valueOf(mobile.getText()), new DatabaseReference.CompletionListener() {
+                            public void onComplete(DatabaseError error, DatabaseReference ref) {
+                                ((CustomerMapActivity) getActivity()).getCustomer().setMobile(String.valueOf(username.getText()));
+                                verifyPhoneNumber();
+                                Toast.makeText(getActivity(), "Mobile " + "Changes Saved Successfully", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+
+
+
+
+                } else
+                    Toast.makeText(getActivity(), getResources().getString(R.string.fields_cannot_empty), Toast.LENGTH_LONG).show();
+            }
+        }
+
+        if (view.getId() == R.id.reset_password_btn) {
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            auth.sendPasswordResetEmail(user.getEmail()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(getActivity(), "Check email to reset your password!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Fail to send reset password email!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
 
     }
 
-  //  @Override
+    public void setFirbaseUSerEmail(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        user.updateEmail( ((CustomerMapActivity) getActivity()).getCustomer().getEmail())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getActivity(), "Email " + "Changes Saved Successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+public void verifyPhoneNumber(){
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(
+                Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build())).build(), 1000);
+
+}
+
+    //  @Override
     public void onFragmentInteraction(Uri uri) {
-        Log.i("UIR",uri.toString());
+
     }
 
     public interface OnFragmentInteractionListener {

@@ -43,6 +43,8 @@ import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.firebase.geofire.LocationCallback;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -202,9 +204,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         Intent i = getIntent();
         user = (UserModel) i.getParcelableExtra("CurrentUser");
-        user.setVehicle(new VehicleModel("KIA", "RIO 2014"));
+       // user.setVehicle(new VehicleModel("KIA", "RIO 2014"));
 
-        driverModel = new UserModel("", "", "", "", "");
+        driverModel = new UserModel("", "", "", "");
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.customer_map);
         mapFragment.getMapAsync(this);
@@ -1034,11 +1036,15 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             if(profileSettingsFragment == null)
                 profileSettingsFragment = new ProfileFragment();
             fragment = profileSettingsFragment;
+            getSupportActionBar().setTitle(getResources().getString(R.string.Profile));
+
         }
         else  if (tab == R.id.payment_btn) {
             if(paymentOptionsSettingsFragment == null)
                 paymentOptionsSettingsFragment = new PaymentOptionsFragment();
             fragment = paymentOptionsSettingsFragment;
+            getSupportActionBar().setTitle(getResources().getString(R.string.PaymentMethod));
+
         }
         else  if (tab == R.id.family_btn) {
             if(familyViewSettingsFragment == null)
@@ -1049,21 +1055,29 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             if(historySettingsFragment == null)
                 historySettingsFragment = new HistoricFragment();
             fragment = historySettingsFragment;
+            getSupportActionBar().setTitle(getResources().getString(R.string.history));
+
         }
         else  if (tab == R.id.vehicles_btn) {
             if(vehiclesSettingsFragment == null)
                 vehiclesSettingsFragment = new VehiclesFragment();
             fragment = vehiclesSettingsFragment;
+            getSupportActionBar().setTitle(getResources().getString(R.string.vehicle));
+
         }
         else  if (tab == R.id.inviteFriends_btn) {
             if(inviteSettingsFragment == null)
                 inviteSettingsFragment = new InviteFragment();
             fragment = inviteSettingsFragment;
+            getSupportActionBar().setTitle(getResources().getString(R.string.textView_invite));
+
         }
         else  if (tab == R.id.about_btn) {
             if(aboutSettingsFragment == null)
                 aboutSettingsFragment = new AboutFragment();
             fragment = aboutSettingsFragment;
+            getSupportActionBar().setTitle(getResources().getString(R.string.textView_about));
+
         }
 
         if (fragment != null) {
@@ -1080,7 +1094,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 
     }
-
     @Override
     public void onFragmentInteraction(Uri uri) {
         // NOTE:  Code to replace the toolbar title based current visible fragment
@@ -1220,6 +1233,34 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         } else if (resultCode == RESULT_CANCELED) {
             // Indicates that the activity closed before a selection was made. For example if
             // the user pressed the back button.
+        }else if (requestCode == 1000) {
+
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+            if (resultCode == RESULT_OK) {
+                if (!FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber().isEmpty()) {
+                    //  startActivity(new Intent(PhoneActivity.this, HomeActivity.class).putExtra("phone", FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber()));
+                    //  finish();
+                    return;
+
+                } else {
+                    if (response == null) {
+                        Toast.makeText(this, "Sign In Failed", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
+                          Toast.makeText(this, "No Network", Toast.LENGTH_SHORT).show();
+
+                        return;
+                    }
+
+                    if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+                         Toast.makeText(this, "unkown Error", Toast.LENGTH_SHORT).show();
+
+                        return;
+                    }
+                }
+            }
         }
     }
 
