@@ -37,6 +37,8 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
     TextView demoValue, noVehicle;
     Button addNewVehicle;
 
+    AddNewVehicleFragment vehicleDetailsFragment;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -75,8 +77,12 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 //noinspection ConstantConditions
+                ((CustomerMapActivity)getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.button_new_vehicle));
+                if(vehicleDetailsFragment == null)
+                vehicleDetailsFragment = new AddNewVehicleFragment();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.mainFrame, new AddNewVehicleFragment());
+                ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
+                ft.replace(R.id.mainFrame, vehicleDetailsFragment);
                 ft.commit();
             }
         });

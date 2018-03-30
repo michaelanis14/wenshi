@@ -190,6 +190,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     ///
 
 
+    //VHICLES TAB//
+    int editVhicle = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
