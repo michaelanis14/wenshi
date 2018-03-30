@@ -98,6 +98,7 @@ public class FetchAddressIntentService extends IntentService {
             // Using getFromLocation() returns an array of Addresses for the area immediately
             // surrounding the given latitude and longitude. The results are a best guess and are
             // not guaranteed to be accurate.
+
             addresses = geocoder.getFromLocation(
                     location.getLatitude(),
                     location.getLongitude(),
@@ -125,10 +126,8 @@ public class FetchAddressIntentService extends IntentService {
         } else {
             Address address = addresses.get(0);
             ArrayList<String> addressFragments = new ArrayList<String>();
-
-            for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
+            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
                 addressFragments.add(address.getAddressLine(i));
-
             }
             deliverResultToReceiver(AppUtils.LocationConstants.SUCCESS_RESULT,
                     TextUtils.join(System.getProperty("line.separator"), addressFragments), address);

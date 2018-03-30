@@ -38,7 +38,7 @@ allprojects {
     repositories {
         mavenCentral()
         jcenter()
-        maven { url "https://dl.bintray.com/paymobsolutions/paymob_accept_sdk" }
+       // maven { url "https://dl.bintray.com/paymobsolutions/paymob_accept_sdk" }
 
     }
 }
@@ -61,7 +61,7 @@ dependencies {
     implementation 'com.android.support:support-v4:26.1.0'
     compile 'com.android.support:appcompat-v7:26.1.0'
     //  testCompile 'junit:junit:4.12'
-    compile 'com.jakewharton:butterknife:8.8.1'
+   // compile 'com.jakewharton:butterknife:8.8.1'
     compile 'com.google.firebase:firebase-core:11.8.0'
     implementation 'com.firebaseui:firebase-ui-auth:3.2.1'
     compile 'com.google.firebase:firebase-database:11.8.0'
@@ -72,7 +72,7 @@ dependencies {
     implementation 'com.facebook.android:facebook-login:[4,5)'
 
     implementation('com.twitter.sdk.android:twitter-core:3.1.1@aar') { transitive = true }
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    //annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile 'com.android.support:design:26.0.0'
     compile 'com.google.maps.android:android-maps-utils:0.5+'
     compile 'com.google.firebase:firebase-storage:11.8.0'

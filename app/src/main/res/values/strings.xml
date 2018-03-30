@@ -90,9 +90,9 @@
     <string name="offline">Offline</string>
     <string name="accept">Accept</string>
 
-    <string name="textView_profile_userName_label">Name</string>
-    <string name="textView_profile_email_label">Email</string>
-    <string name="textView_profile_mobile_label">Mobile</string>
+    <string name="textView_profile_userName_label">Name *</string>
+    <string name="textView_profile_email_label">Email *</string>
+    <string name="textView_profile_mobile_label">Mobile *</string>
     <string name="textView_profile_address_label">Address</string>
     <string name="new_request">NEW REQUEST</string>
     <string name="textView_driverProfile_carType_label">Wensh type</string>
@@ -242,5 +242,6 @@
     <string name="Promo_code">Promo Code</string>
     <string name="reset_password">Reset Password</string>
     <string name="fields_cannot_empty">Please fill all required fields</string>
+    <string name="wrong_phone_number">Wrong Phone Number</string>
 
 </resources>

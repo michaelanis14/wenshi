@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     tools:context="com.wenshi_egypt.wenshi.DriverProfileFragment">
 
-    <!-- TODO: Update blank fragment layout -->
 
     <TextView
         android:id="@+id/textView_driverProfile_userName_label"

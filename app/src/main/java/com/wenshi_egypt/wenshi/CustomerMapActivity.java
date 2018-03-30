@@ -1007,6 +1007,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             fragment = settingsFragment;
             getSupportActionBar().setTitle(getResources().getString(R.string.action_settings));
 
+        }else if(id == R.id.nav_header_logout){
+            FirebaseAuth.getInstance().signOut();
+            Intent customerWelcome = new Intent(CustomerMapActivity.this, WelcomeActivity.class);
+             startActivity(customerWelcome);
         }
 
         //NOTE: Fragment changing code
@@ -1526,7 +1530,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 googleDirectionsUrl.append("&destination=" + driverModel.getCurrentLocation().getLatitude() + "," + driverModel.getCurrentLocation().getLongitude());
         }
 
-        googleDirectionsUrl.append("&departure_time=now&key=" + getResources().getString(R.string.google_geo_maps_key));
+        googleDirectionsUrl.append("&departure_time=now&key=AIzaSyCvKJJXSQLXM-BmWYpMck1YT1hiG9u8L5c");
 
         return googleDirectionsUrl.toString();
     }

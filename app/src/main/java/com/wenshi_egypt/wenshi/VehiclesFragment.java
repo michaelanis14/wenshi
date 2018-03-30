@@ -1,5 +1,6 @@
 package com.wenshi_egypt.wenshi;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,14 +29,13 @@ import com.wenshi_egypt.wenshi.model.VehicleModel;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class VehiclesFragment extends Fragment implements View.OnClickListener{
+public class VehiclesFragment extends Fragment implements View.OnClickListener {
 
-    DatabaseReference rootRef, vehicleRef;
-    TextView demoValue, noVehicle;
-    ImageButton addNewVehicle;
     static String type, model;
     static String defType, defModel;
-
+    DatabaseReference rootRef, vehicleRef;
+    TextView demoValue, noVehicle;
+    Button addNewVehicle;
 
     @Nullable
     @Override
@@ -44,29 +46,30 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        final ArrayList<VehicleModel> vehicle = getVehicle();
+       // final ArrayList<VehicleModel> vehicle = getVehicle();
         //noinspection ConstantConditions
-        demoValue = getView().findViewById(R.id.tvValue2);
-        addNewVehicle = getView().findViewById(R.id.textView_vehicle_addNew);
-        noVehicle = getView().findViewById(R.id.textView_no_vehicle);
 
-        final ListView lv1 = getView().findViewById(R.id.listView_vehicles);
+        addNewVehicle = getView().findViewById(R.id.btn_Aadd_new_vehicle);
+        addNewVehicle.setBackgroundColor(Color.BLACK);
+        addNewVehicle.setOnClickListener(this);
 
-        lv1.setAdapter(new MyVehiclesAdapter(getActivity(), vehicle));
 
-        lv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                defType = vehicle.get(position).getType();
-                defModel = vehicle.get(position).getModel();
 
-                assert getActivity() != null;
-                DatabaseReference defVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(((CustomerMapActivity) getActivity()).getCustomer().getID()).child("Profile");
-                defVehicle.child("carType").setValue(defType);
-                defVehicle.child("model").setValue(defModel);
-                Toast.makeText(getActivity(), String.format("%s has become your default car", defType), Toast.LENGTH_SHORT).show();
-            }
-        });
+        LinearLayout layout = (LinearLayout) getView().findViewById(R.id.vehicles_list_layout);
+
+        //set the properties for button
+        Button button = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
+        button.setText("Button");
+
+        //btnTag.setId(31);
+
+        //add button to the layout
+        layout.addView(button);
+        Button button2 = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
+        button2.setText("Button2");
+        layout.addView(button2);
+    //    final ListView lv1 = getView().findViewById(R.id.listView_vehicles);
+       // lv1.setAdapter(new MyVehiclesAdapter(getActivity(), vehicle));
 
         addNewVehicle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,8 +82,8 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
         });
     }
 
-
-    private ArrayList<VehicleModel> getVehicle(){
+/*
+    private ArrayList<VehicleModel> getVehicle() {
         final ArrayList<VehicleModel> results = new ArrayList<>();
         assert getActivity() != null;
         UserModel user = ((CustomerMapActivity) getActivity()).getCustomer();
@@ -91,33 +94,34 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener{
         vehicleRef.orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot child : dataSnapshot.getChildren()) {
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
                     //noinspection unchecked
                     HashMap<String, String> value = (HashMap<String, String>) child.getValue();
                     assert value != null;
-                    if(!child.hasChild("FirstConstantVehicle")) {
+                    if (!child.hasChild("FirstConstantVehicle")) {
                         type = value.get("type");
                         model = String.format("%s", value.get("model"));
 
                         demoValue.setText("");
                         if (!type.isEmpty()) {
                             noVehicle.setVisibility(View.INVISIBLE);
-                            results.add(new VehicleModel(type, model,true,"",""));
+                            results.add(new VehicleModel(type, model, true, "", ""));
                         }
                     }
                 }
-                if(results.size()==0)
-                    noVehicle.setVisibility(View.VISIBLE);
+                if (results.size() == 0) noVehicle.setVisibility(View.VISIBLE);
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
-             //   Toast.makeText(HistoricFragment.this, "Error", Toast.LENGTH_SHORT).show();
+                //   Toast.makeText(HistoricFragment.this, "Error", Toast.LENGTH_SHORT).show();
             }
         });
         return results;
+
+
     }
-
-
+*/
 
     @Override
     public void onClick(View view) {

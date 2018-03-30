@@ -887,7 +887,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         }
 
 
-        googleDirectionsUrl.append("&departure_time=now&key=" + getResources().getString(R.string.google_geo_maps_key));
+        googleDirectionsUrl.append("&departure_time=now&key=AIzaSyAgPwnT7C18Mv9PE7yXavg0kZ5lfSzKJW4");
 
         return googleDirectionsUrl.toString();
     }

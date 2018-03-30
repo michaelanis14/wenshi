@@ -22,12 +22,6 @@ import com.wenshi_egypt.wenshi.model.UserModel;
 
 import java.util.Arrays;
 
-import javax.xml.validation.Validator;
-
-import butterknife.BindView;
-import retrofit2.http.HEAD;
-
-import static com.firebase.ui.auth.AuthUI.EXTRA_DEFAULT_COUNTRY_CODE;
 
 public class LoginActivity extends AppCompatActivity {
 
