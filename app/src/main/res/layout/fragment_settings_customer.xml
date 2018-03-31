@@ -42,13 +42,6 @@
         android:drawableRight="@drawable/arrow"
         android:text="@string/history" />
 
-    <Button
-        android:id="@+id/promoCode_btn"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@android:color/background_light"
-        android:drawableRight="@drawable/arrow"
-        android:text="@string/Promo_code" />
 
     <Button
         android:id="@+id/vehicles_btn"

@@ -82,7 +82,7 @@ public class ReviewRequestFragment extends Fragment implements View.OnClickListe
         ((TextView)getView().findViewById(R.id.pickupValue)).setText(user.getPickupAddress());
         ((TextView)getView().findViewById(R.id.dropoffValue)).setText(user.getDestinationAddress());
         ((TextView)getView().findViewById(R.id.serviceValue)).setText(user.getServiceType());
-        ((TextView)getView().findViewById(R.id.cartypeValue)).setText(user.getDefaultVehicle().getType());
+//        ((TextView)getView().findViewById(R.id.cartypeValue)).setText(user.getDefaultVehicle().getType());
         ((TextView)getView().findViewById(R.id.carmodelValue)).setText(user.getDefaultVehicle().getModel());
         ((TextView)getView().findViewById(R.id.etaValue)).setText( ((CustomerMapActivity)getActivity()).getDirectionsData.getDuration());
         ((TextView)getView().findViewById(R.id.distanceValue)).setText( ((CustomerMapActivity)getActivity()).getDirectionsData.getDistance());

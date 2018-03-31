@@ -1,52 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.wenshi_egypt.wenshi.VehiclesFragment">
+    android:id="@+id/vehicles_Layout"
+    android:orientation="vertical"
+    android:padding="15dp">
 
-    <TextView
-        android:id="@+id/textView_no_vehicle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="124dp"
-        android:layout_marginTop="44dp"
-        android:text="@string/textView_no_vehicle"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ListView
-        android:id="@+id/listView_vehicles"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="325dp"
-        android:listSelector="@color/colorGreen"
-        android:textColor="@color/colorBlack"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvValue2"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="26dp"
-        android:layout_marginStart="26dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toEndOf="@id/listView_vehicles"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:animateLayoutChanges="true"
+        android:animationCache="true"
+        android:divider="@drawable/empty_tall_divider"
+        android:padding="15dp"
+        android:showDividers="middle"
+        android:gravity="start"
+        android:orientation="vertical"
+        android:id="@+id/vehicles_list_layout">
 
-    <ImageButton
-        android:id="@+id/textView_vehicle_addNew"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="24dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/todo"
-        android:src="@drawable/addvehicledrawable"
-        app:layout_constraintStart_toStartOf="@id/listView_vehicles"
-        app:layout_constraintTop_toBottomOf="@+id/listView_vehicles" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="center|bottom"
+        android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+        <Button
+            android:id="@+id/btn_Aadd_new_vehicle"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="40dp"
+            android:gravity="center"
+            android:text="@string/textView_vehicle_addNew"
+            android:textColor="@color/tw__solid_white" />
+    </LinearLayout>
+
+</LinearLayout>
+

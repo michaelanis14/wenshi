@@ -30,10 +30,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
 
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.wenshi_egypt.wenshi.helpers.Scanner;
 
 import java.io.File;
@@ -42,9 +39,9 @@ import java.util.Random;
 
 public class PostImageActivity extends AppCompatActivity {
 
-
+ /*
     ImageView imageView;
-    StorageReference myrefernce;
+  //  StorageReference myrefernce;
 
 
     private static final String LOG_TAG = "Barcode Scanner API";
@@ -63,7 +60,7 @@ public class PostImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post_image);
         imageView = (ImageView) findViewById(R.id.imgview);
         scan = (TextView) findViewById(R.id.txtContent);
-        myrefernce = FirebaseStorage.getInstance().getReference();
+     //   myrefernce = FirebaseStorage.getInstance().getReference();
         progressDialog = new ProgressDialog(PostImageActivity.this);
         if (savedInstanceState!=null){
 
@@ -108,7 +105,8 @@ public class PostImageActivity extends AppCompatActivity {
 
                 progressDialog.setTitle("Uploading..");
                 progressDialog.show();
-                StorageReference filepath = myrefernce.child("photos").child(imageuri.getLastPathSegment());
+                //        StorageReference filepath = myrefernce.child("photos").child(imageuri.getLastPathSegment());
+
                 filepath.putFile(imageuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -131,6 +129,8 @@ public class PostImageActivity extends AppCompatActivity {
                 Log.e(LOG_TAG, e.toString());
             }
         }
+
+            }
     }
 
     public void takePicture() {
@@ -146,6 +146,7 @@ public class PostImageActivity extends AppCompatActivity {
         startActivityForResult(intent, PHOTO_REQUEST);
     }
 
+    /*
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (imageuri != null) {
@@ -160,5 +161,5 @@ public class PostImageActivity extends AppCompatActivity {
         mediaScanIntent.setData(imageuri);
         this.sendBroadcast(mediaScanIntent);
     }
-
+*/
 }

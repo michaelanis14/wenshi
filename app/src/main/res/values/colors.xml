@@ -7,11 +7,11 @@
     <color name="colorBlue">#FF4081</color>
     <color name="colorGreen">#09e146</color>
 
-    <!-- Michael Abadir -->
+
     <color name="colorBlack">#000000</color>
     <color name="colorGrey">#d4d4d4</color>
-
-
+    <color name="tw__solid_white">#f9f9f9</color>
+    <color name="colorOrange">#FFA500</color>
 
 
     <color name="material_green_50">#E8F5E9</color>

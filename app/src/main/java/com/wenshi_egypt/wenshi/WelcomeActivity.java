@@ -52,7 +52,7 @@ public class WelcomeActivity extends AppCompatActivity {
             String name = user.getDisplayName();
             String email = user.getEmail();
             String mobil = user.getPhoneNumber();
-            currenctUserModel = new UserModel(uid, name, email, mobil, "");
+            currenctUserModel = new UserModel(uid, name, email, mobil);
 
 
             isDriverRef = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(uid);
@@ -93,6 +93,8 @@ public class WelcomeActivity extends AppCompatActivity {
                         return;
                     } else {
                         isUserRef.removeEventListener(this);
+                        findViewById(R.id.progress_wheel).setVisibility(View.INVISIBLE);
+
                         swtch_RiderOrDriver.setVisibility(View.VISIBLE);
                         lbl_Rider.setVisibility(View.VISIBLE);
                         lbl_Driver.setVisibility(View.VISIBLE);

@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,15 +36,6 @@ public class CustomerSettingsFragment extends Fragment implements View.OnClickLi
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CustomerSettingsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static CustomerSettingsFragment newInstance(String param1, String param2) {
         CustomerSettingsFragment fragment = new CustomerSettingsFragment();
         Bundle args = new Bundle();
@@ -62,18 +52,23 @@ public class CustomerSettingsFragment extends Fragment implements View.OnClickLi
             builder.scheme("http").authority("www.merply.com").appendPath("Winshe").appendPath("types").appendQueryParameter("type", "1").appendQueryParameter("sort", "relevance").fragment("settings");
             mListener.onFragmentInteraction(builder.build());
         }
-
-
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        return inflater.inflate(R.layout.fragment_settings_customer, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         getView().findViewById(R.id.profile_btn).setOnClickListener(this);
+        getView().findViewById(R.id.payment_btn).setOnClickListener(this);
+        getView().findViewById(R.id.family_btn).setOnClickListener(this);
+        getView().findViewById(R.id.history_btn).setOnClickListener(this);
+        getView().findViewById(R.id.vehicles_btn).setOnClickListener(this);
+        getView().findViewById(R.id.inviteFriends_btn).setOnClickListener(this);
+        getView().findViewById(R.id.about_btn).setOnClickListener(this);
+
 
     }
 
-        // TODO: Rename method, update argument and hook method into UI event
+    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -98,19 +93,7 @@ public class CustomerSettingsFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
-
-        Log.i("ViewClick","   "+view.getId()+R.id.profile_btn);
-        if(view.getId() == R.id.profile_btn){
-           // mBottomSheet.setVisibility(View.GONE);
-            Fragment
-                fragment = new ProfileFragment();
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();// ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-            ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
-            ft.replace(R.id.mainFrame, fragment);
-            // ft.addToBackStack(item.getItemId()+"");
-            ft.commit();
-        }
-
+            ((CustomerMapActivity)getActivity()).showSettingsTabs(view.getId());
     }
 
     /**

@@ -10,10 +10,16 @@ import android.os.Parcelable;
 public class VehicleModel implements Parcelable {
     String type;
     String model;
+    boolean sedan;
+    String color;
+    String year;
 
-    public VehicleModel(String carType, String model) {
+    public VehicleModel(String carType, String model,boolean sedan,String color,String year) {
         this.type = carType;
         this.model = model;
+        this.sedan = sedan;
+        this.color = color;
+        this.year = year;
     }
 
 
@@ -34,6 +40,9 @@ public class VehicleModel implements Parcelable {
         return "{" +
                 "\"type\":\"" + type + "\"" +
                 ", \"model\":\"" + model + "\"" +
+                ", \"sedan\":\"" + sedan + "\"" +
+                ", \"color\":\"" + color + "\"" +
+                ", \"year\":\"" + year + "\"" +
                 '}';
     }
     public static final Parcelable.Creator<VehicleModel> CREATOR

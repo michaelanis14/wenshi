@@ -44,9 +44,9 @@ public class InviteFragment extends Fragment implements View.OnClickListener {
         rootRef.child("Invite").orderByKey().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
-                step1 = value.get("demoInvite");
-                demo.setText(step1);
+          //      HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
+          //      step1 = value.get("demoInvite");
+         //       demo.setText(step1);
             }
 
             @Override

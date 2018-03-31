@@ -30,7 +30,7 @@
         android:textColor="@color/colorBlack" />
 
     <TextView
-        android:id="@+id/textViewEmailNav"
+        android:id="@+id/nav_header_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"

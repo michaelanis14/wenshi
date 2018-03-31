@@ -66,9 +66,9 @@ public class HelpFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 HashMap<String, String> value = (HashMap<String, String>) dataSnapshot.getValue();
-                step1 = value.get("helpDemo");
-                demo.setText(step1);
-                demo.setTextColor(Color.BLACK);
+      //          step1 = value.get("helpDemo");
+       //         demo.setText(step1);
+        //        demo.setTextColor(Color.BLACK);
             }
 
             @Override

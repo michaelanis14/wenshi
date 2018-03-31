@@ -70,7 +70,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_geo_maps_key" />
+            android:value="AIzaSyAgPwnT7C18Mv9PE7yXavg0kZ5lfSzKJW4" />
 
         <activity
             android:name=".DriverMapsActivity"
