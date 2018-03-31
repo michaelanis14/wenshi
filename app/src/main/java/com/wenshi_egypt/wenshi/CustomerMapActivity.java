@@ -1266,8 +1266,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.INVISIBLE);
+
                 findViewById(R.id.reviewReq).bringToFront();
                 changeMap(user.getDestination());
+
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
                 mBottomSheet.setVisibility(View.VISIBLE);

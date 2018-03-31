@@ -11,87 +11,6 @@
 
 
 
-    <RelativeLayout
-        android:id="@+id/reviewReq"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_alignParentBottom="true"
-            android:orientation="vertical"
-            android:background="@android:color/white">
-            <TextView
-                android:id="@+id/carData"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Car type here"
-                android:textSize="20dp"
-                android:background="@drawable/border"
-                android:layout_weight="1"
-                android:textColor="@color/colorBlack"
-                />
-            <TextView
-                android:id="@+id/Service"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Service here"
-                android:textSize="20dp"
-                android:layout_weight="1"
-                android:textColor="@color/colorBlack"
-                />
-            <TextView
-                android:id="@+id/pickUp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="pickup"
-                android:textSize="20dp"
-                android:layout_weight="1"
-                android:textColor="@color/colorBlack"
-                />
-            <TextView
-                android:id="@+id/Destination"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Destnation"
-                android:textSize="20dp"
-                android:layout_weight="1"
-                android:textColor="@color/colorBlack"
-                />
-            <TextView
-                android:id="@+id/PaymentMethod"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/PaymentMethod"
-                android:textSize="20dp"
-                android:layout_weight="1"
-                android:textColor="@color/colorBlack"
-                />
-
-                <TextView
-                    android:id="@+id/Cash"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Cash"
-                    android:textSize="20dp"
-                    android:textColor="@color/colorBlack"
-                    />
-            <Button
-                android:id="@+id/FindDriverBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Find Driver"
-                android:textSize="20dp"
-                android:textColor="@color/tw__solid_white"
-                android:background="@color/colorBlack"/>
-
-
-        </LinearLayout>
-    </RelativeLayout>
-
-
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -144,6 +63,87 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.wenshi_egypt.wenshi.CustomerMapActivity">
+
+        <RelativeLayout
+            android:id="@+id/reviewReq"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical"
+                android:background="@android:color/white">
+                <TextView
+                    android:id="@+id/carData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Car type here"
+                    android:textSize="20dp"
+                    android:background="@drawable/border"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorBlack"
+                    />
+                <TextView
+                    android:id="@+id/Service"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Service here"
+                    android:textSize="20dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorBlack"
+                    />
+                <TextView
+                    android:id="@+id/pickUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="pickup"
+                    android:textSize="20dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorBlack"
+                    />
+                <TextView
+                    android:id="@+id/Destination"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Destnation"
+                    android:textSize="20dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorBlack"
+                    />
+                <TextView
+                    android:id="@+id/PaymentMethod"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/PaymentMethod"
+                    android:textSize="20dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorBlack"
+                    />
+
+                <TextView
+                    android:id="@+id/Cash"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Cash"
+                    android:textSize="20dp"
+                    android:textColor="@color/colorBlack"
+                    />
+                <Button
+                    android:id="@+id/FindDriverBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Find Driver"
+                    android:textSize="20dp"
+                    android:textColor="@color/tw__solid_white"
+                    android:background="@color/colorBlack"/>
+
+
+            </LinearLayout>
+        </RelativeLayout>
+
 
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
