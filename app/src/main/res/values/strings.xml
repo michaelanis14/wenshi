@@ -243,5 +243,12 @@
     <string name="reset_password">Reset Password</string>
     <string name="fields_cannot_empty">Please fill all required fields</string>
     <string name="wrong_phone_number">Wrong Phone Number</string>
+    <string name="sedan">Sedan</string>
+    <string name="SUV">SUV</string>
+    <string name="textView_vehicle_type">Type</string>
+    <string name="textView_vehicle_color">Color</string>
+    <string name="textView_vehicle_year">Year</string>
+    <string name="textView_vehicle_model">Model</string>
+    <string name="textView_vehicle_make">Make</string>
 
 </resources>

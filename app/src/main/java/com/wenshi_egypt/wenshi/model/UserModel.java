@@ -47,7 +47,6 @@ public class UserModel implements Parcelable {
     }
 
     String ServiceType;
-    VehicleModel defaultVehicle;
     Location pickup;
     String pickupAddress;
     Location destination;
@@ -89,8 +88,6 @@ public class UserModel implements Parcelable {
         this.name = name;
         this.email = email;
         this.mobile = mobile;
-        this.defaultVehicle = new VehicleModel("KIA", "RIO 2014",true,"","");
-
         Location locationCairo = new Location("");
         locationCairo.setLatitude(CAIRO.latitude);
         locationCairo.setLongitude(CAIRO.longitude);
@@ -98,14 +95,13 @@ public class UserModel implements Parcelable {
         pickup = locationCairo;
         destination = locationCairo;
     }
-    public UserModel(String id, String name, String email, String mobile, Location pickup, Location destination,  VehicleModel defaultVehicle) {
+    public UserModel(String id, String name, String email, String mobile, Location pickup, Location destination) {
         this.ID = id;
         this.name = name;
         this.email = email;
         this.mobile = mobile;
         this.pickup = pickup;
         this.destination = destination;
-        this.defaultVehicle = defaultVehicle;
     }
     // example constructor that takes a Parcel and gives you an object populated with it's values
     private UserModel(Parcel in) {
@@ -113,7 +109,6 @@ public class UserModel implements Parcelable {
         name = in.readString();
         email = in.readString();
         mobile = in.readString();
-        defaultVehicle = in.readParcelable(VehicleModel.class.getClassLoader());
        // pickup = (Location) in.readValue(Location.class.getClassLoader());
         pickupAddress = in.readString();
        // destination = (Location) in.readValue(Location.class.getClassLoader());
@@ -149,10 +144,6 @@ public class UserModel implements Parcelable {
         this.currentLocation = currentLocation;
     }
 
-    public VehicleModel getDefaultVehicle() {
-        return defaultVehicle;
-    }
-
     public String getID() {
         if (ID != null) return ID;
         else return "";
@@ -175,7 +166,6 @@ public class UserModel implements Parcelable {
     }
 
     public void setVehicle(VehicleModel vehicle) {
-        this.defaultVehicle = vehicle;
         Vehicles.add(vehicle);
     }
 
@@ -197,7 +187,6 @@ public class UserModel implements Parcelable {
       //  parcel.writeValue(currentLocation);
      //   pickup.writeToParcel(parcel, i);
       //  destination.writeToParcel(parcel, i);
-        parcel.writeParcelable(defaultVehicle, i);
         parcel.writeTypedList(Vehicles);
 
 
@@ -205,7 +194,7 @@ public class UserModel implements Parcelable {
 
     @Override
     public String toString() {
-        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\""+ ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\""  + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\"" + ", \"Vehicle\":" + this.defaultVehicle.toString() + "" + '}';
+        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\""+ ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\""  + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\""  + '}';
     }
 
 

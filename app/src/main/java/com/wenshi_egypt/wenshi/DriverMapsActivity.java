@@ -301,7 +301,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                                     driverViewStateControler(NEWREQ);
                                     marksCameraUpdate();
                                     hidePopup();
-                                    showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi");
+                                    showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : ", "CAR MODEL : " , "SERVICE : Wenshi");
 
                                 }
                             }
@@ -984,7 +984,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 break;
             case ARRIVED:
                 Log.i("STATE", "ARRIVED");
-                showPopup(getResources().getString(R.string.arrived), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi");
+                showPopup(getResources().getString(R.string.arrived), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : ", "CAR MODEL : ", "SERVICE : Wenshi");
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 monlineOfflineLayout.setVisibility(View.GONE);

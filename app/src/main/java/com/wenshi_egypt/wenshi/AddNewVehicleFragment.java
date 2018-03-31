@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +11,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,13 +22,13 @@ public class AddNewVehicleFragment extends Fragment implements View.OnClickListe
     double vicDouble = Math.random() * 1000;
     int vicCount = (int) vicDouble;
 
-    TextView savedSuccess;
+   // TextView savedSuccess;
     Button newVehicle;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.template_add_new_vehicle, container, false);
+        return inflater.inflate(R.layout.fragment_vehices_add_new, container, false);
     }
 
     @Override
@@ -40,7 +37,7 @@ public class AddNewVehicleFragment extends Fragment implements View.OnClickListe
       //  //noinspection ConstantConditions
        // newType = getActivity().findViewById(R.id.editText_newType);
        // newModel = getActivity().findViewById(R.id.editText_newModel);
-        savedSuccess = getActivity().findViewById(R.id.textView_vehicle_saved_label);
+       // savedSuccess = getActivity().findViewById(R.id.textView_vehicle_saved_label);
         newVehicle = getActivity().findViewById(R.id.button_new_vehicle);
 
         //get the spinner from the xml.
@@ -69,7 +66,7 @@ public class AddNewVehicleFragment extends Fragment implements View.OnClickListe
                   //  addVehicle.child("carType").setValue(newType.getText().toString());
                    // addVehicle.child("model").setValue(newModel.getText().toString());
                     vicCount++;
-                    savedSuccess.setVisibility(View.VISIBLE);
+                  //  savedSuccess.setVisibility(View.VISIBLE);
                    // Toast.makeText(getActivity(), String.format("%s has become your default car", newType.getText().toString()), Toast.LENGTH_LONG).show();
 
 /*                        new CountDownTimer(3000, 10) {

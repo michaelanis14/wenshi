@@ -37,6 +37,9 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
     TextView demoValue, noVehicle;
     Button addNewVehicle;
 
+    UserModel user;
+
+
     AddNewVehicleFragment vehicleDetailsFragment;
 
     @Nullable
@@ -48,7 +51,7 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-       // final ArrayList<VehicleModel> vehicle = getVehicle();
+        // final ArrayList<VehicleModel> vehicle = getVehicle();
         //noinspection ConstantConditions
 
         addNewVehicle = getView().findViewById(R.id.btn_Aadd_new_vehicle);
@@ -56,36 +59,21 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
         addNewVehicle.setOnClickListener(this);
 
 
+        user = ((CustomerMapActivity) getActivity()).getCustomer();
+
 
         LinearLayout layout = (LinearLayout) getView().findViewById(R.id.vehicles_list_layout);
 
-        //set the properties for button
-        Button button = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
-        button.setText("Button");
+        if (user.getVehicles().isEmpty()) {
+            addNewVehicle();
 
-        //btnTag.setId(31);
+        } else for (VehicleModel vehicle : user.getVehicles()) {
+            Button button = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
+            button.setText(vehicle.getModel() + " " + vehicle.getType());
+            button.setId(user.getVehicles().indexOf(vehicle));
+            layout.addView(button);
+        }
 
-        //add button to the layout
-        layout.addView(button);
-        Button button2 = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
-        button2.setText("Button2");
-        layout.addView(button2);
-    //    final ListView lv1 = getView().findViewById(R.id.listView_vehicles);
-       // lv1.setAdapter(new MyVehiclesAdapter(getActivity(), vehicle));
-
-        addNewVehicle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //noinspection ConstantConditions
-                ((CustomerMapActivity)getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.button_new_vehicle));
-                if(vehicleDetailsFragment == null)
-                vehicleDetailsFragment = new AddNewVehicleFragment();
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
-                ft.replace(R.id.mainFrame, vehicleDetailsFragment);
-                ft.commit();
-            }
-        });
     }
 
 /*
@@ -132,6 +120,22 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
+        switch (view.getId()) {
+            case R.id.btn_Aadd_new_vehicle:
+                addNewVehicle();
+                break;
+
+        }
+    }
+
+
+    private void addNewVehicle() {
+        ((CustomerMapActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.button_new_vehicle));
+        if (vehicleDetailsFragment == null) vehicleDetailsFragment = new AddNewVehicleFragment();
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
+        ft.replace(R.id.mainFrame, vehicleDetailsFragment);
+        ft.commit();
     }
 
     public interface OnFragmentInteractionListener {
