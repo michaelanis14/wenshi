@@ -8,6 +8,16 @@ import android.os.Parcelable;
  */
 
 public class VehicleModel implements Parcelable {
+
+
+    public VehicleModel(){
+        this.make = "";
+        this.model = "";
+        this.type = false;
+        this.color = "";
+        this.year = "";
+        this.id = "";
+    }
     public VehicleModel(String id,String make, String model, boolean type, String color, String year) {
         this.make = make;
         this.model = model;

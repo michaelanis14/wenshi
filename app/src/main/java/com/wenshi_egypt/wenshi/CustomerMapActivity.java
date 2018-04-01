@@ -191,7 +191,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 
     //VHICLES TAB//
-    int editVhicle = -1;
+    AddNewVehicleFragment vehicleDetailsFragment;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,6 +208,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         Intent i = getIntent();
         user = (UserModel) i.getParcelableExtra("CurrentUser");
+
        // user.setVehicle(new VehicleModel("KIA", "RIO 2014"));
 
         driverModel = new UserModel("", "", "", "");
@@ -320,6 +323,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 */
 
+        getCustomerVehicles();
 
     }
 
@@ -901,7 +905,25 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 ft.replace(R.id.mainFrame, settingsFragment);
                 ft.commit();
             }
-        }  else if (CURRENTSTATE != REVIEWREQ && findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE) {
+        }else if (findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE &&(vehicleDetailsFragment != null && vehicleDetailsFragment.isResumed())){
+
+
+            getSupportActionBar().setTitle(getResources().getString(R.string.vehicles));
+            if (vehiclesSettingsFragment != null) {
+                mBottomSheet.setVisibility(View.GONE);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                // ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+                ft.setCustomAnimations(R.anim.anim_slide_in_right, R.anim.anim_slide_out_right);
+                ft.replace(R.id.mainFrame, vehiclesSettingsFragment);
+                ft.commit();
+            }
+
+
+        }
+
+
+
+        else if (CURRENTSTATE != REVIEWREQ && findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE) {
             customerViewStateControler(CURRENTSTATE);
         }
 
@@ -1100,6 +1122,43 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 
     }
+
+
+   //VEHICLES CONTROLLER
+    private void getCustomerVehicles(){
+
+
+        DatabaseReference getVehicles = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userId).child("Vehicles");
+        getVehicles.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot vehicleSnapshot : dataSnapshot.getChildren()) {
+
+                    if(vehicleSnapshot.getKey().equals("FirstConstant"))
+                        continue;
+
+
+                    VehicleModel vehicleModel = new VehicleModel(vehicleSnapshot.getKey().toString()
+                            , vehicleSnapshot.child("make").getValue() != null ?vehicleSnapshot.child("make").getValue().toString():"_Make"
+                            ,vehicleSnapshot.child("model").getValue() != null ? vehicleSnapshot.child("model").getValue().toString() :"_Model"
+                            , vehicleSnapshot.child("type").getValue() != null ?(vehicleSnapshot.child("type").getValue().equals("true")? true:false):true
+                            , vehicleSnapshot.child("color").getValue() != null ?vehicleSnapshot.child("color").getValue().toString():"_Color"
+                            , vehicleSnapshot.child("year").getValue() != null ?vehicleSnapshot.child("year").getValue().toString():"_year"
+                    );
+                    user.setVehicle(vehicleSnapshot.getKey().toString(),vehicleModel);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // ...
+            }
+        });
+
+
+    }
+
+
     @Override
     public void onFragmentInteraction(Uri uri) {
         // NOTE:  Code to replace the toolbar title based current visible fragment

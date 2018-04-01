@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="15dp">
+    android:padding="15dp"
+   >
 
     <TextView
         android:id="@+id/textView_vehicle_make"
@@ -19,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"
-        android:padding="15dp"/>
+       />
 
     <TextView
         android:id="@+id/textView_vehicle_model"
@@ -36,7 +37,7 @@
         android:ems="10"
         android:hint="Model"
         android:lines="1"
-        android:padding="15dp"/>
+       />
 
     <TextView
         android:id="@+id/textView_car_type"
@@ -52,7 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="15dp">
+       >
 
         <RadioButton
             android:id="@+id/carSedan"
@@ -84,7 +85,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"
-        android:padding="15dp"/>
+       />
 
     <TextView
         android:id="@+id/textView_car_year"
@@ -99,17 +100,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"
-        android:padding="15dp"/>
+       />
 
     <Button
         android:id="@+id/delete_vehicle_btn"
-        android:layout_width="100dp"
-        android:layout_height="36dp"
+        android:layout_width="70dp"
+        android:layout_height="25dp"
         android:layout_gravity="end"
-        android:layout_marginTop="60dp"
         android:background="@color/fui_bgEmail"
         android:textColor="@color/tw__solid_white"
-        android:text="@string/delete" />
+        android:text="@string/delete"
+        android:layout_marginTop="30dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"

@@ -253,5 +253,6 @@
     <string name="delete">Delete</string>
     <string name="please_enter_car_model">Please enter car mode</string>
     <string name="saved">Saved</string>
+    <string name="vehicles">Vehicles</string>
 
 </resources>

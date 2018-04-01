@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.wenshi_egypt.wenshi.helpers.AppUtils.Defs.CAIRO;
@@ -65,7 +66,7 @@ public class UserModel implements Parcelable {
     String vehicleSelected = "";
 
 
-    Map<String,VehicleModel> vehicles ;
+    Map<String,VehicleModel> vehicles  = new HashMap<String,VehicleModel>();;
 
     public String getPickupAddress() {
         return pickupAddress;
