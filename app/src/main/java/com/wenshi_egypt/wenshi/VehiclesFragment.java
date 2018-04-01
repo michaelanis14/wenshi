@@ -69,7 +69,8 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
 
         } else for (VehicleModel vehicle : user.getVehicles()) {
             Button button = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
-            button.setText(vehicle.getModel() + " " + vehicle.getType());
+            button.setText(vehicle.getModel() + " " + (vehicle.isType()?"Sedan":"SUV"));
+
             button.setId(user.getVehicles().indexOf(vehicle));
             layout.addView(button);
         }
@@ -134,6 +135,14 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
         if (vehicleDetailsFragment == null) vehicleDetailsFragment = new AddNewVehicleFragment();
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
+
+
+        Bundle args = new Bundle();
+        VehicleModel v = new VehicleModel("","VV","VVVV",false,"","") ;
+
+        args.putParcelable("DATA", v);
+        vehicleDetailsFragment.setArguments(args);
+
         ft.replace(R.id.mainFrame, vehicleDetailsFragment);
         ft.commit();
     }

@@ -10,12 +10,12 @@
         android:id="@+id/textView_vehicle_make"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:labelFor="@id/new_car_type"
+        android:labelFor="@id/new_car_make"
         android:text="@string/textView_vehicle_make"
         android:textColor="@color/colorBlack" />
 
     <Spinner
-        android:id="@+id/new_car_type"
+        android:id="@+id/new_car_make"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"
@@ -35,6 +35,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Model"
+        android:lines="1"
         android:padding="15dp"/>
 
     <TextView
@@ -58,6 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:checked="true"
             android:text="@string/sedan" />
 
         <RadioButton
@@ -99,7 +101,15 @@
         android:spinnerMode="dropdown"
         android:padding="15dp"/>
 
-
+    <Button
+        android:id="@+id/delete_vehicle_btn"
+        android:layout_width="100dp"
+        android:layout_height="36dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="60dp"
+        android:background="@color/fui_bgEmail"
+        android:textColor="@color/tw__solid_white"
+        android:text="@string/delete" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"

@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import static com.wenshi_egypt.wenshi.helpers.AppUtils.Defs.CAIRO;
 
@@ -53,8 +54,18 @@ public class UserModel implements Parcelable {
     String destinationAddress;
     Location currentLocation;
 
+    public String getVehicleSelected() {
+        return vehicleSelected;
+    }
 
-    ArrayList<VehicleModel> Vehicles = new ArrayList<VehicleModel>();
+    public void setVehicleSelected(String vehicleSelected) {
+        this.vehicleSelected = vehicleSelected;
+    }
+
+    String vehicleSelected = "";
+
+
+    Map<String,VehicleModel> vehicles ;
 
     public String getPickupAddress() {
         return pickupAddress;
@@ -117,7 +128,7 @@ public class UserModel implements Parcelable {
 
      //   destination =Location.CREATOR.createFromParcel(in);
       //  pickup = Location.CREATOR.createFromParcel(in);
-        in.readTypedList(Vehicles, VehicleModel.CREATOR);
+     //   in.readTypedList(vehicles, VehicleModel.CREATOR);
     }
 
     public Location getPickup() {
@@ -161,12 +172,12 @@ public class UserModel implements Parcelable {
         return mobile;
     }
 
-    public ArrayList<VehicleModel> getVehicles() {
-        return Vehicles;
+    public Map<String,VehicleModel> getvehicles() {
+        return vehicles;
     }
 
-    public void setVehicle(VehicleModel vehicle) {
-        Vehicles.add(vehicle);
+    public void setVehicle(String id,VehicleModel vehicle) {
+        vehicles.put(id,vehicle);
     }
 
     @Override
@@ -187,14 +198,15 @@ public class UserModel implements Parcelable {
       //  parcel.writeValue(currentLocation);
      //   pickup.writeToParcel(parcel, i);
       //  destination.writeToParcel(parcel, i);
-        parcel.writeTypedList(Vehicles);
+      //  parcel.writeTypedList(vehicles);
 
 
     }
 
     @Override
     public String toString() {
-        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\""+ ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\""  + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\""  + '}';
+        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\""+ ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\""  + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\""
+                + ", \"vehicle\":\"" + vehicleSelected + "\""+ '}';
     }
 
 

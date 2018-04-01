@@ -8,19 +8,64 @@ import android.os.Parcelable;
  */
 
 public class VehicleModel implements Parcelable {
-    String type;
+    public VehicleModel(String id,String make, String model, boolean type, String color, String year) {
+        this.make = make;
+        this.model = model;
+        this.type = type;
+        this.color = color;
+        this.year = year;
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    String id;
+    String make;
     String model;
-    boolean sedan;
+    boolean type;
+
+    public String getMake() {
+        return make;
+    }
+
+    public void setMake(String make) {
+        this.make = make;
+    }
+
+    public boolean isType() {
+        return type;
+    }
+
+    public void setType(boolean type) {
+        this.type = type;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
     String color;
     String year;
 
-    public VehicleModel(String carType, String model,boolean sedan,String color,String year) {
-        this.type = carType;
-        this.model = model;
-        this.sedan = sedan;
-        this.color = color;
-        this.year = year;
-    }
+
 
 
 
@@ -32,15 +77,18 @@ public class VehicleModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(type);
+        parcel.writeString(make);
         parcel.writeString(model);
+        parcel.writeByte((byte) (type ? 1 : 0));     //if myBoolean == true, byte == 1
+        parcel.writeString(color);
+        parcel.writeString(year);
     }
     @Override
     public String toString() {
         return "{" +
-                "\"type\":\"" + type + "\"" +
+                "\"make\":\"" + make + "\"" +
                 ", \"model\":\"" + model + "\"" +
-                ", \"sedan\":\"" + sedan + "\"" +
+                ", \"type\":\"" + type + "\"" +
                 ", \"color\":\"" + color + "\"" +
                 ", \"year\":\"" + year + "\"" +
                 '}';
@@ -57,17 +105,14 @@ public class VehicleModel implements Parcelable {
     };
 
     private VehicleModel(Parcel in) {
-        type = in.readString();
+        make = in.readString();
         model = in.readString();
+        type = in.readByte() != 0;
+        color = in.readString();
+        year = in.readString();
     }
 
-    public String getType() {
-        return type;
-    }
 
-    public void setType(String type) {
-        this.type = type;
-    }
 
 
     public String getModel() {

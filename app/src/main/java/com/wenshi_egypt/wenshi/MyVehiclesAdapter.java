@@ -48,7 +48,7 @@ public class MyVehiclesAdapter extends BaseAdapter {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            holder.txtType.setText(searchArrayList.get(position).getType());
+        //    holder.txtType.setText(searchArrayList.get(position).getType());
             holder.txtModel.setText(String.format(searchArrayList.get(position).getModel()));
 
             return convertView;

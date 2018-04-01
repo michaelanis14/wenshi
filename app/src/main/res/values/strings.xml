@@ -250,5 +250,8 @@
     <string name="textView_vehicle_year">Year</string>
     <string name="textView_vehicle_model">Model</string>
     <string name="textView_vehicle_make">Make</string>
+    <string name="delete">Delete</string>
+    <string name="please_enter_car_model">Please enter car mode</string>
+    <string name="saved">Saved</string>
 
 </resources>

@@ -11,19 +11,33 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.wenshi_egypt.wenshi.model.VehicleModel;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class AddNewVehicleFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+    VehicleModel VEHICLE_MODEL = new VehicleModel("", "", "", false, "", "");
 
-    double vicDouble = Math.random() * 1000;
-    int vicCount = (int) vicDouble;
 
-   // TextView savedSuccess;
-    Button newVehicle;
+    Button newVehicle_btn, deleteVehicle_btn;
+
+
+    Spinner color, make, year;
+    EditText model;
+    RadioButton type;
+    List<String> carMakeItems;
+    List<String> carColorItems;
+    List<String> carYearItems;
 
     @Nullable
     @Override
@@ -34,67 +48,125 @@ public class AddNewVehicleFragment extends Fragment implements View.OnClickListe
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-      //  //noinspection ConstantConditions
-       // newType = getActivity().findViewById(R.id.editText_newType);
-       // newModel = getActivity().findViewById(R.id.editText_newModel);
-       // savedSuccess = getActivity().findViewById(R.id.textView_vehicle_saved_label);
-        newVehicle = getActivity().findViewById(R.id.button_new_vehicle);
+        //  //noinspection ConstantConditions
+        // newType = getActivity().findViewById(R.id.editText_newType);
+        // newModel = getActivity().findViewById(R.id.editText_newModel);
+        // savedSuccess = getActivity().findViewById(R.id.textView_vehicle_saved_label);
+
 
         //get the spinner from the xml.
-        Spinner dropdown = getActivity().findViewById(R.id.new_car_type);
-        dropdown.setOnItemSelectedListener(this);
+        make = getActivity().findViewById(R.id.new_car_make);
+        make.setOnItemSelectedListener(this);
+        carMakeItems = Arrays.asList(
+            "Alfa Romeo", "Aston Martin", "Audi", "Baic", "Bentley", "BMW", "Brilliance", "Bugatti", "Buick", "Byd", "Cadillac", "Canghe", "Chana", "Changan", "Chery", "Chevrolet", "Chrysler", "Citroën", "Daewoo", "Daihatsu", "Datsun", "DFM", "DFSK", "Dodge", "Emgrand", "Faw", "Ferrari", "Fiat", "Ford", "Foton", "GAC", "Gaz", "Geely", "Gmc", "Great Wall", "Hafei", "Haima", "Haval", "Hawtai", "Honda", "Hummer", "Hyundai", "Infiniti", "Isuzu", "Jac", "Jaguar", "Jeep", "Jonway", "Karry", "Kenbo", "Keyton", "Kia", "Lada", "Lamborghini", "Lancia", "Land Rover", "Landwind", "Lexus", "Lifan", "Lincoln", "Mahindra", "Maserati", "Mazda", "Mercedes", "Mercury", "Mini", "Mitsubishi", "Morris Garage", "Nissan", "Opel", "Peugeot", "Pontiac", "Porsche", "Proton", "Renault", "Saab", "Saipa", "Scion", "Seat", "Senova", "Skoda", "Smart", "Sokon", "Soueast", "Speranza", "Ssang Yong", "Subaru", "Suzuki", "Tata", "Tesla", "Toyota", "UFO", "Victory", "Volkswagen", "Volvo", "ZNA", "Zotye"
+        ) ;
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, carMakeItems);
+        make.setAdapter(adapter);
 
-        String[] items = new String[]{"Alfa Romeo","Aston Martin","Audi","Baic","Bentley","BMW","Brilliance","Bugatti","Buick","Byd","Cadillac","Canghe","Chana","Changan","Chery","Chevrolet","Chrysler","Citroën","Daewoo","Daihatsu","Datsun","DFM","DFSK","Dodge","Emgrand","Faw","Ferrari","Fiat","Ford","Foton","GAC","Gaz","Geely","Gmc","Great Wall","Hafei","Haima","Haval","Hawtai","Honda","Hummer","Hyundai","Infiniti","Isuzu","Jac","Jaguar","Jeep","Jonway","Karry","Kenbo","Keyton","Kia","Lada","Lamborghini","Lancia","Land Rover","Landwind","Lexus","Lifan","Lincoln","Mahindra","Maserati","Mazda","Mercedes","Mercury","Mini","Mitsubishi","Morris Garage","Nissan","Opel","Peugeot","Pontiac","Porsche","Proton","Renault","Saab","Saipa","Scion","Seat","Senova","Skoda","Smart","Sokon","Soueast","Speranza","Ssang Yong","Subaru","Suzuki","Tata","Tesla","Toyota","UFO","Victory","Volkswagen","Volvo","ZNA","Zotye"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, items);
-        dropdown.setAdapter(adapter);
+        model = getActivity().findViewById(R.id.editText_newModel);
+
+        type = getView().findViewById(R.id.carSedan);
 
 
+        color = getActivity().findViewById(R.id.car_color);
+        color.setOnItemSelectedListener(this);
+        carColorItems =  Arrays.asList(
+            "White", "Silver", "Black", "Grey", "Blue", "Red", "Brown", "Green", "Others");
+        ArrayAdapter<String> carColorAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, carColorItems);
+        color.setAdapter(carColorAdapter);
+
+        year = getActivity().findViewById(R.id.car_year);
+        year.setOnItemSelectedListener(this);
+        carYearItems =  Arrays.asList(
+            "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001", "2000", "1999", "1998"
+        ) ;
+        ArrayAdapter<String> carYearAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, carYearItems);
+        year.setAdapter(carYearAdapter);
 
 
-        newVehicle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              //  if (TextUtils.isEmpty(newType.getText()) || TextUtils.isEmpty(newModel.getText()))
-               //     Toast.makeText(getActivity(), "Cannot submit empty field", Toast.LENGTH_LONG).show();
-                //else
-                    {
-                    String uid = ((CustomerMapActivity) getActivity()).getCustomer().getID();
-                    DatabaseReference addVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Vehicles").child("newVic" + vicCount);
-                   // addVehicle.child("type").setValue(newType.getText().toString());
-                    //addVehicle.child("model").setValue(newModel.getText().toString());
-                    addVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Profile");
-                  //  addVehicle.child("carType").setValue(newType.getText().toString());
-                   // addVehicle.child("model").setValue(newModel.getText().toString());
-                    vicCount++;
-                  //  savedSuccess.setVisibility(View.VISIBLE);
-                   // Toast.makeText(getActivity(), String.format("%s has become your default car", newType.getText().toString()), Toast.LENGTH_LONG).show();
+        newVehicle_btn = getActivity().findViewById(R.id.button_new_vehicle);
+        newVehicle_btn.setOnClickListener(this);
+        deleteVehicle_btn = getActivity().findViewById(R.id.delete_vehicle_btn);
+        deleteVehicle_btn.setOnClickListener(this);
 
-/*                        new CountDownTimer(3000, 10) {
-                            @Override
-                            public void onTick(long millisUntilFinished) {
 
-                            }
-
-                            @Override
-                            public void onFinish() {
-                               // startActivity(new Intent(AddNewVehicleFragment.this, WelcomeActivity.class));
-                            }
-                        }.start();
-
-                        */
-                }
-            }
-        });
     }
 
     @Override
     public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.button_new_vehicle:
+                if (!model.getText().toString().isEmpty()) saveVehicle();
+                else
+                    Toast.makeText(getActivity(), getResources().getString(R.string.please_enter_car_model), Toast.LENGTH_LONG).show();
+                break;
+                case R.id.delete_vehicle_btn:
+                    deleteVehicle();
 
+        }
+    }
+
+    private void deleteVehicle() {
+        String uid = ((CustomerMapActivity) getActivity()).getCustomer().getID();
+        DatabaseReference addVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Vehicles").child(VEHICLE_MODEL.getId());
+        addVehicle.removeValue();
+        ((CustomerMapActivity) getActivity()).getCustomer().getvehicles().remove(VEHICLE_MODEL.getId());
+
+    }
+
+
+    private void saveVehicle() {
+        String uid = ((CustomerMapActivity) getActivity()).getCustomer().getID();
+        DatabaseReference addVehicle = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Vehicles").child(VEHICLE_MODEL.getId());
+        addVehicle.child("make").setValue(make.getSelectedItem().toString());
+        addVehicle.child("model").setValue(model.getText().toString());
+        addVehicle.child("type").setValue(type.isChecked() + "");
+        addVehicle.child("color").setValue(color.getSelectedItem().toString());
+        addVehicle.child("year").setValue(year.getSelectedItem().toString());
+        ((CustomerMapActivity) getActivity()).getCustomer().setVehicle(VEHICLE_MODEL.getId(),VEHICLE_MODEL);
+
+        Toast.makeText(getActivity(), getResources().getString(R.string.saved), Toast.LENGTH_LONG).show();
+
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Bundle args = getArguments();
+        if (args != null) {
+            VEHICLE_MODEL = ((VehicleModel) args.getParcelable("DATA"));
+            if (!VEHICLE_MODEL.getId().isEmpty()) {
+                deleteVehicle_btn.setVisibility(View.VISIBLE);
+                newVehicle_btn.setText(getResources().getString(R.string.save));
+                fillVehicle();
+
+            } else {
+                deleteVehicle_btn.setVisibility(View.GONE);
+                double vicDouble = Math.random() * 1000;
+                int vicCount = (int) vicDouble;
+                VEHICLE_MODEL.setId("" + vicCount);
+                newVehicle_btn.setText(getResources().getString(R.string.button_new_vehicle));
+                model.setText("");
+            }
+        } else {
+        }
+
+//            Toast.makeText(getActivity(), "VISSS", Toast.LENGTH_LONG).show();
+
+    }
+
+    private void fillVehicle() {
+        make.setSelection(carMakeItems.indexOf(VEHICLE_MODEL.getMake()));
+        model.setText(VEHICLE_MODEL.getModel());
+        type.setSelected(VEHICLE_MODEL.isType());
+        year.setSelection(carMakeItems.indexOf(VEHICLE_MODEL.getYear()));
+        color.setSelection(carYearItems.indexOf(VEHICLE_MODEL.getColor()));
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-    Log.i("Dropdown",""+i);
+       // Log.i("Dropdown", "" + i);
     }
 
     @Override
