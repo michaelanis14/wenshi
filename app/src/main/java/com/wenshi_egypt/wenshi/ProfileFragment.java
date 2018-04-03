@@ -170,6 +170,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         });
         getView().findViewById(R.id.progress_wheel_profile).setVisibility(View.INVISIBLE);
 
+
+        if (user != null) {
+            getUserData();
+            fillUserData();
+        }
     }
 
     @Override
@@ -181,10 +186,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
         }
 
-        if(user != null){
-            getUserData();
-            fillUserData();
-        }
 
     }
 
@@ -214,12 +215,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             if (user != null) {
                 if (!String.valueOf(mobile.getText()).isEmpty() && !String.valueOf(username.getText()).isEmpty() && !String.valueOf(email.getText()).isEmpty()) {
 
-                    if (!user.getName().equals(username.getText().toString())) {
+                    if (!user.getName().equals(username.getText().toString())  && !username.getText().toString().isEmpty()) {
                         updateUserNameAuth();
                     }
-                    if (!user.getEmail().equals(email.getText().toString())) {
+                    if (!user.getEmail().equals(email.getText().toString()) && !email.getText().toString().isEmpty()) {
                         updateUserEmailAuth();
                     }
+                    if( ((CustomerMapActivity) getActivity()).getCURRENTSTATE() ==  ((CustomerMapActivity) getActivity()).INCOMPLETEPROFIE)
+                        ((CustomerMapActivity) getActivity()).setCURRENTSTATE(((CustomerMapActivity) getActivity()).PICKUP);
+                    ((CustomerMapActivity) getActivity()).onBackPressed();
+
 
                 } else
                     Toast.makeText(getActivity(), getResources().getString(R.string.fields_cannot_empty), Toast.LENGTH_LONG).show();
@@ -463,8 +468,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 if (task.isSuccessful()) {
                     Toast.makeText(getActivity(), "Email " + "Changes Saved For Auth", Toast.LENGTH_SHORT).show();
                     updateUserEmailFire();
-                }
-                else   Toast.makeText(getActivity(), "Email Update Failed, Please contact support", Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(getActivity(), "Email Update Failed, Please contact support", Toast.LENGTH_SHORT).show();
                 getView().findViewById(R.id.progress_wheel_profile).setVisibility(View.INVISIBLE);
 
             }

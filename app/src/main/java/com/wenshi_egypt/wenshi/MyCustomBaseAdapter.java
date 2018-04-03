@@ -49,8 +49,8 @@ public class MyCustomBaseAdapter extends BaseAdapter {
             }
 
             holder.txtDate.setText(searchArrayList.get(position).getDate());
-            holder.txtFrom.setText(String.format("From: %s", searchArrayList.get(position).getFrom()));
-            holder.txtTo.setText(String.format("To: %s", searchArrayList.get(position).getTo()));
+          //  holder.txtFrom.setText(String.format("From: %s", searchArrayList.get(position).getFrom()));
+         //   holder.txtTo.setText(String.format("To: %s", searchArrayList.get(position).getTo()));
             holder.txtCost.setText(String.format("%s EGP", searchArrayList.get(position).getCost()));
 
             return convertView;

@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setTheme(R.style.GreenTheme).setLogo(R.drawable.full_logo)
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setTheme(R.style.GreenTheme).setLogo(R.drawable.full_logo).setTosUrl("http://wenshi-egypt.com/tos.html").setPrivacyPolicyUrl("http://wenshi-egypt.com/PrivacyPolicy.html")
                         .setAvailableProviders(Arrays.asList(
                 new AuthUI.IdpConfig.PhoneBuilder().build(),
                 new AuthUI.IdpConfig.EmailBuilder().build(),

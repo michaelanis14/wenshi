@@ -123,7 +123,7 @@
     <string name="service_not_available">No Service Available</string>
     <string name="invalid_lat_long_used">Invalid Location Data</string>
     <string name="no_address_found">No Address Found</string>
-    <string name="confirm_pickup">Confirm Pickup Location</string>
+    <string name="confirm_pickup">CONFIRM PICKUP</string>
     <string name="choose">Choose</string>
     <string name="confirm">Confirm</string>
     <string name="confirm_destination">CONFIRM DROP OFF</string>
@@ -254,5 +254,33 @@
     <string name="please_enter_car_model">Please enter car mode</string>
     <string name="saved">Saved</string>
     <string name="vehicles">Vehicles</string>
+    <string name="you_must_have_atleast_one_vehicle">You must have at least on vehicle</string>
 
+
+    <!-- INVITES -->
+    <string name="action_deep_link">
+        com.wenshi_egypt.wenshi.DEEP_LINK_ACTION
+    </string>
+
+    <string name="invite">Send invitations!</string>
+    <string name="welcome">Invites</string>
+    <string name="referrer_hint">Deep link not provided</string>
+    <string name="deep_link_default">Deep link not set</string>
+    <string name="invitation_id_default">Invitation ID not set</string>
+    <string name="invite_friends">Invite Friends</string>
+
+    <string name="invitation_title">Send App Invitation</string>
+    <string name="invitation_message">Wenshi! get 25 LE OFF your next Wenshi!</string>
+    <string name="invitation_deep_link">http://example.com/offer/five_dollar_offer</string>
+    <string name="invitation_custom_image">http://wenshi-egypt.com/Logo_text.png</string>
+    <string name="invitation_cta">Download!</string>
+
+    <string name="deep_link_fmt" formatted="false">Deep Link: %s</string>
+
+    <string name="send_failed">Sending invitations failed</string>
+    <string name="invite_dialog_title">You got an invitation!</string>
+
+    <string name="google_play_services_error">Google Play Services Error</string>
+    <string name="family_inivitation_message">Wenshi Family Connect Request From</string>
+    <string name="please_compelete_your_profile">Please Compelete your profile</string>
 </resources>

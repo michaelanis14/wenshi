@@ -133,6 +133,9 @@ public class AddNewVehicleFragment extends Fragment implements View.OnClickListe
         VEHICLE_MODEL.setYear(year.getSelectedItem().toString());
 
         ((CustomerMapActivity) getActivity()).getCustomer().setVehicle(VEHICLE_MODEL.getId(), VEHICLE_MODEL);
+        ((CustomerMapActivity) getActivity()).getCustomer().setVehicle(VEHICLE_MODEL.getId(), VEHICLE_MODEL);
+        if( ((CustomerMapActivity) getActivity()).getCURRENTSTATE() ==  ((CustomerMapActivity) getActivity()).INCOMPLETEVHICLES)
+        ((CustomerMapActivity) getActivity()).setCURRENTSTATE(((CustomerMapActivity) getActivity()).PICKUP);
         ((CustomerMapActivity) getActivity()).onBackPressed();
     }
 

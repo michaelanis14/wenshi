@@ -34,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +46,7 @@ import com.firebase.geofire.GeoQueryEventListener;
 import com.firebase.geofire.LocationCallback;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -93,10 +95,13 @@ import com.wenshi_egypt.wenshi.model.VehicleModel;
 public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, CustomerSettingsFragment.OnFragmentInteractionListener, RateDriverFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptionsFragment.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
 
+    public static final int PICKUP = 0;
+    public static final int INCOMPLETEPROFIE = 10;
+    public static final int INCOMPLETEVHICLES = 11;
+    public static final int REQUEST_INVITE = 115;
     private static final long UPDATE_INTERVAL = 50000;
     private static final long FASTEST_INTERVAL = 30000;
     private static final float DISPLACMENT = 100;
-    private static final int PICKUP = 0;
     private static final int SERVICECHOICE = 1;
     private static final int DESTINATION = 2;
     private static final int READYTOREQ = 3;
@@ -106,8 +111,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     private static final int TRACEDRIVER = 7;
     private static final int TODESTINATION = 8;
     private static final int RATEDRIVER = 9;
-
-
     private static final int REQUEST_CODE_AUTOCOMPLETE = 114;
     static GoogleApiClient mGoogleApiClient;
     private static String TAG = "MAP LOCATION";
@@ -148,12 +151,23 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     };
     View mapView;
     Model model;
+    ///SETTINGS TAB ITEMS
+    Fragment settingsFragment;
+    ProfileFragment profileSettingsFragment;
+    PaymentOptionsFragment paymentOptionsSettingsFragment;
+    FamilyViewFragment familyViewSettingsFragment;
+    HistoricFragment historySettingsFragment;
+    VehiclesFragment vehiclesSettingsFragment;
+    InviteFragment inviteSettingsFragment;
+    AboutFragment aboutSettingsFragment;
+    //VHICLES TAB//
+    AddNewVehicleFragment vehicleDetailsFragment;
     private int CURRENTSTATE;
     private GoogleMap mMap;
     private Marker mDriverMarker;
     private Marker mPickupMarker;
     private Marker mDestination;
-    private Marker mChoiceMarker;
+    private ImageView mChoiceMarker;
     private SupportMapFragment mapFragment;
     private Button mbtn1, mbtn2, mbtn3;
     private boolean driverFound = false;
@@ -177,23 +191,14 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     private String duration;
     private String distance;
 
-
-    ///SETTINGS TAB ITEMS
-    Fragment settingsFragment;
-    ProfileFragment profileSettingsFragment;
-    PaymentOptionsFragment paymentOptionsSettingsFragment;
-    FamilyViewFragment familyViewSettingsFragment;
-    HistoricFragment historySettingsFragment;
-    VehiclesFragment vehiclesSettingsFragment;
-    InviteFragment inviteSettingsFragment;
-    AboutFragment aboutSettingsFragment;
+    public int getCURRENTSTATE() {
+        return CURRENTSTATE;
+    }
     ///
 
-
-    //VHICLES TAB//
-    AddNewVehicleFragment vehicleDetailsFragment;
-
-
+    public void setCURRENTSTATE(int CURRENTSTATE) {
+        this.CURRENTSTATE = CURRENTSTATE;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,8 +214,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         Intent i = getIntent();
         user = (UserModel) i.getParcelableExtra("CurrentUser");
 
-       // user.setVehicle(new VehicleModel("KIA", "RIO 2014"));
-
+        // user.setVehicle(new VehicleModel("KIA", "RIO 2014"));
+        mChoiceMarker = (ImageView)findViewById(R.id.confirm_address_map_custom_marker);
         driverModel = new UserModel("", "", "", "");
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.customer_map);
@@ -237,6 +242,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.customer_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View hView = navigationView.getHeaderView(0);
+        TextView nav_user = (TextView) hView.findViewById(R.id.textViewUsernameNav);
+        nav_user.setText(user.getName());
+        Button logout = (Button) hView.findViewById(R.id.nav_header_logout);
+        logout.setOnClickListener(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         driversID = new ArrayList<String>();
@@ -322,9 +332,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 
 */
-
-        getCustomerVehicles();
-
+        checkCustomerProfile();
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -453,7 +461,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                         customerViewStateControler(REQ);
                         break;
                     case TRACEDRIVER:
-
                         if (driverModel != null && driverModel.getMobile() != null)
                             startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", driverModel.getMobile(), null)));
 
@@ -502,6 +509,12 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 // customerViewStateControler(DESTINATION);
                 openAutocompleteActivity();
                 break;
+
+            case R.id.nav_header_logout:
+                FirebaseAuth.getInstance().signOut();
+                Intent customerWelcome = new Intent(CustomerMapActivity.this, WelcomeActivity.class);
+                startActivity(customerWelcome);
+                break;
         }
     }
 
@@ -525,11 +538,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     //  mMap.clear();
                     try {
                         Location mLocation = new Location("");
-                        mLocation.setLatitude(mCenterLatLong.latitude);
+                        mLocation.setLatitude(mCenterLatLong.latitude-0.001815); //waste of life
                         mLocation.setLongitude(mCenterLatLong.longitude);
-                        if (mChoiceMarker != null) mChoiceMarker.remove();
+                       // if (mChoiceMarker != null) mChoiceMarker.remove();
 
-                        mChoiceMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(mLocation.getLatitude(), mLocation.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.add_marker)));
+                      //  mChoiceMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(mLocation.getLatitude(), mLocation.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.add_marker)));
 
 
                         setLocation(mLocation);
@@ -559,7 +572,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             layoutParams.setMargins(0, 0, 0, 240);
         }
-        customerViewStateControler(PICKUP);
+        if(checkCustomerProfile())
+              customerViewStateControler(PICKUP);
 //
 //        // Add a marker in Sydney and move the camera
 //        LatLng sydney = new LatLng(-34, 151);
@@ -871,29 +885,22 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     @Override
     public void onBackPressed() {
 
-       // Log.i("")
+        // Log.i("")
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.customer_drawer_layout);
         if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
 
-        }
+        } else if (CURRENTSTATE == INCOMPLETEPROFIE) {
+            customerViewStateControler(INCOMPLETEPROFIE);
+            Toast.makeText(mContext, R.string.please_compelete_your_profile, Toast.LENGTH_SHORT).show();
+        } else if (CURRENTSTATE == INCOMPLETEVHICLES) {
+            customerViewStateControler(INCOMPLETEVHICLES);
+            Toast.makeText(mContext, R.string.you_must_have_atleast_one_vehicle, Toast.LENGTH_SHORT).show();
+        } else if (findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE && settingsFragment != null && ((profileSettingsFragment != null && profileSettingsFragment.isResumed()) || (paymentOptionsSettingsFragment != null && paymentOptionsSettingsFragment.isResumed()) || (familyViewSettingsFragment != null && familyViewSettingsFragment.isResumed()) || (historySettingsFragment != null && historySettingsFragment.isResumed()) || (vehiclesSettingsFragment != null && vehiclesSettingsFragment.isResumed()) || (inviteSettingsFragment != null && inviteSettingsFragment.isResumed()) || (aboutSettingsFragment != null && aboutSettingsFragment.isResumed()))) {
 
 
-        else if(findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE && settingsFragment != null  && (
-                (profileSettingsFragment != null && profileSettingsFragment.isResumed() )
-                        || (paymentOptionsSettingsFragment != null && paymentOptionsSettingsFragment.isResumed() )
-                        || (familyViewSettingsFragment != null && familyViewSettingsFragment.isResumed() )
-                        || (historySettingsFragment != null && historySettingsFragment.isResumed() )
-                        || (vehiclesSettingsFragment != null && vehiclesSettingsFragment.isResumed() )
-                        || (inviteSettingsFragment != null && inviteSettingsFragment.isResumed() )
-                        || (aboutSettingsFragment != null && aboutSettingsFragment.isResumed() )
-                ) ){
-
-
-                if(settingsFragment == null)
-                    settingsFragment = new CustomerSettingsFragment();
-                getSupportActionBar().setTitle(getResources().getString(R.string.action_settings));
-
+            if (settingsFragment == null) settingsFragment = new CustomerSettingsFragment();
+            getSupportActionBar().setTitle(getResources().getString(R.string.action_settings));
 
 
             //NOTE: Fragment changing code
@@ -905,7 +912,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 ft.replace(R.id.mainFrame, settingsFragment);
                 ft.commit();
             }
-        }else if (findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE &&(vehicleDetailsFragment != null && vehicleDetailsFragment.isResumed())){
+        } else if (findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE && (vehicleDetailsFragment != null && vehicleDetailsFragment.isResumed())) {
 
 
             getSupportActionBar().setTitle(getResources().getString(R.string.vehicles));
@@ -919,18 +926,14 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             }
 
 
-        }
-
-
-
-        else if (CURRENTSTATE != REVIEWREQ && findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE) {
+        } else if (CURRENTSTATE != REVIEWREQ && findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE) {
             customerViewStateControler(CURRENTSTATE);
         }
 
         /// if (currentFragment != null && currentFragment.isVisible()) {
         //}
 
-       //
+        //
         else if (CURRENTSTATE != PICKUP) {
             switch (CURRENTSTATE) {
                 case SERVICECHOICE:
@@ -1022,19 +1025,17 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             //  } else if (id == R.id.nav_about) {
             //       fragment = new AboutFragment();
         } else if (id == R.id.nav_invite) {
-            fragment = new InviteFragment();
+            customerViewStateControler(getCURRENTSTATE());
+            Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title)).setMessage(getString(R.string.invitation_message)).setDeepLink(Uri.parse(getString(R.string.invitation_deep_link))).setCustomImage(Uri.parse(getString(R.string.invitation_custom_image))).setCallToActionText(getString(R.string.invitation_cta)).build();
+            startActivityForResult(intent, REQUEST_INVITE);
+            // fragment = new InviteFragment();
             //   } else if (id == R.id.nav_family) {
             //       fragment = new FamilyViewFragment();
         } else if (id == R.id.nav_settings) {
-            if(settingsFragment == null)
-                settingsFragment = new CustomerSettingsFragment();
+            if (settingsFragment == null) settingsFragment = new CustomerSettingsFragment();
             fragment = settingsFragment;
             getSupportActionBar().setTitle(getResources().getString(R.string.action_settings));
 
-        }else if(id == R.id.nav_header_logout){
-            FirebaseAuth.getInstance().signOut();
-            Intent customerWelcome = new Intent(CustomerMapActivity.this, WelcomeActivity.class);
-             startActivity(customerWelcome);
         }
 
         //NOTE: Fragment changing code
@@ -1061,48 +1062,40 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         Fragment fragment = null;
 
         if (tab == R.id.profile_btn) {
-            if(profileSettingsFragment == null)
-                profileSettingsFragment = new ProfileFragment();
+            if (profileSettingsFragment == null) profileSettingsFragment = new ProfileFragment();
             fragment = profileSettingsFragment;
             getSupportActionBar().setTitle(getResources().getString(R.string.Profile));
 
-        }
-        else  if (tab == R.id.payment_btn) {
-            if(paymentOptionsSettingsFragment == null)
+        } else if (tab == R.id.payment_btn) {
+            if (paymentOptionsSettingsFragment == null)
                 paymentOptionsSettingsFragment = new PaymentOptionsFragment();
             fragment = paymentOptionsSettingsFragment;
             getSupportActionBar().setTitle(getResources().getString(R.string.PaymentMethod));
 
-        }
-        else  if (tab == R.id.family_btn) {
-            if(familyViewSettingsFragment == null)
-                familyViewSettingsFragment = new FamilyViewFragment();
-            fragment = familyViewSettingsFragment;
-        }
-        else  if (tab == R.id.history_btn) {
-            if(historySettingsFragment == null)
-                historySettingsFragment = new HistoricFragment();
+        } else if (tab == R.id.family_btn) {
+            //  if(familyViewSettingsFragment == null)
+            //familyViewSettingsFragment = new FamilyViewFragment();
+            // fragment = familyViewSettingsFragment;
+            customerViewStateControler(getCURRENTSTATE());
+            Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title)).setMessage(getString(R.string.family_inivitation_message) + getCustomer().getName()).setDeepLink(Uri.parse(getString(R.string.invitation_deep_link))).setCustomImage(Uri.parse(getString(R.string.invitation_custom_image))).setCallToActionText(getString(R.string.invitation_cta)).build();
+            startActivityForResult(intent, REQUEST_INVITE);
+        } else if (tab == R.id.history_btn) {
+            if (historySettingsFragment == null) historySettingsFragment = new HistoricFragment();
             fragment = historySettingsFragment;
             getSupportActionBar().setTitle(getResources().getString(R.string.history));
 
-        }
-        else  if (tab == R.id.vehicles_btn) {
-            if(vehiclesSettingsFragment == null)
-                vehiclesSettingsFragment = new VehiclesFragment();
+        } else if (tab == R.id.vehicles_btn) {
+            if (vehiclesSettingsFragment == null) vehiclesSettingsFragment = new VehiclesFragment();
             fragment = vehiclesSettingsFragment;
             getSupportActionBar().setTitle(getResources().getString(R.string.vehicle));
 
-        }
-        else  if (tab == R.id.inviteFriends_btn) {
-            if(inviteSettingsFragment == null)
-                inviteSettingsFragment = new InviteFragment();
+        } else if (tab == R.id.inviteFriends_btn) {
+            if (inviteSettingsFragment == null) inviteSettingsFragment = new InviteFragment();
             fragment = inviteSettingsFragment;
             getSupportActionBar().setTitle(getResources().getString(R.string.textView_invite));
 
-        }
-        else  if (tab == R.id.about_btn) {
-            if(aboutSettingsFragment == null)
-                aboutSettingsFragment = new AboutFragment();
+        } else if (tab == R.id.about_btn) {
+            if (aboutSettingsFragment == null) aboutSettingsFragment = new AboutFragment();
             fragment = aboutSettingsFragment;
             getSupportActionBar().setTitle(getResources().getString(R.string.textView_about));
 
@@ -1124,29 +1117,23 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     }
 
 
-   //VEHICLES CONTROLLER
-    private void getCustomerVehicles(){
-
-
+    //VEHICLES CONTROLLER
+    private void getCustomerVehicles() {
         DatabaseReference getVehicles = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userId).child("Vehicles");
         getVehicles.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                int VhiclesCount = 0;
                 for (DataSnapshot vehicleSnapshot : dataSnapshot.getChildren()) {
 
-                    if(vehicleSnapshot.getKey().equals("FirstConstant"))
-                        continue;
+                    if (vehicleSnapshot.getKey().equals("FirstConstant")) continue;
 
+                    VhiclesCount++;
 
-                    VehicleModel vehicleModel = new VehicleModel(vehicleSnapshot.getKey().toString()
-                            , vehicleSnapshot.child("make").getValue() != null ?vehicleSnapshot.child("make").getValue().toString():"_Make"
-                            ,vehicleSnapshot.child("model").getValue() != null ? vehicleSnapshot.child("model").getValue().toString() :"_Model"
-                            , vehicleSnapshot.child("type").getValue() != null ?(vehicleSnapshot.child("type").getValue().equals("true")? true:false):true
-                            , vehicleSnapshot.child("color").getValue() != null ?vehicleSnapshot.child("color").getValue().toString():"_Color"
-                            , vehicleSnapshot.child("year").getValue() != null ?vehicleSnapshot.child("year").getValue().toString():"_year"
-                    );
-                    user.setVehicle(vehicleSnapshot.getKey().toString(),vehicleModel);
+                    VehicleModel vehicleModel = new VehicleModel(vehicleSnapshot.getKey().toString(), vehicleSnapshot.child("make").getValue() != null ? vehicleSnapshot.child("make").getValue().toString() : "_Make", vehicleSnapshot.child("model").getValue() != null ? vehicleSnapshot.child("model").getValue().toString() : "_Model", vehicleSnapshot.child("type").getValue() != null ? (vehicleSnapshot.child("type").getValue().equals("true") ? true : false) : true, vehicleSnapshot.child("color").getValue() != null ? vehicleSnapshot.child("color").getValue().toString() : "_Color", vehicleSnapshot.child("year").getValue() != null ? vehicleSnapshot.child("year").getValue().toString() : "_year");
+                    user.setVehicle(vehicleSnapshot.getKey().toString(), vehicleModel);
                 }
+                if (VhiclesCount == 0) customerViewStateControler(INCOMPLETEVHICLES);
             }
 
             @Override
@@ -1156,6 +1143,26 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         });
 
 
+    }
+
+    //PROFILECONTROLLER
+    private boolean checkCustomerProfile() {
+        boolean state = true;
+        if (user != null) {
+            if (user.getName() == null || user.getName().isEmpty()) {
+                customerViewStateControler(INCOMPLETEPROFIE);
+                state = false;
+            }
+            if (user.getEmail() == null || user.getEmail().isEmpty()) {
+                customerViewStateControler(INCOMPLETEPROFIE);
+                state = false;
+            }
+            if (user.getMobile() == null || user.getMobile().isEmpty()) {
+                customerViewStateControler(INCOMPLETEPROFIE);
+                state = false;
+            }
+        }
+        return state;
     }
 
 
@@ -1215,7 +1222,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     public UserModel getCustomer() {
         return user;
     }
-
 
     protected void displayAddressOutput() {
         try {
@@ -1298,7 +1304,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         } else if (resultCode == RESULT_CANCELED) {
             // Indicates that the activity closed before a selection was made. For example if
             // the user pressed the back button.
-        }else if (requestCode == 1000) {
+        } else if (requestCode == 1000) {
 
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
@@ -1314,21 +1320,37 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     }
 
                     if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-                          Toast.makeText(this, "No Network", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "No Network", Toast.LENGTH_SHORT).show();
 
                         return;
                     }
 
                     if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                         Toast.makeText(this, "unkown Error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "unkown Error", Toast.LENGTH_SHORT).show();
 
                         return;
                     }
                 }
             }
+        } else if (requestCode == REQUEST_INVITE) {
+            Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
+
+
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                for (String id : ids) {
+                    Log.d(TAG, "onActivityResult: sent invitation " + id);
+                }
+            } else {
+                // Sending failed or it was canceled, show failure message to the user
+                // [START_EXCLUDE]
+                Log.i("FAIL", "FAILED TO SEND INVITATIONS");            // [END_EXCLUDE]
+            }
+            Log.i("CURRENTSTATE", "" + CURRENTSTATE);
+            customerViewStateControler(CURRENTSTATE);
         }
     }
-
 
     private void setMarker(boolean force) {
 
@@ -1372,7 +1394,38 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
     private void customerViewStateControler(int customerState) {
         switch (customerState) {
+            case INCOMPLETEPROFIE:
+                findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
+                mBottomSheet.setVisibility(View.INVISIBLE);
+                findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
+                findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
+                getSupportActionBar().setTitle(getResources().getString(R.string.Profile));
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                mbtn2.setVisibility(View.GONE);
+                mbtn3.setVisibility(View.GONE);
+                mbtn1.setVisibility(View.GONE);
+                mbtn1.setText(getResources().getString(R.string.confirm_pickup));
+                CURRENTSTATE = customerState;
+                showSettingsTabs(R.id.profile_btn);
+                break;
+            case INCOMPLETEVHICLES:
+                findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
+                mBottomSheet.setVisibility(View.INVISIBLE);
+                findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
+                findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
+                getSupportActionBar().setTitle(getResources().getString(R.string.Profile));
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                mbtn2.setVisibility(View.GONE);
+                mbtn3.setVisibility(View.GONE);
+                mbtn1.setVisibility(View.GONE);
+                mbtn1.setText(getResources().getString(R.string.confirm_pickup));
+                CURRENTSTATE = customerState;
+                showSettingsTabs(R.id.vehicles_btn);
+                break;
+
+
             case PICKUP:
+                getCustomerVehicles();
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
@@ -1384,8 +1437,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mbtn2.setVisibility(View.GONE);
                 mbtn3.setVisibility(View.GONE);
                 mbtn1.setVisibility(View.VISIBLE);
-                mbtn1.setText(getResources().getString(R.string.choose_service_btn));
-                if (mChoiceMarker != null) mChoiceMarker.setVisible(true);
+                mbtn1.setText(getResources().getString(R.string.confirm_pickup));
+                if (mChoiceMarker != null)  mChoiceMarker.setVisibility(View.VISIBLE);
                 CURRENTSTATE = customerState;
                 break;
 
@@ -1408,7 +1461,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mbtn2.setText(getResources().getString(R.string.carbroke));
                 mbtn3.setVisibility(View.GONE);
                 setMarker(false);
-                if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
+                if (mChoiceMarker != null) mChoiceMarker.setVisibility(View.VISIBLE);
                 CURRENTSTATE = customerState;
                 break;
 
@@ -1428,7 +1481,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mbtn1.setVisibility(View.VISIBLE);
                 mbtn1.setText(getResources().getString(R.string.confirm_destination));
                 setMarker(false); // delay the set Marker one step behind
-                if (mChoiceMarker != null) mChoiceMarker.setVisible(true);
+                if (mChoiceMarker != null) mChoiceMarker.setVisibility(View.VISIBLE);
                 CURRENTSTATE = customerState;
                 break;
             case REVIEWREQ:
@@ -1451,7 +1504,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                 //setMarker(false); // delay the set Marker one step behind
                 CURRENTSTATE = customerState;
-                if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
+                if (mChoiceMarker != null)  mChoiceMarker.setVisibility(View.INVISIBLE);
                 break;
             case READYTOREQ:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
@@ -1469,7 +1522,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                 radius = 1;
                 CURRENTSTATE = customerState;
-                if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
+                if (mChoiceMarker != null) mChoiceMarker.setVisibility(View.INVISIBLE);
                 customerViewStateControler(REQ);
                 break;
             case REQ:
@@ -1490,7 +1543,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 
                 CURRENTSTATE = customerState;
-                if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
+                if (mChoiceMarker != null)  mChoiceMarker.setVisibility(View.INVISIBLE);
                 break;
             case TRACEDRIVER:
                 //   getClosestDriver();
@@ -1515,7 +1568,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 CURRENTSTATE = customerState;
                 showRout();
                 marksCameraUpdate();
-                if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
+                if (mChoiceMarker != null)  mChoiceMarker.setVisibility(View.INVISIBLE);
                 traceDriver();
                 break;
             case TODESTINATION:
@@ -1541,7 +1594,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 CURRENTSTATE = customerState;
                 showRout();
                 marksCameraUpdate();
-                if (mChoiceMarker != null) mChoiceMarker.setVisible(false);
+                if (mChoiceMarker != null)  mChoiceMarker.setVisibility(View.INVISIBLE);
                 traceDriver();
                 break;
             case RATEDRIVER:
@@ -1669,8 +1722,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         }
 
     }
-
-
 
 
 }

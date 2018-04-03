@@ -14,6 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/container_toolbar">
+        <RelativeLayout
+            android:id="@+id/confirm_address_map_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <fragment
             android:id="@+id/customer_map"
@@ -21,8 +25,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context="com.wenshi_egypt.wenshi.CustomerMapActivity" />
-
-
+            <ImageView
+                android:id="@+id/confirm_address_map_custom_marker"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/add_marker"/>
+        </RelativeLayout>
 
 
 

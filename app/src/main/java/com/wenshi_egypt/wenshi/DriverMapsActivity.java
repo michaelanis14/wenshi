@@ -177,6 +177,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         navigationView.bringToFront();
         navigationView.requestLayout();
 
+        View hView =  navigationView.getHeaderView(0);
+        TextView nav_user = (TextView)hView.findViewById(R.id.textViewUsernameNav);
+        nav_user.setText(driverMod.getName());
+        Button logout = (Button)hView.findViewById(R.id.nav_header_logout);
+        logout.setOnClickListener(this);
         //hide the accept request buttons
         //
 
@@ -820,6 +825,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         driverViewStateControler(TODISTINATION);
                         break;
                 }
+            case  R.id.nav_header_logout:
+                FirebaseAuth.getInstance().signOut();
+                Intent customerWelcome = new Intent(DriverMapsActivity.this, WelcomeActivity.class);
+                startActivity(customerWelcome);
                 break;
         }
     }

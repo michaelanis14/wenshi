@@ -1,6 +1,7 @@
 package com.wenshi_egypt.wenshi;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,6 +23,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+
+import static com.wenshi_egypt.wenshi.CustomerMapActivity.REQUEST_INVITE;
 
 public class FamilyViewFragment extends Fragment implements View.OnClickListener {
 
@@ -38,6 +42,10 @@ public class FamilyViewFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+
+
+
 
         rootRef = FirebaseDatabase.getInstance().getReference();
 

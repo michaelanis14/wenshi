@@ -1,0 +1,25 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/vehicles_Layout"
+    android:orientation="vertical"
+    android:background="@color/tw__solid_white"
+    android:padding="15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:animationCache="true"
+        android:divider="@drawable/empty_tall_divider"
+        android:padding="15dp"
+        android:showDividers="middle"
+        android:gravity="start"
+        android:orientation="vertical"
+        android:id="@+id/history_list_layout">
+
+    </LinearLayout>
+
+</LinearLayout>
+

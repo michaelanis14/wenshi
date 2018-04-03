@@ -77,14 +77,15 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
         user = ((CustomerMapActivity) getActivity()).getCustomer();
 
         if (user.getvehicles() == null || user.getvehicles().size() == 0) {
-            addNewVehicle(0);
+          //  addNewVehicle(0);
+
+            Toast.makeText(getActivity(), getResources().getString(R.string.you_must_have_atleast_one_vehicle), Toast.LENGTH_SHORT).show();
+            ((CustomerMapActivity) getActivity()).setCURRENTSTATE(((CustomerMapActivity) getActivity()).INCOMPLETEVHICLES);
+
 
         } else for (Map.Entry<String, VehicleModel>  vehicle : user.getvehicles().entrySet()) {
             Button button = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
             button.setText(vehicle.getValue().getMake()+" "+vehicle.getValue().getModel() + " " + (vehicle.getValue().isType()?"Sedan":"SUV"));
-
-
-
             button.setId(Integer.parseInt(vehicle.getKey()));
             button.setOnClickListener(this);
             layout.addView(button);
