@@ -69,15 +69,19 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
     @Override
     protected void onPostExecute(String s) {
+try {
+    String[] directionsList;
+    DataParser parser = new DataParser();
+    directionsList = parser.parseDirections(s);
+    distance = parser.getDistance();
+    duration = parser.getDuration();
+    timeSec = Double.parseDouble(parser.getTimeSec());
+    displayDirection(directionsList);
+    delegate.gotDurationDistanceRout(s);
+}
+catch (Exception e){
 
-        String[] directionsList;
-        DataParser parser = new DataParser();
-        directionsList = parser.parseDirections(s);
-        distance = parser.getDistance();
-        duration = parser.getDuration();
-        timeSec = Double.parseDouble(parser.getTimeSec());
-        displayDirection(directionsList);
-        delegate.gotDurationDistanceRout(s);
+}
 
     }
 

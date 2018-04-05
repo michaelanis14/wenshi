@@ -46,12 +46,14 @@ class DataParser {
         if(googleDirectionsJson != null)
         try {
 
-            duration = googleDirectionsJson.getJSONObject(0).getJSONObject("duration").getString("text");
-            distance = googleDirectionsJson.getJSONObject(0).getJSONObject("distance").getString("text");
-            timeSec = (googleDirectionsJson.getJSONObject(0).getJSONObject("duration").getString("value"));
+            duration = googleDirectionsJson.getJSONObject(0).getJSONObject("duration_in_traffic").getString("text");
+            distance = googleDirectionsJson.getJSONObject(0).getJSONObject("distance").getString("value");
+            timeSec = (googleDirectionsJson.getJSONObject(0).getJSONObject("duration_in_traffic").getString("value"));
             googleDirectionsMap.put("duration" , duration);
             googleDirectionsMap.put("distance", distance);
             googleDirectionsMap.put("timeSec", timeSec);
+
+         //   Log.i("JSON", googleDirectionsJson.getJSONObject(0).toString());
 
         } catch (JSONException e) {
             e.printStackTrace();

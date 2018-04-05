@@ -135,6 +135,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private Fragment currentFragment;
     private String duration;
     private String distance;
+    double timeSec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -844,7 +845,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
 
         Object dataTransfer[] = new Object[2];
-        dataTransfer = new Object[5];
+        dataTransfer = new Object[6];
         String url = getDirectionsUrl();
         getDirectionsData = new GetDirectionsData(this);
         dataTransfer[0] = mMap;
@@ -862,6 +863,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
         dataTransfer[3] = duration;
         dataTransfer[4] = distance;
+        dataTransfer[5] = timeSec;
+
         getDirectionsData.execute(dataTransfer);
 
 
@@ -869,6 +872,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
 
     private String getDirectionsUrl() {
+
+       // Log.i("Client Status","origin=" + mLastLocation.getLatitude() + "," + mLastLocation.getLongitude() + "&destination=" + cutomerMod.getDestination().getLatitude() + "," + cutomerMod.getDestination().getLongitude());
         StringBuilder googleDirectionsUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
         googleDirectionsUrl.append("origin=" + mLastLocation.getLatitude() + "," + mLastLocation.getLongitude());
 
@@ -884,7 +889,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         }
 
 
-        googleDirectionsUrl.append("&departure_time=now&key=AIzaSyAgPwnT7C18Mv9PE7yXavg0kZ5lfSzKJW4");
+        googleDirectionsUrl.append("&departure_time=now&key="+getResources().getString(R.string.google_maps_key));
 
         return googleDirectionsUrl.toString();
     }
