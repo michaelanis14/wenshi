@@ -1158,11 +1158,12 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         editor.apply();
 
     }
-public void loadLocale(){
+
+    public void loadLocale() {
         SharedPreferences prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE);
-        String language = prefs.getString("My_Lang","");
+        String language = prefs.getString("My_Lang", "");
         setLocale(language);
-}
+    }
 
 
     //VEHICLES MODEL - CONTROLLER
@@ -1271,7 +1272,6 @@ public void loadLocale(){
         }
     }
 
-
     //PROFILECONTROLLER
     private boolean checkCustomerProfile() {
         boolean state = true;
@@ -1291,7 +1291,6 @@ public void loadLocale(){
         }
         return state;
     }
-
 
     @Override
     public void onFragmentInteraction(Uri uri) {
