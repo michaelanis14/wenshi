@@ -6,24 +6,24 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_payment"
-            android:title="Payment" />
+            android:title="@string/PaymentMethod" />
 
         <item
             android:id="@+id/nav_history"
-            android:title="Your Trips" />
+            android:title="@string/history" />
 
 
         <item
             android:id="@+id/nav_help"
-            android:title="Help" />
+            android:title="@string/textView_help_Info" />
 
         <item
             android:id="@+id/nav_invite"
-            android:title="Invite" />
+            android:title="@string/invite_friends" />
 
         <item
             android:id="@+id/nav_settings"
-            android:title="Settings" />
+            android:title="@string/action_settings" />
 
     </group>
 

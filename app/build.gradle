@@ -14,7 +14,6 @@ android {
     }
     compileSdkVersion 26
     defaultConfig {
-        resConfigs("en", "xxxhdpi")
         applicationId "com.wenshi_egypt.wenshi"
         minSdkVersion 21
         targetSdkVersion 26
