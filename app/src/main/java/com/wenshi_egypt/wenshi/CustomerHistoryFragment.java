@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,16 +138,24 @@ public class CustomerHistoryFragment extends Fragment implements View.OnClickLis
         if (user.getHistory() == null || user.getHistory().size() == 0) {
             //  addNewVehicle(0);
 
-        } else for (Map.Entry<String, HistoryModel>  historyItem : user.getHistory().entrySet()) {
-            Button button = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
-            button.setText(historyItem.getValue().getDate()+" "+historyItem.getValue().getStartTime()+" "+historyItem.getValue().getCost()+" LE");
-            button.setId(Integer.parseInt(historyItem.getKey()));
-            button.setOnClickListener(this);
-            layout.addView(button);
+        } else {
+
+         try {
+
+
+            for (Map.Entry<String, HistoryModel> historyItem : user.getHistory().entrySet()) {
+                Button button = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
+                button.setText(historyItem.getValue().getDate() + " " + historyItem.getValue().getStartTime() + " " + historyItem.getValue().getCost() + " LE");
+                button.setId(Integer.parseInt(historyItem.getKey()));
+                button.setOnClickListener(this);
+                layout.addView(button);
+            }
+
+         }
+         catch (Exception e){
+             Log.i("DATABASE ERR","Bad Structure"+e.toString());
+         }
         }
-
-
-
     }
 
     public interface OnFragmentInteractionListener {

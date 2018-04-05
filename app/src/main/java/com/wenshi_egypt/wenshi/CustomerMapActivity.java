@@ -1210,9 +1210,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                     HistoryModel historyModel = new HistoryModel(historySnapshot.getKey().toString(), historySnapshot.child("date").getValue() != null ? historySnapshot.child("date").getValue().toString() : "_date", historySnapshot.child("startTime").getValue() != null ? historySnapshot.child("startTime").getValue().toString() : "_startTime", historySnapshot.child("eta").getValue() != null ? historySnapshot.child("eta").getValue().toString() : "_ETA", historySnapshot.child("distance").getValue() != null ? historySnapshot.child("distance").getValue().toString() : "_distance", historySnapshot.child("clientName").getValue() != null ? historySnapshot.child("clientName").getValue().toString() : "_clientName", historySnapshot.child("cleintID").getValue() != null ? historySnapshot.child("cleintID").getValue().toString() : "_cleintID", historySnapshot.child("driverName").getValue() != null ? historySnapshot.child("driverName").getValue().toString() : "_driverName", historySnapshot.child("driverID").getValue() != null ? historySnapshot.child("driverID").getValue().toString() : "_driverID", historySnapshot.child("vehicleDetails").getValue() != null ? historySnapshot.child("vehicleDetails").getValue().toString() : "_vehicleDetails");
 
-                    historyModel.setCost(Double.parseDouble(historySnapshot.child("cost").getValue().toString()));
-                    historyModel.setTimeSec(Double.parseDouble(historySnapshot.child("timeSec").getValue().toString()));
-                    historyModel.setCompeleted((historySnapshot.child("compeleted").getValue().toString()).equals("true") ? true : false);
+                    historyModel.setCost(Double.parseDouble(historySnapshot.child("cost").getValue() != null ?historySnapshot.child("cost").getValue().toString():"404"));
+                    historyModel.setTimeSec(Double.parseDouble(historySnapshot.child("timeSec").getValue()!= null ?historySnapshot.child("timeSec").getValue().toString():"404"));
+                    historyModel.setCompeleted((historySnapshot.child("compeleted").getValue()!= null?(historySnapshot.child("compeleted").getValue().toString()).equals("true") ? true : false :false));
 
                     user.addHistory(historySnapshot.getKey().toString(), historyModel);
                 }
