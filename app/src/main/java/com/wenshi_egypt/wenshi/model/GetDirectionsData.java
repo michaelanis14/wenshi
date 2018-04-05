@@ -26,6 +26,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
     Polyline polylineFinal;
     String duration = "";
     String distance ="";
+    double timeSec;
 
     public String getDuration() {
         return duration;
@@ -54,7 +55,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
         latLng = (LatLng) objects[2];
         duration = (String) objects[3];
         distance = (String) objects[4];
-
+        timeSec = (double) objects[5];
 
         DownloadUrl downloadUrl = new DownloadUrl();
         try {
@@ -74,7 +75,7 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
         directionsList = parser.parseDirections(s);
         distance = parser.getDistance();
         duration = parser.getDuration();
-
+        timeSec = Double.parseDouble(parser.getTimeSec());
         displayDirection(directionsList);
         delegate.gotDurationDistanceRout(s);
 

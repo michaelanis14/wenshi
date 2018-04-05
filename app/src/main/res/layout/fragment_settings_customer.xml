@@ -60,6 +60,13 @@
         android:text="@string/textView_invite" />
 
     <Button
+        android:id="@+id/language_btn"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@android:color/background_light"
+        android:drawableRight="@drawable/arrow"
+        android:text="@string/languge" />
+    <Button
         android:id="@+id/about_btn"
         android:layout_width="match_parent"
         android:layout_height="40dp"

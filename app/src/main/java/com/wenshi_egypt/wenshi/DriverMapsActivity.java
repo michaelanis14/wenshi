@@ -65,19 +65,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wenshi_egypt.wenshi.model.GetDirectionsData;
 import com.wenshi_egypt.wenshi.model.UserModel;
-import com.wenshi_egypt.wenshi.model.VehicleModel;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DriverMapsActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DriverProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, OnNavigationItemSelectedListener, com.google.android.gms.location.LocationListener {
+public class DriverMapsActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DriverProfileFragment.OnFragmentInteractionListener, CustomerHistoryFragment.OnFragmentInteractionListener, OnNavigationItemSelectedListener, com.google.android.gms.location.LocationListener {
 
     private static final long UPDATE_INTERVAL = 5000;
     private static final long FASTEST_INTERVAL = 3000;
@@ -177,6 +174,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         navigationView.bringToFront();
         navigationView.requestLayout();
 
+        View hView =  navigationView.getHeaderView(0);
+        TextView nav_user = (TextView)hView.findViewById(R.id.textViewUsernameNav);
+        nav_user.setText(driverMod.getName());
+        Button logout = (Button)hView.findViewById(R.id.nav_header_logout);
+        logout.setOnClickListener(this);
         //hide the accept request buttons
         //
 
@@ -267,7 +269,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             //  String lat = cust.getString("Latitude");
                             //  String longt = cust.getString("Longitude");
                            // String address = cust.getString("address");
-                            VehicleModel defaultVehicle = new VehicleModel(cust.getJSONObject("Vehicle").getString("type"), cust.getJSONObject("Vehicle").getString("model"),true,"","");
+                         //   VehicleModel defaultVehicle = new VehicleModel("",cust.getJSONObject("Vehicle").getString("type"), cust.getJSONObject("Vehicle").getString("model"),true,"","");
 
 
                             // Location locat = new Location("dummyprovider");
@@ -276,7 +278,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
 
                             cutomerMod = new UserModel(id, name, email, mobile);
-                            cutomerMod.setVehicle(defaultVehicle);
+                            //cutomerMod.setVehicle(defaultVehicle);
                         } catch (Exception e) {
                             e.printStackTrace();
                             cutomerMod = new UserModel("", "", "",  "");
@@ -301,7 +303,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                                     driverViewStateControler(NEWREQ);
                                     marksCameraUpdate();
                                     hidePopup();
-                                    showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi");
+                                    showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : ", "CAR MODEL : " , "SERVICE : Wenshi");
 
                                 }
                             }
@@ -696,7 +698,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (id == R.id.nav_profile) {
             currentFragment = new DriverProfileFragment();
         } else if (id == R.id.nav_history) {
-            currentFragment = new HistoricFragment(false, getDriver().getID());
+            currentFragment = new CustomerHistoryFragment(false, getDriver().getID());
         }
         if (currentFragment != null) {
             driverViewStateControler(SIDENAV);
@@ -820,6 +822,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         driverViewStateControler(TODISTINATION);
                         break;
                 }
+            case  R.id.nav_header_logout:
+                FirebaseAuth.getInstance().signOut();
+                Intent customerWelcome = new Intent(DriverMapsActivity.this, WelcomeActivity.class);
+                startActivity(customerWelcome);
                 break;
         }
     }
@@ -984,7 +990,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 break;
             case ARRIVED:
                 Log.i("STATE", "ARRIVED");
-                showPopup(getResources().getString(R.string.arrived), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : " + cutomerMod.getDefaultVehicle().getType(), "CAR MODEL : " + cutomerMod.getDefaultVehicle().getModel(), "SERVICE : Wenshi");
+                showPopup(getResources().getString(R.string.arrived), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : ", "CAR MODEL : ", "SERVICE : Wenshi");
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 monlineOfflineLayout.setVisibility(View.GONE);

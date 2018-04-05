@@ -10,7 +10,9 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-feature android:name="android.hardware.location.gps" />
 
     <!-- *** ShortcutBadger**************************************************************** -->
@@ -87,8 +89,30 @@
             android:name=".helpers.FetchAddressIntentService"
             android:exported="false" />
 
-        <activity android:name=".PostImageActivity"
-            android:theme="@style/MerplyAppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".PostImageActivity"
+            android:theme="@style/MerplyAppTheme.NoActionBar" />
+        <activity
+            android:name=".DeepLinkActivity"
+            android:label="@string/app_name"
+            android:theme="@style/MerplyAppTheme">
+
+            <!-- [START deep_link_filter] -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="example.com"
+                    android:scheme="http" />
+                <data
+                    android:host="example.com"
+                    android:scheme="https" />
+            </intent-filter>
+            <!-- [END deep_link_filter] -->
+        </activity>
     </application>
 
 </manifest>

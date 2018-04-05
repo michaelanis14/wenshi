@@ -26,14 +26,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:paddingTop="40dp"
-        android:text="Rider 3"
         android:textColor="@color/colorBlack" />
 
-    <TextView
+
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/nav_header_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:text="@string/Logout"/>
+        android:background="@color/tw__solid_white"
+        android:text="@string/Logout"
+        android:stateListAnimator="@null"
+
+        />
 
 </LinearLayout>

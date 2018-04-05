@@ -5,6 +5,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static com.wenshi_egypt.wenshi.helpers.AppUtils.Defs.CAIRO;
 
@@ -15,28 +18,83 @@ import static com.wenshi_egypt.wenshi.helpers.AppUtils.Defs.CAIRO;
 public class UserModel implements Parcelable {
     // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
 
-    public void setID(String ID) {
-        this.ID = ID;
-    }
+    public static final Parcelable.Creator<UserModel> CREATOR = new Parcelable.Creator<UserModel>() {
+
+        public UserModel createFromParcel(Parcel in) {
+            return new UserModel(in);
+        }
+
+        public UserModel[] newArray(int size) {
+            return new UserModel[size];
+        }
+    };
 
     String ID = "ID";
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     String name = "";
     String email = "";
-
-    public void setMobile(String mobile) {
+    String mobile = "";
+    String ServiceType;
+    Location pickup;
+    String pickupAddress;
+    Location destination;
+    String destinationAddress;
+    Location currentLocation;
+    String vehicleSelected = "";
+    int vehicleSelectedIndex = 0;
+    LinkedHashMap<String, VehicleModel> vehicles = new LinkedHashMap<String, VehicleModel>();
+    LinkedHashMap<String, HistoryModel> history = new LinkedHashMap<String, HistoryModel>();
+    public UserModel(String id, String name, String email, String mobile) {
+        this.ID = id;
+        this.name = name;
+        this.email = email;
         this.mobile = mobile;
+        Location locationCairo = new Location("");
+        locationCairo.setLatitude(CAIRO.latitude);
+        locationCairo.setLongitude(CAIRO.longitude);
+        pickup = locationCairo;
+        destination = locationCairo;
+    }
+    public UserModel(String id, String name, String email, String mobile, Location pickup, Location destination) {
+        this.ID = id;
+        this.name = name;
+        this.email = email;
+        this.mobile = mobile;
+        this.pickup = pickup;
+        this.destination = destination;
     }
 
-    String mobile = "";
+    // example constructor that takes a Parcel and gives you an object populated with it's values
+    private UserModel(Parcel in) {
+        ID = in.readString();
+        name = in.readString();
+        email = in.readString();
+        mobile = in.readString();
+        // pickup = (Location) in.readValue(Location.class.getClassLoader());
+        pickupAddress = in.readString();
+        // destination = (Location) in.readValue(Location.class.getClassLoader());
+        destinationAddress = in.readString();
+        //currentLocation = (Location) in.readValue(Location.class.getClassLoader());
+
+        //   destination =Location.CREATOR.createFromParcel(in);
+        //  pickup = Location.CREATOR.createFromParcel(in);
+        //   in.readTypedList(vehicles, VehicleModel.CREATOR);
+    }
+
+    public int getVehicleSelectedIndex() {
+        return vehicleSelectedIndex;
+    }
+
+    public void setVehicleSelectedIndex(int vehicleSelectedIndex) {
+        this.vehicleSelectedIndex = vehicleSelectedIndex;
+    }
+
+    public Map<String, HistoryModel> getHistory() {
+        return history;
+    }
+
+    public void addHistory(String id, HistoryModel historyItem) {
+        history.put(id, historyItem);
+    }
 
     public String getServiceType() {
         return ServiceType;
@@ -46,16 +104,13 @@ public class UserModel implements Parcelable {
         ServiceType = serviceType;
     }
 
-    String ServiceType;
-    VehicleModel defaultVehicle;
-    Location pickup;
-    String pickupAddress;
-    Location destination;
-    String destinationAddress;
-    Location currentLocation;
+    public String getVehicleSelected() {
+        return vehicleSelected;
+    }
 
-
-    ArrayList<VehicleModel> Vehicles = new ArrayList<VehicleModel>();
+    public void setVehicleSelected(String vehicleSelected) {
+        this.vehicleSelected = vehicleSelected;
+    }
 
     public String getPickupAddress() {
         return pickupAddress;
@@ -71,58 +126,6 @@ public class UserModel implements Parcelable {
 
     public void setDestinationAddress(String destinationAddress) {
         this.destinationAddress = destinationAddress;
-    }
-
-    public static final Parcelable.Creator<UserModel> CREATOR = new Parcelable.Creator<UserModel>() {
-
-        public UserModel createFromParcel(Parcel in) {
-            return new UserModel(in);
-        }
-
-        public UserModel[] newArray(int size) {
-            return new UserModel[size];
-        }
-    };
-
-    public UserModel(String id, String name, String email, String mobile) {
-        this.ID = id;
-        this.name = name;
-        this.email = email;
-        this.mobile = mobile;
-        this.defaultVehicle = new VehicleModel("KIA", "RIO 2014",true,"","");
-
-        Location locationCairo = new Location("");
-        locationCairo.setLatitude(CAIRO.latitude);
-        locationCairo.setLongitude(CAIRO.longitude);
-
-        pickup = locationCairo;
-        destination = locationCairo;
-    }
-    public UserModel(String id, String name, String email, String mobile, Location pickup, Location destination,  VehicleModel defaultVehicle) {
-        this.ID = id;
-        this.name = name;
-        this.email = email;
-        this.mobile = mobile;
-        this.pickup = pickup;
-        this.destination = destination;
-        this.defaultVehicle = defaultVehicle;
-    }
-    // example constructor that takes a Parcel and gives you an object populated with it's values
-    private UserModel(Parcel in) {
-        ID = in.readString();
-        name = in.readString();
-        email = in.readString();
-        mobile = in.readString();
-        defaultVehicle = in.readParcelable(VehicleModel.class.getClassLoader());
-       // pickup = (Location) in.readValue(Location.class.getClassLoader());
-        pickupAddress = in.readString();
-       // destination = (Location) in.readValue(Location.class.getClassLoader());
-        destinationAddress = in.readString();
-        //currentLocation = (Location) in.readValue(Location.class.getClassLoader());
-
-     //   destination =Location.CREATOR.createFromParcel(in);
-      //  pickup = Location.CREATOR.createFromParcel(in);
-        in.readTypedList(Vehicles, VehicleModel.CREATOR);
     }
 
     public Location getPickup() {
@@ -149,34 +152,45 @@ public class UserModel implements Parcelable {
         this.currentLocation = currentLocation;
     }
 
-    public VehicleModel getDefaultVehicle() {
-        return defaultVehicle;
-    }
-
     public String getID() {
         if (ID != null) return ID;
         else return "";
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getMobile() {
         return mobile;
     }
 
-    public ArrayList<VehicleModel> getVehicles() {
-        return Vehicles;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
-    public void setVehicle(VehicleModel vehicle) {
-        this.defaultVehicle = vehicle;
-        Vehicles.add(vehicle);
+    public Map<String, VehicleModel> getvehicles() {
+        return vehicles;
+    }
+
+    public void setVehicle(String id, VehicleModel vehicle) {
+        vehicles.put(id, vehicle);
     }
 
     @Override
@@ -192,20 +206,19 @@ public class UserModel implements Parcelable {
         parcel.writeString(mobile);
         //parcel.writeValue(pickup);
         parcel.writeString(pickupAddress);
-       // parcel.writeValue(destination);
+        // parcel.writeValue(destination);
         parcel.writeString(destinationAddress);
-      //  parcel.writeValue(currentLocation);
-     //   pickup.writeToParcel(parcel, i);
-      //  destination.writeToParcel(parcel, i);
-        parcel.writeParcelable(defaultVehicle, i);
-        parcel.writeTypedList(Vehicles);
+        //  parcel.writeValue(currentLocation);
+        //   pickup.writeToParcel(parcel, i);
+        //  destination.writeToParcel(parcel, i);
+        //  parcel.writeTypedList(vehicles);
 
 
     }
 
     @Override
     public String toString() {
-        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\""+ ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\""  + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\"" + ", \"Vehicle\":" + this.defaultVehicle.toString() + "" + '}';
+        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\"" + ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\"" + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\"" + ", \"vehicle\":\"" + vehicleSelected + "\"" + '}';
     }
 
 

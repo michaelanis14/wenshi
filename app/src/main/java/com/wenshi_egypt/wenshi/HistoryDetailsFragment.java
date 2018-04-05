@@ -3,24 +3,21 @@ package com.wenshi_egypt.wenshi;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CustomerSettingsFragment.OnFragmentInteractionListener} interface
+ * {@link HistoryDetailsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CustomerSettingsFragment#newInstance} factory method to
+ * Use the {@link HistoryDetailsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CustomerSettingsFragment extends Fragment implements View.OnClickListener {
+public class HistoryDetailsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -32,12 +29,21 @@ public class CustomerSettingsFragment extends Fragment implements View.OnClickLi
 
     private OnFragmentInteractionListener mListener;
 
-    public CustomerSettingsFragment() {
+    public HistoryDetailsFragment() {
         // Required empty public constructor
     }
 
-    public static CustomerSettingsFragment newInstance(String param1, String param2) {
-        CustomerSettingsFragment fragment = new CustomerSettingsFragment();
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment HistoryDetailsFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static HistoryDetailsFragment newInstance(String param1, String param2) {
+        HistoryDetailsFragment fragment = new HistoryDetailsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -46,28 +52,19 @@ public class CustomerSettingsFragment extends Fragment implements View.OnClickLi
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (mListener != null) {
-            Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http").authority("www.merply.com").appendPath("Winshe").appendPath("types").appendQueryParameter("type", "1").appendQueryParameter("sort", "relevance").fragment("settings");
-            mListener.onFragmentInteraction(builder.build());
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        return inflater.inflate(R.layout.fragment_settings_customer, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        getView().findViewById(R.id.profile_btn).setOnClickListener(this);
-        getView().findViewById(R.id.payment_btn).setOnClickListener(this);
-        getView().findViewById(R.id.family_btn).setOnClickListener(this);
-        getView().findViewById(R.id.history_btn).setOnClickListener(this);
-        getView().findViewById(R.id.vehicles_btn).setOnClickListener(this);
-        getView().findViewById(R.id.inviteFriends_btn).setOnClickListener(this);
-        getView().findViewById(R.id.about_btn).setOnClickListener(this);
-        getView().findViewById(R.id.language_btn).setOnClickListener(this);
-
-
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        TextView textView = new TextView(getActivity());
+        textView.setText(R.string.hello_blank_fragment);
+        return textView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -91,11 +88,6 @@ public class CustomerSettingsFragment extends Fragment implements View.OnClickLi
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public void onClick(View view) {
-        ((CustomerMapActivity) getActivity()).showSettingsTabs(view.getId());
     }
 
     /**

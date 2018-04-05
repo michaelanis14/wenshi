@@ -1,6 +1,7 @@
 package com.wenshi_egypt.wenshi;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,6 +20,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static com.wenshi_egypt.wenshi.CustomerMapActivity.REQUEST_INVITE;
 
 public class InviteFragment extends Fragment implements View.OnClickListener {
 
@@ -35,6 +39,10 @@ public class InviteFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
+
+
+
 
         //ArrayList<String> request = howToRequest();
         demo = getView().findViewById(R.id.inviteDemo);
@@ -100,7 +108,7 @@ public class InviteFragment extends Fragment implements View.OnClickListener {
 //                    step3 = value.get("step3");
 //
 //                    demo.setText(step1 + step2 + step3);
-//                  //  results.add(new HistoricTrip(date, from, to, Double.parseDouble(cost)));
+//                  //  results.add(new HistoryModel(date, from, to, Double.parseDouble(cost)));
 //
 //                }
 //            }

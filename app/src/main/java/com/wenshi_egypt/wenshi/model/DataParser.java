@@ -28,6 +28,11 @@ class DataParser {
     String distance ="";
     JSONArray jsonArray = null;
 
+    public String getTimeSec() {
+        return timeSec;
+    }
+
+    String timeSec="";
 
 
 
@@ -43,9 +48,10 @@ class DataParser {
 
             duration = googleDirectionsJson.getJSONObject(0).getJSONObject("duration").getString("text");
             distance = googleDirectionsJson.getJSONObject(0).getJSONObject("distance").getString("text");
-
+            timeSec = (googleDirectionsJson.getJSONObject(0).getJSONObject("duration").getString("value"));
             googleDirectionsMap.put("duration" , duration);
             googleDirectionsMap.put("distance", distance);
+            googleDirectionsMap.put("timeSec", timeSec);
 
         } catch (JSONException e) {
             e.printStackTrace();

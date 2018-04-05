@@ -1,0 +1,132 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/vehicles_add_new_Layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp"
+   >
+
+    <TextView
+        android:id="@+id/textView_vehicle_make"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/new_car_make"
+        android:text="@string/textView_vehicle_make"
+        android:textColor="@color/colorBlack" />
+
+    <Spinner
+        android:id="@+id/new_car_make"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dropdown"
+       />
+
+    <TextView
+        android:id="@+id/textView_vehicle_model"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/editText_newModel"
+        android:text="@string/textView_vehicle_model"
+        android:textColor="@color/colorBlack" />
+
+    <EditText
+        android:id="@+id/editText_newModel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Model"
+        android:inputType="text"
+        android:maxLines="1"       />
+
+    <TextView
+        android:id="@+id/textView_car_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/sedan_or_suv"
+        android:text="@string/textView_vehicle_type"
+        android:textColor="@color/colorBlack" />
+
+
+    <RadioGroup
+        android:id="@+id/sedan_or_suv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+       >
+
+        <RadioButton
+            android:id="@+id/carSedan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="@string/sedan" />
+
+        <RadioButton
+            android:id="@+id/carSuv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+
+            android:text="@string/SUV" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView_car_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/car_color"
+        android:text="@string/textView_vehicle_color"
+        android:textColor="@color/colorBlack" />
+
+    <Spinner
+        android:id="@+id/car_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dropdown"
+       />
+
+    <TextView
+        android:id="@+id/textView_car_year"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/car_year"
+        android:text="@string/textView_vehicle_year"
+        android:textColor="@color/colorBlack" />
+
+    <Spinner
+        android:id="@+id/car_year"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dropdown"
+       />
+
+    <Button
+        android:id="@+id/delete_vehicle_btn"
+        android:layout_width="70dp"
+        android:layout_height="25dp"
+        android:layout_gravity="end"
+        android:background="@color/fui_bgEmail"
+        android:textColor="@color/tw__solid_white"
+        android:text="@string/delete"
+        android:layout_marginTop="30dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="center|bottom"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button_new_vehicle"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="40dp"
+            android:gravity="center"
+            android:text="@string/button_new_vehicle"
+            android:textColor="@color/tw__solid_white" />
+    </LinearLayout>
+
+</LinearLayout>
