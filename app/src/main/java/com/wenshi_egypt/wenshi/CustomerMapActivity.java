@@ -13,6 +13,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.annotation.StyleRes;
@@ -124,9 +125,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     private static final int TRACEDRIVER = 7;
     private static final int TODESTINATION = 8;
     private static final int RATEDRIVER = 9;
-    private static boolean review = false;
     private static final int REQUEST_CODE_AUTOCOMPLETE = 114;
     static GoogleApiClient mGoogleApiClient;
+    private static boolean review = false;
     private static String TAG = "MAP LOCATION";
     final int MY_PERMISSION_REQ_CODE = 1234;
     final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
@@ -487,7 +488,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     case SERVICECHOICE:
                         customerViewStateControler(DESTINATION);
                         user.setServiceType("ACCEDIENT");
-
                         break;
                     case DESTINATION:
                         showRout();
@@ -540,7 +540,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 // mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 break;
             case R.id.PickupLocality:
-                Log.i("locality","Locality pressed");
+                Log.i("locality", "Locality pressed");
                 customerViewStateControler(PICKUP);
                 openAutocompleteActivity();
                 break;
@@ -549,6 +549,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 openAutocompleteActivity();
                 break;
             case R.id.PickupLocalityRQ:
+ Log.i("locality", "Locality pressed");
                 customerViewStateControler(PICKUP);
                 break;
             case R.id.DestinationLocalityRQ:
@@ -704,9 +705,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         } else if (CURRENTSTATE == DESTINATION) {
             user.setDestination(location);
         }
-       // user.setDestinationAddress();
+        // user.setDestinationAddress();
     }
-//get address
+
+    //get address
     private void setLocationString(String location) {
         if (CURRENTSTATE == PICKUP) {
             user.setPickupAddress(location);
@@ -993,8 +995,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     customerViewStateControler(SERVICECHOICE);
                     break;
                 case REVIEWREQ:
-                    if(review)
-                        review = false;
+                    if (review) review = false;
                     customerViewStateControler(DESTINATION);
                     break;
                 case READYTOREQ:
@@ -1130,7 +1131,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             //familyViewSettingsFragment = new FamilyViewFragment();
             // fragment = familyViewSettingsFragment;
             customerViewStateControler(getCURRENTSTATE());
-           Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title)).setMessage(getString(R.string.family_inivitation_message) + getCustomer().getName()).setDeepLink(Uri.parse(getString(R.string.invitation_deep_link))).setCustomImage(Uri.parse(getString(R.string.invitation_custom_image))).setCallToActionText(getString(R.string.invitation_cta)).build();
+            Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title)).setMessage(getString(R.string.family_inivitation_message) + getCustomer().getName()).setDeepLink(Uri.parse(getString(R.string.invitation_deep_link))).setCustomImage(Uri.parse(getString(R.string.invitation_custom_image))).setCallToActionText(getString(R.string.invitation_cta)).build();
             startActivityForResult(intent, REQUEST_INVITE);
         } else if (tab == R.id.history_btn) {
             if (historySettingsFragment == null)
@@ -1162,10 +1163,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     if (i == 0) {
-                        setLocale("ar");
+                        setLanguage("ar");
                         recreate();
                     } else if (i == 1) {
-                        setLocale("en");
+                        setLanguage("en");
                         recreate();
                     }
                     dialogInterface.dismiss();
@@ -1190,27 +1191,42 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
     }
 
-    private void setLocale(String lang) {
-        Resources res = getBaseContext().getResources();
-// Change locale settings in the app.
-        DisplayMetrics dm = res.getDisplayMetrics();
-        android.content.res.Configuration conf = res.getConfiguration();
-        conf.setLocale(new Locale(lang)); // API 17+ only.
-// Use conf.locale = new Locale(...) if targeting lower versions
-        res.updateConfiguration(conf, dm);
+    private void setLanguage(String lang) {
 
-        getBaseContext().getResources().updateConfiguration(conf, getBaseContext().getResources().getDisplayMetrics());
+        setLocale(new Locale(lang));
+
+
+
+
+
+    }
+
+    private void setLocale(Locale locale){
+        Resources resources = getResources();
+        Configuration configuration = resources.getConfiguration();
+        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
+            configuration.setLocale(locale);
+        } else{
+            configuration.locale=locale;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            getApplicationContext().createConfigurationContext(configuration);
+        } else {
+            resources.updateConfiguration(configuration,displayMetrics);
+        }
+
+        getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
         SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
-        editor.putString("My_Lang", lang);
+        editor.putString("My_Lang", locale.getLanguage());
+        Log.i("LOCALEE",getResources().getString(R.string.vehicle));
         editor.apply();
-
-
     }
 
     public void loadLocale() {
         SharedPreferences prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE);
         String language = prefs.getString("My_Lang", "");
-        setLocale(language);
+        setLanguage(language);
     }
 
 
@@ -1401,7 +1417,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         try {
             //    mLocationMarkerText.setText("Lat : " + mCenterLatLong.latitude + "," + "Long : " + mCenterLatLong.longitude + mAddressOutput);
             if (CURRENTSTATE == PICKUP) mPickupText.setText(mAddressOutput);
-            //destunation address
+                //destunation address
             else if (CURRENTSTATE == DESTINATION) mDestinationText.setText(mAddressOutput);
 
 
@@ -1563,7 +1579,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             }
 
         }
-        if(CURRENTSTATE == REVIEWREQ || force){
+        if (CURRENTSTATE == REVIEWREQ || force) {
             if (mReviewRequestMarker == null)
                 mReviewRequestMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(user.getPickup().getLatitude(), user.getPickup().getLongitude())).title(getDirectionsData.getDuration()));
 
@@ -1645,7 +1661,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mbtn2.setText(getResources().getString(R.string.carbroke));
                 mbtn3.setVisibility(View.GONE);
                 setMarker(false);
-                if (mChoiceMarker != null) mChoiceMarker.setVisibility(View.VISIBLE);
+                if (mChoiceMarker != null) mChoiceMarker.setVisibility(View.INVISIBLE);
                 CURRENTSTATE = customerState;
                 break;
 
@@ -1861,10 +1877,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 
         try {
-            double distance =Double.parseDouble(getDirectionsData.getDistance().split(" ")[0]);
-            cash.setText(distance*15+" LE");
+            double distance = Double.parseDouble(getDirectionsData.getDistance().split(" ")[0]);
+            cash.setText(distance * 15 + " LE");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             cash.setText("Contact Driver");
 
         }
