@@ -1566,6 +1566,7 @@ public void loadLocale(){
                 findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
                 mBottomSheet.setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
+                findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
                 getSupportActionBar().setTitle(getResources().getString(R.string.Profile));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -1580,6 +1581,7 @@ public void loadLocale(){
                 findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
                 mBottomSheet.setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
+                findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
                 getSupportActionBar().setTitle(getResources().getString(R.string.Profile));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
