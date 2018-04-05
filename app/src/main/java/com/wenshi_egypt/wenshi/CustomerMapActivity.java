@@ -1137,11 +1137,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             fragment = vehiclesSettingsFragment;
             getSupportActionBar().setTitle(getResources().getString(R.string.vehicle));
 
-        } else if (tab == R.id.inviteFriends_btn) {
-            if (inviteSettingsFragment == null) inviteSettingsFragment = new InviteFragment();
-            fragment = inviteSettingsFragment;
-            getSupportActionBar().setTitle(getResources().getString(R.string.textView_invite));
-
         } else if (tab == R.id.about_btn) {
             if (aboutSettingsFragment == null) aboutSettingsFragment = new AboutFragment();
             fragment = aboutSettingsFragment;

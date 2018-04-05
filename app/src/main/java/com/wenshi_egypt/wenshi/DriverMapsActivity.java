@@ -689,7 +689,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (id == R.id.nav_profile) {
             currentFragment = new DriverProfileFragment();
         } else if (id == R.id.nav_history) {
-            currentFragment = new CustomerHistoryFragment(false, getDriver().getID());
+         //   currentFragment = new CustomerHistoryFragment(false, getDriver().getID());
         }
         if (currentFragment != null) {
             driverViewStateControler(SIDENAV);
