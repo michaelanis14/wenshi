@@ -34,6 +34,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -1114,6 +1115,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             final String[] languageList = {"Arabic", "English"};
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(CustomerMapActivity.this);
             mBuilder.setTitle("Choose Language ...");
+
             mBuilder.setSingleChoiceItems(languageList, 0, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -1147,15 +1149,19 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     }
 
     private void setLocale(String lang) {
-        Locale locale = new Locale(lang);
-        locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.setLocale(locale);
+        Resources res = getBaseContext().getResources();
+// Change locale settings in the app.
+        DisplayMetrics dm = res.getDisplayMetrics();
+        android.content.res.Configuration conf = res.getConfiguration();
+        conf.setLocale(new Locale(lang)); // API 17+ only.
+// Use conf.locale = new Locale(...) if targeting lower versions
+        res.updateConfiguration(conf, dm);
 
-        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        getBaseContext().getResources().updateConfiguration(conf, getBaseContext().getResources().getDisplayMetrics());
         SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
         editor.putString("My_Lang", lang);
         editor.apply();
+
 
     }
 
@@ -1210,9 +1216,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                     HistoryModel historyModel = new HistoryModel(historySnapshot.getKey().toString(), historySnapshot.child("date").getValue() != null ? historySnapshot.child("date").getValue().toString() : "_date", historySnapshot.child("startTime").getValue() != null ? historySnapshot.child("startTime").getValue().toString() : "_startTime", historySnapshot.child("eta").getValue() != null ? historySnapshot.child("eta").getValue().toString() : "_ETA", historySnapshot.child("distance").getValue() != null ? historySnapshot.child("distance").getValue().toString() : "_distance", historySnapshot.child("clientName").getValue() != null ? historySnapshot.child("clientName").getValue().toString() : "_clientName", historySnapshot.child("cleintID").getValue() != null ? historySnapshot.child("cleintID").getValue().toString() : "_cleintID", historySnapshot.child("driverName").getValue() != null ? historySnapshot.child("driverName").getValue().toString() : "_driverName", historySnapshot.child("driverID").getValue() != null ? historySnapshot.child("driverID").getValue().toString() : "_driverID", historySnapshot.child("vehicleDetails").getValue() != null ? historySnapshot.child("vehicleDetails").getValue().toString() : "_vehicleDetails");
 
-                    historyModel.setCost(Double.parseDouble(historySnapshot.child("cost").getValue() != null ?historySnapshot.child("cost").getValue().toString():"404"));
-                    historyModel.setTimeSec(Double.parseDouble(historySnapshot.child("timeSec").getValue()!= null ?historySnapshot.child("timeSec").getValue().toString():"404"));
-                    historyModel.setCompeleted((historySnapshot.child("compeleted").getValue()!= null?(historySnapshot.child("compeleted").getValue().toString()).equals("true") ? true : false :false));
+                    historyModel.setCost(Double.parseDouble(historySnapshot.child("cost").getValue() != null ? historySnapshot.child("cost").getValue().toString() : "404"));
+                    historyModel.setTimeSec(Double.parseDouble(historySnapshot.child("timeSec").getValue() != null ? historySnapshot.child("timeSec").getValue().toString() : "404"));
+                    historyModel.setCompeleted((historySnapshot.child("compeleted").getValue() != null ? (historySnapshot.child("compeleted").getValue().toString()).equals("true") ? true : false : false));
 
                     user.addHistory(historySnapshot.getKey().toString(), historyModel);
                 }
