@@ -39,10 +39,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +61,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompleteFilter;
@@ -100,7 +104,7 @@ import com.google.android.gms.common.api.Status;
 
 import com.wenshi_egypt.wenshi.model.VehicleModel;
 
-public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, CustomerSettingsFragment.OnFragmentInteractionListener, RateDriverFragment.OnFragmentInteractionListener, CustomerHistoryFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptionsFragment.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, CustomerSettingsFragment.OnFragmentInteractionListener, RateDriverFragment.OnFragmentInteractionListener, CustomerHistoryFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptionsFragment.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, AdapterView.OnItemClickListener {
 
 
     public static final int PICKUP = 0;
@@ -126,6 +130,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     final int MY_PERMISSION_REQ_CODE = 1234;
     final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
     public GetDirectionsData getDirectionsData;
+
+    private Spinner vehicleSpinner;
+
     /**
      * The formatted location address.
      */
@@ -248,7 +255,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         mPickupTextRQ = (TextView) findViewById(R.id.PickupLocalityRQ);
         mDestinationTextRQ = (TextView) findViewById(R.id.DestinationLocalityRQ);
 
-
         setupLocation();
 
         //Navigation
@@ -330,6 +336,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         mDestinationTextRQ.setOnClickListener(this);
 
         CURRENTSTATE = -1;
+
+
+        vehicleSpinner = (Spinner) findViewById(R.id.vehicleSpinner);
 
 
         // sendNotification("Michael", "This is a message to tell clients stop eating your feet");
@@ -469,13 +478,13 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             case R.id.bottom_view_btn1:
                 switch (CURRENTSTATE) {
                     case PICKUP: //if pickup and review go back to reviewrReq
-                        customerViewStateControler(SERVICECHOICE);
-                        break;
-                    case SERVICECHOICE:
                         if(review)
                             customerViewStateControler(REVIEWREQ);
                         else
-                            customerViewStateControler(DESTINATION);
+                            customerViewStateControler(SERVICECHOICE);
+                        break;
+                    case SERVICECHOICE:
+                        customerViewStateControler(DESTINATION);
                         user.setServiceType("ACCEDIENT");
 
                         break;
@@ -539,13 +548,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 openAutocompleteActivity();
                 break;
             case R.id.PickupLocalityRQ:
-                Log.i("locality","Locality pressed");
                 customerViewStateControler(PICKUP);
-                openAutocompleteActivity();
                 break;
             case R.id.DestinationLocalityRQ:
-                // customerViewStateControler(DESTINATION);
-                openAutocompleteActivity();
+                customerViewStateControler(DESTINATION);
                 break;
 
             case R.id.FindDriverBtn:
@@ -1047,6 +1053,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
+        findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
         findViewById(R.id.customer_nav_view).bringToFront();
         findViewById(R.id.customer_nav_view).requestLayout();
 
@@ -1809,6 +1816,7 @@ public void loadLocale(){
     }
 
     private void setReviewRequestData() {
+
         TextView pickUpPlace = (TextView) findViewById(R.id.currentLocation);
         pickUpPlace.setText(user.getPickupAddress());
         TextView dstPlace = (TextView) findViewById(R.id.headingLocation);
@@ -1816,6 +1824,35 @@ public void loadLocale(){
         TextView paymentMethod = (TextView) findViewById(R.id.paymentMethod);
         paymentMethod.setText(getString(R.string.radioButton_payment_cash));
         TextView cash = (TextView) findViewById(R.id.tripCost);
+
+        int count = 0;
+        String [] arraySpinner = new String[ user.getvehicles().size()];
+        final String [] vehicleId = new String[ user.getvehicles().size()];
+       for (Map.Entry<String, VehicleModel>  vehicle : user.getvehicles().entrySet()) {
+           Log.i("vehichles--- " , vehicle.getValue().getModel() + " id " + vehicle.getKey() );
+           arraySpinner[count] =  vehicle.getValue().getModel();
+           vehicleId[count] = vehicle.getKey();
+           count++;
+
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, arraySpinner);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        vehicleSpinner.setAdapter(adapter);
+
+        vehicleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                user.setVehicleSelectedIndex(vehicleSpinner.getSelectedItemPosition());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
 
 
         try {
@@ -1826,6 +1863,9 @@ public void loadLocale(){
             cash.setText("Contact Driver");
 
         }
+    }
+    private void onSpinnerItemClicked(){
+        Log.i("Listenerr -- " , "hi");
     }
 
     private String getDirectionsUrl() {
@@ -1892,6 +1932,11 @@ public void loadLocale(){
         // mBottomTextView.setText(getResources().getString(R.string.eta) + " " + getDirectionsData.getDuration());
         //   driverViewStateControler(ONROUT); //must be after showRout to get the correct duration
 
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
     }
 

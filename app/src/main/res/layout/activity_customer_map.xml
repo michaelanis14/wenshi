@@ -80,7 +80,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="260dp"
+                android:layout_height="280dp"
                 android:layout_alignParentBottom="true"
                 android:orientation="vertical"
                 android:background="@android:color/white">
@@ -111,6 +111,7 @@
                                android:layout_width="wrap_content"
                                android:singleLine="true"
                                android:layout_height="wrap_content"
+                               android:paddingTop="5dp"
                                android:text="@string/pickup"
                                android:layout_weight="1"
                                android:textStyle="bold"
@@ -127,6 +128,7 @@
                                android:textSize="@dimen/font_22" />
 
                        </LinearLayout>
+
                        <LinearLayout
                            android:id="@+id/DestinationLayout"
                            android:layout_width="match_parent"
@@ -134,12 +136,18 @@
                            android:orientation="vertical"
                            android:paddingTop="10dp"
                            android:background="@android:color/white">
-
+                           <View
+                               android:layout_width="fill_parent"
+                               android:layout_height="1dp"
+                               android:layout_weight="1"
+                               android:paddingTop="20dp"
+                               android:background="#D0D0D0" />
                            <TextView
                                android:id="@+id/headingLocation"
                                android:layout_width="wrap_content"
                                android:singleLine="true"
                                android:layout_height="wrap_content"
+                               android:paddingTop="3dp"
                                android:text="@string/drop_off_location"
                                android:layout_weight="1"
                                android:textStyle="bold"
@@ -167,6 +175,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:orientation="horizontal">
                         <ImageView
                             android:layout_width="50dp"
@@ -185,29 +194,29 @@
                             android:textColor="@color/colorBlack"
                             android:textSize="@dimen/font_24" />
 
+
                     </LinearLayout>
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:paddingTop="20dp"
+                        android:background="#D0D0D0" />
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
-
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:orientation="horizontal">
-                                <ImageView
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    android:layout_gravity="left"
-                                    android:src="@drawable/winsh_sign"
 
-                                    />
                                 <TextView
                                     android:id="@+id/tripCost"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:paddingLeft="30dp"
                                     android:text="@string/fare"
                                     android:layout_weight="0.5"
                                     android:layout_gravity="center"
@@ -215,10 +224,15 @@
                                     android:textColor="@color/colorBlack"
                                     android:textSize="@dimen/font_19"
                                     />
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="fill_parent"
+                                    android:background="#D0D0D0" />
                                 <Spinner
-                                    android:id="@+id/spinner1"
+                                    android:id="@+id/vehicleSpinner"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:dropDownWidth="wrap_content"
                                     android:layout_weight="0.5"
                                     android:layout_gravity="center"
                                     android:gravity="right"
