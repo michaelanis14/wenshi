@@ -55,6 +55,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     EditText username, email, mobile, codeVerfy;
     Button saveButton, resetPassword, sendCode, verifyCode, resendCode;
     String mVerificationId;
+    boolean nameChanged, emailChanged, mobileChanged;
     private UserModel user;
     private ProfileFragment.OnFragmentInteractionListener mListener;
     private FirebaseAuth mAuth;
@@ -79,7 +80,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
+        mobileChanged = false;
         username = getView().findViewById(R.id.editText_profile_userName);
         email = getView().findViewById(R.id.editText_profile_email);
         mobile = getView().findViewById(R.id.editText_profile_mobile);
@@ -121,7 +122,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 if (user != null) {
                     if (!mobile.getText().toString().equals(user.getMobile())) {
                         sendCode.setVisibility(View.VISIBLE);
+                        mobileChanged = true;
                     } else {
+                        mobileChanged = false;
                         sendCode.setVisibility(View.GONE);
                         mobile.setEnabled(true);
                         codeVerfy.setVisibility(View.GONE);
@@ -139,7 +142,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 if (user != null) {
                     if (!mobile.getText().toString().equals(user.getMobile())) {
                         sendCode.setVisibility(View.VISIBLE);
+                        mobileChanged = true;
                     } else {
+                        mobileChanged = false;
                         sendCode.setVisibility(View.GONE);
                         mobile.setEnabled(true);
                         codeVerfy.setVisibility(View.GONE);
@@ -156,7 +161,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 if (user != null) {
                     if (!mobile.getText().toString().equals(user.getMobile())) {
                         sendCode.setVisibility(View.VISIBLE);
+                        mobileChanged = true;
                     } else {
+                        mobileChanged = false;
                         sendCode.setVisibility(View.GONE);
                         mobile.setEnabled(true);
                         codeVerfy.setVisibility(View.GONE);
@@ -210,21 +217,31 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        try{
         if (view.getId() == R.id.button_profile_saveButton) {
 
             if (user != null) {
+                nameChanged = false;
+                emailChanged = false;
                 if (!String.valueOf(mobile.getText()).isEmpty() && !String.valueOf(username.getText()).isEmpty() && !String.valueOf(email.getText()).isEmpty()) {
 
-                    if (!user.getName().equals(username.getText().toString())  && !username.getText().toString().isEmpty()) {
+                    if (!user.getName().equals(username.getText().toString()) && !username.getText().toString().isEmpty()) {
+                        nameChanged = true;
+                        getView().findViewById(R.id.progress_wheel_profile).setVisibility(View.VISIBLE);
                         updateUserNameAuth();
                     }
                     if (!user.getEmail().equals(email.getText().toString()) && !email.getText().toString().isEmpty()) {
+                        emailChanged = true;
+                        getView().findViewById(R.id.progress_wheel_profile).setVisibility(View.VISIBLE);
                         updateUserEmailAuth();
                     }
-                    if( ((CustomerMapActivity) getActivity()).getCURRENTSTATE() ==  ((CustomerMapActivity) getActivity()).INCOMPLETEPROFIE)
+                    if (mobileChanged) {
+                        sendVerification();
+                    }
+                    if (((CustomerMapActivity) getActivity()).getCURRENTSTATE() == ((CustomerMapActivity) getActivity()).INCOMPLETEPROFIE)
                         ((CustomerMapActivity) getActivity()).setCURRENTSTATE(((CustomerMapActivity) getActivity()).PICKUP);
-                    ((CustomerMapActivity) getActivity()).onBackPressed();
 
+                    saved();
 
                 } else
                     Toast.makeText(getActivity(), getResources().getString(R.string.fields_cannot_empty), Toast.LENGTH_LONG).show();
@@ -242,30 +259,44 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 }
             });
         } else if (view.getId() == R.id.send_verify_btn) {
-            verifyPhoneNumber();
-            getOtp(String.valueOf(mobile.getText()));
-            sendCode.setVisibility(View.GONE);
-            mobile.setEnabled(false);
-            resendCode.setVisibility(View.VISIBLE);
-
-
+            sendVerification();
         } else if (view.getId() == R.id.verify_btn) {
             clickVerifyPhone();
         } else if (view.getId() == R.id.resend_verify_btn) {
             clickResend();
         }
 
-
+        }catch (Exception e){
+            Log.i("ERROR","ProfileFragment"+e.toString());
+        }
     }
 
+    private void sendVerification(){
+        try{
+        verifyPhoneNumber();
+        getOtp(String.valueOf(mobile.getText()));
+        sendCode.setVisibility(View.GONE);
+        mobile.setEnabled(false);
+        resendCode.setVisibility(View.VISIBLE);
+        saveButton.setVisibility(View.INVISIBLE);
+        }catch (Exception e){
+            Log.i("ERROR","ProfileFragment"+e.toString());
+        }
+    }
 
     private void hidePhoneAuth() {
+        try{
+
+
         getView().findViewById(R.id.textView_profile_Code_label).setVisibility(View.GONE);
         mobile.setEnabled(true);
         codeVerfy.setVisibility(View.GONE);
         verifyCode.setVisibility(View.GONE);
         resendCode.setVisibility(View.GONE);
         sendCode.setVisibility(View.GONE);
+        }catch (Exception e){
+            Log.i("ERROR","ProfileFragment"+e.toString());
+        }
     }
 
     private void verifyPhoneNumber() {
@@ -275,7 +306,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void onVerificationCompleted(PhoneAuthCredential credential) {
                     Log.d("", "onVerificationCompleted:" + credential);
-
+                    Toast.makeText(getActivity(), "The Verification Completed", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -297,7 +328,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     Log.d("", "onCodeSent:" + verificationId);
                     mVerificationId = verificationId;
                     mResendToken = token;
-                    Toast.makeText(getActivity(), "onCodeSent:", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "The Verification Code is sent", Toast.LENGTH_SHORT).show();
                     getView().findViewById(R.id.textView_profile_Code_label).setVisibility(View.VISIBLE);
                     codeVerfy.setVisibility(View.VISIBLE);
                     verifyCode.setVisibility(View.VISIBLE);
@@ -308,29 +339,35 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        mAuth = FirebaseAuth.getInstance();
-        mAuth.getCurrentUser().linkWithCredential(credential).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-                    DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID()).child("Profile");
-                    profModify.child("mobile").setValue(String.valueOf(mobile.getText()), new DatabaseReference.CompletionListener() {
-                        public void onComplete(DatabaseError error, DatabaseReference ref) {
-                            ((CustomerMapActivity) getActivity()).getCustomer().setMobile(String.valueOf(mobile.getText()));
-                            getUserData();
-                            hidePhoneAuth();
-                            Toast.makeText(getActivity(), "Mobile " + "Changes Saved Successfully", Toast.LENGTH_SHORT).show();
+        try {
+            mAuth = FirebaseAuth.getInstance();
+            mAuth.getCurrentUser().linkWithCredential(credential).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                        DatabaseReference profModify = rootRef.child("Users").child("Customers").child(user.getID()).child("Profile");
+                        profModify.child("mobile").setValue(String.valueOf(mobile.getText()), new DatabaseReference.CompletionListener() {
+                            public void onComplete(DatabaseError error, DatabaseReference ref) {
+                                ((CustomerMapActivity) getActivity()).getCustomer().setMobile(String.valueOf(mobile.getText()));
+                                getUserData();
+                                hidePhoneAuth();
+                                Toast.makeText(getActivity(), "Mobile " + "Changes Saved Successfully", Toast.LENGTH_SHORT).show();
+                                mobileChanged = false;
+                                saved();
+                            }
+                        });
+                    } else {
+                        verifyCode.setEnabled(true);
+                        Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                    }
 
-                        }
-                    });
-                } else {
-                    Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                    // ...
                 }
-
-                // ...
-            }
-        });
+            });
+        }catch (Exception e){
+            Log.i("ERROR","ProfileFragment"+e.toString());
+        }
         ;
         /*
         mAuth.getCurrentUser().linkWithCredential(credential).addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
@@ -357,20 +394,29 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
 
     private void getOtp(String phoneNumber) {
+        try{
         Log.i("Auth", "002" + phoneNumber);
         PhoneAuthProvider.getInstance().verifyPhoneNumber("002" + phoneNumber,        // Phone number to verify
                 60,                 // Timeout duration
                 TimeUnit.SECONDS,   // Unit of timeout
                 getActivity(),               // Activity (for callback binding)
                 mCallbacks);        // OnVerificationStateChangedCallbacks
+        }catch (Exception e){
+            Log.i("ERROR","ProfileFragment"+e.toString());
+        }
     }
 
     private void verifyPhoneNumberWithCode(String verificationId, String code) {
+        try{
         if (verificationId != null && code != null) {
             PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
+            verifyCode.setEnabled(false);
+            getView().findViewById(R.id.progress_wheel_profile).setVisibility(View.VISIBLE);
             signInWithPhoneAuthCredential(credential);
         } else Toast.makeText(getActivity(), "NULL NULL", Toast.LENGTH_LONG).show();
-
+        }catch (Exception e){
+            Log.i("ERROR","ProfileFragment"+e.toString());
+        }
     }
 
     private void resendVerificationCode(String phoneNumber, PhoneAuthProvider.ForceResendingToken token) {
@@ -398,6 +444,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateUserNameFire() {
+        try{
         getView().findViewById(R.id.progress_wheel_profile).setVisibility(View.VISIBLE);
 
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
@@ -409,13 +456,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 getUserData();
                 Toast.makeText(getActivity(), "Name " + "Changes Saved Successfully", Toast.LENGTH_SHORT).show();
                 getView().findViewById(R.id.progress_wheel_profile).setVisibility(View.INVISIBLE);
+                nameChanged = false;
+                saved();
 
             }
 
         });
+        }catch (Exception e){
+            Log.i("ERROR","ProfileFragment"+e.toString());
+        }
     }
 
     private void updateUserEmailFire() {
+        try{
         getView().findViewById(R.id.progress_wheel_profile).setVisibility(View.VISIBLE);
 
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
@@ -427,12 +480,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 getUserData();
                 Toast.makeText(getActivity(), "Email " + "Changes Saved Successfully", Toast.LENGTH_SHORT).show();
                 getView().findViewById(R.id.progress_wheel_profile).setVisibility(View.INVISIBLE);
+                emailChanged = false;
+                saved();
 
             }
         });
+        }catch (Exception e){
+            Log.i("ERROR","ProfileFragment"+e.toString());
+        }
     }
 
     private void updateUserNameAuth() {
+        try{
         getView().findViewById(R.id.progress_wheel_profile).setVisibility(View.VISIBLE);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -450,6 +509,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
             }
         });
+        }catch (Exception e){
+            Log.i("ERROR","ProfileFragment"+e.toString());
+        }
 
     }
 
@@ -459,6 +521,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateUserEmailAuth() {
+        try{
         getView().findViewById(R.id.progress_wheel_profile).setVisibility(View.VISIBLE);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -474,7 +537,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
             }
         });
+        }catch (Exception e){
+            Log.i("ERROR","ProfileFragment"+e.toString());
+        }
+    }
 
+
+    private void saved() {
+       // saveButton.setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.progress_wheel_profile).setVisibility(View.INVISIBLE);
+        if (!mobileChanged && !emailChanged && !nameChanged) {
+            ((CustomerMapActivity) getActivity()).onBackPressed();
+        }
     }
 
     public interface OnFragmentInteractionListener {

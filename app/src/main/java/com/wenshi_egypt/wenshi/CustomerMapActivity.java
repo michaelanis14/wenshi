@@ -1346,6 +1346,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 state = false;
             }
         }
+        if(!state)
+            Toast.makeText(mContext, "Please Compelete your profile", Toast.LENGTH_SHORT).show();
+
         return state;
     }
 

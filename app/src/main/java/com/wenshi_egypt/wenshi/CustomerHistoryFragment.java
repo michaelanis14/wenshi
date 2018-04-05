@@ -137,12 +137,13 @@ public class CustomerHistoryFragment extends Fragment implements View.OnClickLis
 
         if (user.getHistory() == null || user.getHistory().size() == 0) {
             //  addNewVehicle(0);
+            getView().findViewById(R.id.noHistory).setVisibility(View.VISIBLE);
 
         } else {
 
          try {
 
-
+             getView().findViewById(R.id.noHistory).setVisibility(View.GONE);
             for (Map.Entry<String, HistoryModel> historyItem : user.getHistory().entrySet()) {
                 Button button = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
                 button.setText(historyItem.getValue().getDate() + " " + historyItem.getValue().getStartTime() + " " + historyItem.getValue().getCost() + " LE");
