@@ -167,7 +167,15 @@
     <string name="Promo_code">Promo Code</string>
     <string name="reset_password">Reset Password</string>
     <string name="fields_cannot_empty">Please fill all required fields</string>
-    <string name="wrong_phone_number">Wrong Phone Number</string>
+    <string name="wrong_phone_number">Wrong Phone Number</string>s
+    <string name="vehicle_prompt">Choose vehicle</string>
+
+    <string-array name="vehicle_arrays">
+        <item>KIA CERATO</item>
+        <item>KIA SPORTAGE</item>
+        <item>KIA CARENS</item>
+    </string-array>
+
 
 
     <string name="sedan">Sedan</string>
@@ -211,4 +219,5 @@
     <string name="family_inivitation_message">Wenshi Family Connect Request From</string>
     <string name="please_compelete_your_profile">Please Compelete your profile</string>
     <string name="languge">Language</string>
+>>>>>>> d9b1e89a87f444db9cc95b7e80791da4bfa73aad
 </resources>

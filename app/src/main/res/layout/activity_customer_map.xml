@@ -10,6 +10,8 @@
     tools:openDrawer="start">
 
 
+
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -70,6 +72,178 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.wenshi_egypt.wenshi.CustomerMapActivity">
+
+        <RelativeLayout
+            android:id="@+id/reviewReq"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical"
+                android:background="@android:color/white">
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:layout_weight="1.2"
+                   android:orientation="horizontal">
+                   <ImageView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="left"
+                       android:background="#ffffff"
+                       android:src="@drawable/from_to_icon"
+                       />
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="vertical">
+                       <LinearLayout
+                           android:id="@+id/PickupLayout"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:orientation="vertical"
+                           android:background="@android:color/white">
+                           <TextView
+                               android:id="@+id/currentLocation"
+                               android:layout_width="wrap_content"
+                               android:singleLine="true"
+                               android:layout_height="wrap_content"
+                               android:text="@string/pickup"
+                               android:layout_weight="1"
+                               android:textStyle="bold"
+                               android:textColor="@color/colorBlack"
+                               android:textSize="@dimen/font_16" />
+
+                           <TextView
+                               android:id="@+id/PickupLocalityRQ"
+                               android:layout_width="match_parent"
+                               android:layout_height="wrap_content"
+                               android:singleLine="true"
+                               android:layout_weight="1"
+                               android:text="Click to change location"
+                               android:textSize="@dimen/font_22" />
+
+                       </LinearLayout>
+                       <LinearLayout
+                           android:id="@+id/DestinationLayout"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:orientation="vertical"
+                           android:paddingTop="10dp"
+                           android:background="@android:color/white">
+
+                           <TextView
+                               android:id="@+id/headingLocation"
+                               android:layout_width="wrap_content"
+                               android:singleLine="true"
+                               android:layout_height="wrap_content"
+                               android:text="@string/drop_off_location"
+                               android:layout_weight="1"
+                               android:textStyle="bold"
+                               android:textColor="@color/colorBlack"
+                               android:textSize="@dimen/font_16" />
+
+                           <TextView
+                               android:id="@+id/DestinationLocalityRQ"
+                               android:layout_width="match_parent"
+                               android:layout_height="wrap_content"
+                               android:singleLine="true"
+                               android:layout_weight="1"
+                               android:text="Click to change location"
+                               android:textSize="@dimen/font_22" />
+                       </LinearLayout>
+                   </LinearLayout>
+
+               </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:background="#f5f5ef">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="left"
+                            android:src="@drawable/dollar_sign"
+
+                            />
+                        <TextView
+                            android:id="@+id/paymentMethod"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/radioButton_payment_cash"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/font_24" />
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+                                <ImageView
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="left"
+                                    android:src="@drawable/winsh_sign"
+
+                                    />
+                                <TextView
+                                    android:id="@+id/tripCost"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/fare"
+                                    android:layout_weight="0.5"
+                                    android:layout_gravity="center"
+                                    android:gravity="left"
+                                    android:textColor="@color/colorBlack"
+                                    android:textSize="@dimen/font_19"
+                                    />
+                                <Spinner
+                                    android:id="@+id/spinner1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.5"
+                                    android:layout_gravity="center"
+                                    android:gravity="right"
+                                    android:textSize="@dimen/font_24"
+                                    android:entries="@array/vehicle_arrays"
+                                    android:prompt="@string/vehicle_prompt" />
+                            </LinearLayout>
+
+                        <Button
+                            android:id="@+id/FindDriverBtn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/find_driver"
+                            android:textSize="@dimen/font_24"
+                            android:textColor="@color/tw__solid_white"
+                            android:background="@color/colorBlack"/>
+
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
 
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
