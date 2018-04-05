@@ -244,4 +244,12 @@
     <string name="fields_cannot_empty">Please fill all required fields</string>
     <string name="wrong_phone_number">Wrong Phone Number</string>
 
+    <string name="vehicle_prompt">Choose vehicle</string>
+
+    <string-array name="vehicle_arrays">
+        <item>KIA CERATO</item>
+        <item>KIA SPORTAGE</item>
+        <item>KIA CARENS</item>
+    </string-array>
+
 </resources>

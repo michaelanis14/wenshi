@@ -110,6 +110,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     private static final int TRACEDRIVER = 7;
     private static final int TODESTINATION = 8;
     private static final int RATEDRIVER = 9;
+    private static boolean review = false;
 
 
     private static final int REQUEST_CODE_AUTOCOMPLETE = 114;
@@ -137,6 +138,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     Context mContext;
     TextView mPickupText;
     TextView mDestinationText;
+    TextView mPickupTextRQ;
+    TextView mDestinationTextRQ;
     //runs without a timer by reposting this handler at the end of the runnable
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -227,6 +230,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         // mLocationMarkerText = (TextView) findViewById(R.id.locationMarkertext);
         mPickupText = (TextView) findViewById(R.id.PickupLocality);
         mDestinationText = (TextView) findViewById(R.id.DestinationLocality);
+        mPickupTextRQ = (TextView) findViewById(R.id.PickupLocalityRQ);
+        mDestinationTextRQ = (TextView) findViewById(R.id.DestinationLocalityRQ);
 
 
         setupLocation();
@@ -246,6 +251,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         markers = new HashMap<String, Marker>();
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        review = false;
 
         mbtn1 = (Button) findViewById(R.id.bottom_view_btn1);
         mbtn1.setBackgroundColor(Color.BLACK);
@@ -298,6 +305,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         mPickupText.setOnClickListener(this);
         mDestinationText.setOnClickListener(this);
+
+        mPickupTextRQ.setOnClickListener(this);
+        mDestinationTextRQ.setOnClickListener(this);
 
         CURRENTSTATE = -1;
 
@@ -438,12 +448,16 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         switch (v.getId()) {
             case R.id.bottom_view_btn1:
                 switch (CURRENTSTATE) {
-                    case PICKUP:
+                    case PICKUP: //if pickup and review go back to reviewrReq
                         customerViewStateControler(SERVICECHOICE);
                         break;
                     case SERVICECHOICE:
+                        if(review)
+                            customerViewStateControler(REVIEWREQ);
+                        else
+                            customerViewStateControler(DESTINATION);
                         user.setServiceType("ACCEDIENT");
-                        customerViewStateControler(DESTINATION);
+
                         break;
                     case DESTINATION:
                         showRout();
@@ -497,10 +511,20 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 // mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 break;
             case R.id.PickupLocality:
+                Log.i("locality","Locality pressed");
                 customerViewStateControler(PICKUP);
                 openAutocompleteActivity();
                 break;
             case R.id.DestinationLocality:
+                // customerViewStateControler(DESTINATION);
+                openAutocompleteActivity();
+                break;
+            case R.id.PickupLocalityRQ:
+                Log.i("locality","Locality pressed");
+                customerViewStateControler(PICKUP);
+                openAutocompleteActivity();
+                break;
+            case R.id.DestinationLocalityRQ:
                 // customerViewStateControler(DESTINATION);
                 openAutocompleteActivity();
                 break;
@@ -649,8 +673,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         } else if (CURRENTSTATE == DESTINATION) {
             user.setDestination(location);
         }
+       // user.setDestinationAddress();
     }
-
+//get address
     private void setLocationString(String location) {
         if (CURRENTSTATE == PICKUP) {
             user.setPickupAddress(location);
@@ -1173,6 +1198,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         try {
             //    mLocationMarkerText.setText("Lat : " + mCenterLatLong.latitude + "," + "Long : " + mCenterLatLong.longitude + mAddressOutput);
             if (CURRENTSTATE == PICKUP) mPickupText.setText(mAddressOutput);
+            //destunation address
             else if (CURRENTSTATE == DESTINATION) mDestinationText.setText(mAddressOutput);
 
 
@@ -1331,6 +1357,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         switch (customerState) {
             case PICKUP:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 mPickupText.setEnabled(true);
@@ -1349,6 +1376,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             case SERVICECHOICE:
 
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 mPickupText.setEnabled(false);
@@ -1371,6 +1399,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
             case DESTINATION:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 changeMap(user.getDestination());
@@ -1392,17 +1421,15 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.INVISIBLE);
-
-                findViewById(R.id.reviewReq).bringToFront();
-                changeMap(user.getDestination());
-
+                findViewById(R.id.reviewReq).setVisibility(View.VISIBLE);
+                review = true;
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 setReviewRequestData();
                 getSupportActionBar().setTitle(getString(R.string.request_wenshi));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                mbtn1.setVisibility(View.VISIBLE);
+                mbtn1.setVisibility(View.INVISIBLE);
                 mbtn1.setText(getResources().getString(R.string.find_driver));
                 //setMarker(false); // delay the set Marker one step behind
                 CURRENTSTATE = customerState;
@@ -1410,6 +1437,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 break;
             case READYTOREQ:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
@@ -1431,6 +1459,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             case REQ:
                 getClosestDriver();
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
 
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
@@ -1455,6 +1484,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                 mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
                 mDestinationText.setEnabled(false);
@@ -1481,6 +1511,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                 mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
                 mDestinationText.setEnabled(false);
@@ -1507,6 +1538,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mBottomSheet.setVisibility(View.INVISIBLE);
                 findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
+                findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.INVISIBLE);
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
@@ -1537,24 +1569,18 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     }
 
     private void setReviewRequestData() {
-        TextView carData = (TextView) findViewById(R.id.carData);
-        carData.setText(user.getDefaultVehicle().getType() + " "+ user.getDefaultVehicle().getModel());
-        TextView service = (TextView) findViewById(R.id.Service);
-        service.setText(user.getServiceType());
-        TextView paymentMethod = (TextView) findViewById(R.id.PaymentMethod);
+        TextView pickUpPlace = (TextView) findViewById(R.id.currentLocation);
+        pickUpPlace.setText(user.getPickupAddress());
+        TextView dstPlace = (TextView) findViewById(R.id.headingLocation);
+        dstPlace.setText(user.getDestinationAddress());
+        TextView paymentMethod = (TextView) findViewById(R.id.paymentMethod);
         paymentMethod.setText(getString(R.string.radioButton_payment_cash));
-        TextView cash = (TextView) findViewById(R.id.Cash);
-
-        TextView pickUp = (TextView) findViewById(R.id.pickUp);
-        pickUp.setText("From: " + user.getPickupAddress());
-        TextView destination = (TextView) findViewById(R.id.Destination);
-        destination.setText("To: "+user.getDestinationAddress());
-        //((TextView)getView().findViewById(R.id.etaValue)).setText( ((CustomerMapActivity)getActivity()).getDirectionsData.getDuration());
+        TextView cash = (TextView) findViewById(R.id.tripCost);
 
 
         try {
             double distance =Double.parseDouble(getDirectionsData.getDistance().split(" ")[0]);
-            cash.setText("Trip cost: " +distance*15+" LE");
+            cash.setText(distance*15+" LE");
 
         }catch (Exception e){
             cash.setText("Contact Driver");
