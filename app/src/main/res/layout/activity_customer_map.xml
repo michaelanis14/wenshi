@@ -73,6 +73,7 @@
         android:layout_height="match_parent"
         tools:context="com.wenshi_egypt.wenshi.CustomerMapActivity">
 
+
         <RelativeLayout
             android:id="@+id/reviewReq"
             android:layout_width="match_parent"
@@ -114,9 +115,8 @@
                                android:paddingTop="5dp"
                                android:text="@string/pickup"
                                android:layout_weight="1"
-                               android:textStyle="bold"
                                android:textColor="@color/colorBlack"
-                               android:textSize="@dimen/font_16" />
+                               android:textSize="@dimen/font_20" />
 
                            <TextView
                                android:id="@+id/PickupLocalityRQ"
@@ -150,9 +150,8 @@
                                android:paddingTop="3dp"
                                android:text="@string/drop_off_location"
                                android:layout_weight="1"
-                               android:textStyle="bold"
                                android:textColor="@color/colorBlack"
-                               android:textSize="@dimen/font_16" />
+                               android:textSize="@dimen/font_20"/>
 
                            <TextView
                                android:id="@+id/DestinationLocalityRQ"
