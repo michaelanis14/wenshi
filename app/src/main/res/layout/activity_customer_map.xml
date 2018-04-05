@@ -86,8 +86,8 @@
                 android:background="@android:color/white">
                <LinearLayout
                    android:layout_width="match_parent"
-                   android:layout_height="250dp"
-                   android:layout_weight="1"
+                   android:layout_height="match_parent"
+                   android:layout_weight="1.2"
                    android:orientation="horizontal">
                    <ImageView
                        android:layout_width="wrap_content"
@@ -109,6 +109,7 @@
                            <TextView
                                android:id="@+id/currentLocation"
                                android:layout_width="wrap_content"
+                               android:singleLine="true"
                                android:layout_height="wrap_content"
                                android:text="@string/pickup"
                                android:layout_weight="1"
@@ -131,11 +132,13 @@
                            android:layout_width="match_parent"
                            android:layout_height="wrap_content"
                            android:orientation="vertical"
+                           android:paddingTop="10dp"
                            android:background="@android:color/white">
 
                            <TextView
                                android:id="@+id/headingLocation"
                                android:layout_width="wrap_content"
+                               android:singleLine="true"
                                android:layout_height="wrap_content"
                                android:text="@string/drop_off_location"
                                android:layout_weight="1"
