@@ -954,6 +954,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     customerViewStateControler(SERVICECHOICE);
                     break;
                 case REVIEWREQ:
+                    if(review)
+                        review = false;
                     customerViewStateControler(DESTINATION);
                     break;
                 case READYTOREQ:
