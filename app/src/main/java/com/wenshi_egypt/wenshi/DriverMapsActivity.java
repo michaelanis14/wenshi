@@ -65,19 +65,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wenshi_egypt.wenshi.model.GetDirectionsData;
 import com.wenshi_egypt.wenshi.model.UserModel;
-import com.wenshi_egypt.wenshi.model.VehicleModel;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DriverMapsActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DriverProfileFragment.OnFragmentInteractionListener, HistoricFragment.OnFragmentInteractionListener, OnNavigationItemSelectedListener, com.google.android.gms.location.LocationListener {
+public class DriverMapsActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DriverProfileFragment.OnFragmentInteractionListener, CustomerHistoryFragment.OnFragmentInteractionListener, OnNavigationItemSelectedListener, com.google.android.gms.location.LocationListener {
 
     private static final long UPDATE_INTERVAL = 5000;
     private static final long FASTEST_INTERVAL = 3000;
@@ -701,7 +698,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (id == R.id.nav_profile) {
             currentFragment = new DriverProfileFragment();
         } else if (id == R.id.nav_history) {
-            currentFragment = new HistoricFragment(false, getDriver().getID());
+            currentFragment = new CustomerHistoryFragment(false, getDriver().getID());
         }
         if (currentFragment != null) {
             driverViewStateControler(SIDENAV);

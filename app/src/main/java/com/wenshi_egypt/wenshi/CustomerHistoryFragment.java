@@ -5,33 +5,34 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.wenshi_egypt.wenshi.model.HistoryModel;
 import com.wenshi_egypt.wenshi.model.UserModel;
+import com.wenshi_egypt.wenshi.model.VehicleModel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
-public class HistoricFragment extends Fragment implements View.OnClickListener{
+public class CustomerHistoryFragment extends Fragment implements View.OnClickListener{
 
     DatabaseReference rootRef, histRef;
     TextView demoValue, noHistoric;
     static String date, from, to, cost;
 
-    public HistoricFragment(){}
+    public CustomerHistoryFragment(){}
 
     @SuppressLint("ValidFragment")
-    public HistoricFragment(boolean b, String uid)  {
+    public CustomerHistoryFragment(boolean b, String uid)  {
         if (b)  {
             this.histRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Trips");
         }
@@ -42,14 +43,14 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-       return inflater.inflate(R.layout.fragment_vehicles, container, false);
+       return inflater.inflate(R.layout.fragment_history_customer, container, false);
 
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        ArrayList<HistoricTrip> trip ;
+        ArrayList<HistoryModel> trip ;
                 //= GetTrip();
 /*
         //noinspection ConstantConditions
@@ -68,8 +69,8 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
         */
     }
 
-    private ArrayList<HistoricTrip> GetTrip(){
-        final ArrayList<HistoricTrip> results = new ArrayList<>();
+    private ArrayList<HistoryModel> GetTrip(){
+        final ArrayList<HistoryModel> results = new ArrayList<>();
 /*
         //database reference pointing to root of database
        // rootRef = FirebaseDatabase.getInstance().getReference();
@@ -90,7 +91,7 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
                         demoValue.setText("");
                         if (!date.isEmpty()) {
                             noHistoric.setVisibility(View.INVISIBLE);
-                            results.add(new HistoricTrip(date, from, to, Double.parseDouble(cost)));
+                            results.add(new HistoryModel(date, from, to, Double.parseDouble(cost)));
                         }
                     }
                 }
@@ -99,7 +100,7 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-             //   Toast.makeText(HistoricFragment.this, "Error", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(CustomerHistoryFragment.this, "Error", Toast.LENGTH_SHORT).show();
             }
         });
   */
@@ -107,8 +108,44 @@ public class HistoricFragment extends Fragment implements View.OnClickListener{
 
     }
 
+
+
+
     @Override
     public void onClick(View view) {
+
+
+        if (((CustomerMapActivity) getActivity()).vehicleDetailsFragment == null) ((CustomerMapActivity) getActivity()).vehicleDetailsFragment = new AddNewVehicleFragment();
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
+
+            Bundle args = new Bundle();
+            args.putParcelable("DATA", ((CustomerMapActivity) getActivity()).getCustomer().getvehicles().get(view.getId()+""));
+            ((CustomerMapActivity) getActivity()).vehicleDetailsFragment.setArguments(args);
+
+        ft.replace(R.id.mainFrame, ((CustomerMapActivity) getActivity()).vehicleDetailsFragment);
+        ft.commit();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        LinearLayout layout = (LinearLayout) getView().findViewById(R.id.history_list_layout);
+        UserModel user = ((CustomerMapActivity) getActivity()).getCustomer();
+
+        if (user.getHistory() == null || user.getHistory().size() == 0) {
+            //  addNewVehicle(0);
+
+        } else for (Map.Entry<String, HistoryModel>  historyItem : user.getHistory().entrySet()) {
+            Button button = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
+            button.setText(historyItem.getValue().getDate()+" "+historyItem.getValue().getStartTime()+" "+historyItem.getValue().getCost()+" LE");
+            button.setId(Integer.parseInt(historyItem.getKey()));
+            button.setOnClickListener(this);
+            layout.addView(button);
+        }
+
+
 
     }
 

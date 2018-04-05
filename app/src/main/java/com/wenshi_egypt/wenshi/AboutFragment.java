@@ -100,7 +100,7 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
 //                    step3 = value.get("step3");
 //
 //                    demo.setText(step1 + step2 + step3);
-//                  //  results.add(new HistoricTrip(date, from, to, Double.parseDouble(cost)));
+//                  //  results.add(new HistoryModel(date, from, to, Double.parseDouble(cost)));
 //
 //                }
 //            }
