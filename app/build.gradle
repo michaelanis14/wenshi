@@ -77,6 +77,7 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:11.8.0'
     compile 'com.pnikosis:materialish-progress:1.7'
     compile 'com.google.firebase:firebase-invites:11.8.0'
+    compile "com.andkulikov:transitionseverywhere:1.7.9"
     // compile 'com.paymob:acceptsdk:1.0.2'
 }
 apply plugin: 'com.google.gms.google-services'

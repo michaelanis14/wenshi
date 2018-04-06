@@ -38,9 +38,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -86,6 +88,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.transitionseverywhere.Slide;
+import com.transitionseverywhere.TransitionManager;
 import com.wenshi_egypt.wenshi.helpers.AppUtils;
 import com.wenshi_egypt.wenshi.helpers.FetchAddressIntentService;
 import com.wenshi_egypt.wenshi.model.GetDirectionsData;
@@ -256,6 +260,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         mDestinationText = (TextView) findViewById(R.id.DestinationLocality);
         mPickupTextRQ = (TextView) findViewById(R.id.currentLocation);
         mDestinationTextRQ = (TextView) findViewById(R.id.headingLocation);
+        final ViewGroup transitionsContainer = (ViewGroup) findViewById(R.id.PickupLayout);
+
 
         setupLocation();
 
@@ -1288,8 +1294,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 currentHistory.setId("" + hisCount);
             }
             String uid = userId;
-
-
+            
             DatabaseReference addHistory = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Trips").child(currentHistory.getId());
             addHistory.child("date").setValue(currentHistory.getDate());
             addHistory.child("startTime").setValue(currentHistory.getStartTime());
@@ -1638,7 +1643,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 mPickupText.setEnabled(false);
+                TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.DestinationLayout), new Slide(Gravity.LEFT));
+
                 findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
+
                 mDestinationText.setEnabled(false);
 
                 getSupportActionBar().setTitle(getString(R.string.choose_service_btn));
@@ -1658,11 +1666,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             case DESTINATION:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
-                findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
+                findViewById(R.id.PickupLayout).setVisibility(View.GONE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 changeMap(user.getDestination());
                 mPickupText.setEnabled(false);
-
+                TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.DestinationLayout), new Slide(Gravity.RIGHT));
                 findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
                 mDestinationText.setEnabled(true);
                 getSupportActionBar().setTitle(getResources().getString(R.string.confirm_destination));

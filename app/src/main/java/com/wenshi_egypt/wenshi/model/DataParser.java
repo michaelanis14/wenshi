@@ -17,15 +17,11 @@ import java.util.List;
 
 class DataParser {
     public String getDuration() {
-
-        Log.i("JSON",duration );
-        return duration;
+            return duration;
     }
 
     public String getDistance() {
-        Log.i("JSON",distance);
-
-        return distance;
+              return distance;
     }
 
     String duration = "";
