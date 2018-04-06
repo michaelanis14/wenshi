@@ -41,9 +41,10 @@ public class UserModel implements Parcelable {
     Location currentLocation;
     String vehicleSelected = "";
     int vehicleSelectedIndex = 0;
+    double rating;
     LinkedHashMap<String, VehicleModel> vehicles = new LinkedHashMap<String, VehicleModel>();
     LinkedHashMap<String, HistoryModel> history = new LinkedHashMap<String, HistoryModel>();
-    public UserModel(String id, String name, String email, String mobile) {
+    public UserModel(String id, String name, String email, String mobile, double rating) {
         this.ID = id;
         this.name = name;
         this.email = email;
@@ -53,6 +54,7 @@ public class UserModel implements Parcelable {
         locationCairo.setLongitude(CAIRO.longitude);
         pickup = locationCairo;
         destination = locationCairo;
+        this.rating = rating;
     }
     public UserModel(String id, String name, String email, String mobile, Location pickup, Location destination) {
         this.ID = id;
@@ -78,6 +80,14 @@ public class UserModel implements Parcelable {
         //   destination =Location.CREATOR.createFromParcel(in);
         //  pickup = Location.CREATOR.createFromParcel(in);
         //   in.readTypedList(vehicles, VehicleModel.CREATOR);
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 
     public int getVehicleSelectedIndex() {

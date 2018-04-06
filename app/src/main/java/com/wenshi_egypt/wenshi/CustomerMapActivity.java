@@ -136,9 +136,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     final int MY_PERMISSION_REQ_CODE = 1234;
     final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
     public GetDirectionsData getDirectionsData;
-
-    private Spinner vehicleSpinner;
-    private TextView cash;
     /**
      * The formatted location address.
      */
@@ -187,6 +184,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     //VHICLES TAB//
     AddNewVehicleFragment vehicleDetailsFragment;
     double timeSec;
+    private Spinner vehicleSpinner;
+    private TextView cash;
     private int CURRENTSTATE;
     private GoogleMap mMap;
     private Marker mDriverMarker;
@@ -244,7 +243,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         // user.setVehicle(new VehicleModel("KIA", "RIO 2014"));
         mChoiceMarker = (ImageView) findViewById(R.id.confirm_address_map_custom_marker);
-        driverModel = new UserModel("", "", "", "");
+        driverModel = new UserModel("", "", "", "",4.5);
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.customer_map);
         mapFragment.getMapAsync(this);
@@ -347,7 +346,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 //REVIEW REQUEST VIEW
         vehicleSpinner = (Spinner) findViewById(R.id.vehicleSpinner);
-       cash = (TextView) findViewById(R.id.tripCost);
+        cash = (TextView) findViewById(R.id.tripCost);
 
         // sendNotification("Michael", "This is a message to tell clients stop eating your feet");
 
@@ -486,10 +485,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             case R.id.bottom_view_btn1:
                 switch (CURRENTSTATE) {
                     case PICKUP: //if pickup and review go back to reviewrReq
-                        if(review)
-                            customerViewStateControler(REVIEWREQ);
-                        else
-                            customerViewStateControler(SERVICECHOICE);
+                        if (review) customerViewStateControler(REVIEWREQ);
+                        else customerViewStateControler(SERVICECHOICE);
                         break;
                     case SERVICECHOICE:
                         customerViewStateControler(DESTINATION);
@@ -555,7 +552,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 openAutocompleteActivity();
                 break;
             case R.id.currentLocation:
- Log.i("locality", "Locality pressed");
+                Log.i("locality", "Locality pressed");
                 customerViewStateControler(PICKUP);
                 break;
             case R.id.headingLocation:
@@ -796,6 +793,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                         for (DataSnapshot imageSnapshot : dataSnapshot.getChildren()) {
                             if (imageSnapshot.getKey().equals("Accept") && imageSnapshot.getValue().toString().equals("true")) {
+                                getDriverProfile();
                                 System.out.println(String.format("DRIVER Accepted", imageSnapshot.getKey()));
                                 driverAccept.removeEventListener(driverLocationRefListener);
                                 model.linkProfData(false, driverModel);
@@ -1027,7 +1025,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -1189,30 +1186,27 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         setLocale(new Locale(lang));
 
 
-
-
-
     }
 
-    private void setLocale(Locale locale){
+    private void setLocale(Locale locale) {
         Resources resources = getResources();
         Configuration configuration = resources.getConfiguration();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             configuration.setLocale(locale);
-        } else{
-            configuration.locale=locale;
+        } else {
+            configuration.locale = locale;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             getApplicationContext().createConfigurationContext(configuration);
         } else {
-            resources.updateConfiguration(configuration,displayMetrics);
+            resources.updateConfiguration(configuration, displayMetrics);
         }
 
         getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
         SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
         editor.putString("My_Lang", locale.getLanguage());
-        Log.i("LOCALEE",getResources().getString(R.string.vehicle));
+        Log.i("LOCALEE", getResources().getString(R.string.vehicle));
         editor.apply();
     }
 
@@ -1225,30 +1219,33 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
     //VEHICLES MODEL - CONTROLLER
     private void getCustomerVehicles() {
-        DatabaseReference getVehicles = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userId).child("Vehicles");
-        getVehicles.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int VhiclesCount = 0;
-                for (DataSnapshot vehicleSnapshot : dataSnapshot.getChildren()) {
+        try {
+            DatabaseReference getVehicles = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userId).child("Vehicles");
+            getVehicles.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    int VhiclesCount = 0;
+                    for (DataSnapshot vehicleSnapshot : dataSnapshot.getChildren()) {
 
-                    if (vehicleSnapshot.getKey().equals("FirstConstant")) continue;
+                        if (vehicleSnapshot.getKey().equals("FirstConstant")) continue;
 
-                    VhiclesCount++;
+                        VhiclesCount++;
 
-                    VehicleModel vehicleModel = new VehicleModel(vehicleSnapshot.getKey().toString(), vehicleSnapshot.child("make").getValue() != null ? vehicleSnapshot.child("make").getValue().toString() : "_Make", vehicleSnapshot.child("model").getValue() != null ? vehicleSnapshot.child("model").getValue().toString() : "_Model", vehicleSnapshot.child("type").getValue() != null ? (vehicleSnapshot.child("type").getValue().equals("true") ? true : false) : true, vehicleSnapshot.child("color").getValue() != null ? vehicleSnapshot.child("color").getValue().toString() : "_Color", vehicleSnapshot.child("year").getValue() != null ? vehicleSnapshot.child("year").getValue().toString() : "_year");
-                    user.setVehicle(vehicleSnapshot.getKey().toString(), vehicleModel);
+                        VehicleModel vehicleModel = new VehicleModel(vehicleSnapshot.getKey().toString(), vehicleSnapshot.child("make").getValue() != null ? vehicleSnapshot.child("make").getValue().toString() : "_Make", vehicleSnapshot.child("model").getValue() != null ? vehicleSnapshot.child("model").getValue().toString() : "_Model", vehicleSnapshot.child("type").getValue() != null ? (vehicleSnapshot.child("type").getValue().equals("true") ? true : false) : true, vehicleSnapshot.child("color").getValue() != null ? vehicleSnapshot.child("color").getValue().toString() : "_Color", vehicleSnapshot.child("year").getValue() != null ? vehicleSnapshot.child("year").getValue().toString() : "_year");
+                        user.setVehicle(vehicleSnapshot.getKey().toString(), vehicleModel);
+                    }
+                    if (VhiclesCount == 0) customerViewStateControler(INCOMPLETEVHICLES);
                 }
-                if (VhiclesCount == 0) customerViewStateControler(INCOMPLETEVHICLES);
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // ...
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // ...
+                }
+            });
 
-
+        } catch (Exception e) {
+            Log.i("Error ", "CustomerMap" + e.toString());
+        }
     }
 
 
@@ -1294,7 +1291,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 currentHistory.setId("" + hisCount);
             }
             String uid = userId;
-            
+
             DatabaseReference addHistory = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Trips").child(currentHistory.getId());
             addHistory.child("date").setValue(currentHistory.getDate());
             addHistory.child("startTime").setValue(currentHistory.getStartTime());
@@ -1345,7 +1342,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 state = false;
             }
         }
-        if(!state)
+        if (!state)
             Toast.makeText(mContext, "Please Compelete your profile", Toast.LENGTH_SHORT).show();
 
         return state;
@@ -1845,17 +1842,16 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 
         int count = 0;
-        String [] arraySpinner = new String[ user.getvehicles().size()];
-        final String [] vehicleId = new String[ user.getvehicles().size()];
-       for (Map.Entry<String, VehicleModel>  vehicle : user.getvehicles().entrySet()) {
-           Log.i("vehichles--- " , vehicle.getValue().getModel() + " id " + vehicle.getKey() );
-           arraySpinner[count] =  vehicle.getValue().getModel();
-           vehicleId[count] = vehicle.getKey();
-           count++;
+        String[] arraySpinner = new String[user.getvehicles().size()];
+        final String[] vehicleId = new String[user.getvehicles().size()];
+        for (Map.Entry<String, VehicleModel> vehicle : user.getvehicles().entrySet()) {
+            Log.i("vehichles--- ", vehicle.getValue().getModel() + " id " + vehicle.getKey());
+            arraySpinner[count] = vehicle.getValue().getModel();
+            vehicleId[count] = vehicle.getKey();
+            count++;
 
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, arraySpinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, arraySpinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         vehicleSpinner.setAdapter(adapter);
 
@@ -1872,13 +1868,13 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         });
 
 
-
-            cash.setText("Contact Driver");
+        cash.setText("Contact Driver");
 
 
     }
-    private void onSpinnerItemClicked(){
-        Log.i("Listenerr -- " , "hi");
+
+    private void onSpinnerItemClicked() {
+        Log.i("Listenerr -- ", "hi");
     }
 
     private String getDirectionsUrl() {
@@ -1943,7 +1939,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             currentHistory.setDistance(getDirectionsData.getDistance());
             currentHistory.setTimeSec(getDirectionsData.getTimeSec());
             saveHistory();
-           this.cash.setText(currentHistory.getCost()+" L.E.");
+            this.cash.setText(currentHistory.getCost() + " L.E.");
         }
 
 
@@ -1956,6 +1952,33 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
+    }
+
+    private void getDriverProfile() {
+            try {
+                if (driverModel == null || driverModel.getID() == null || driverModel.getID().isEmpty())
+                    return;
+
+                DatabaseReference getVehicles = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverModel.getID()).child("Profile");
+                getVehicles.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        driverModel.setName(dataSnapshot.child("name").getValue() != null? dataSnapshot.child("name").getValue().toString():"Driver");
+                        driverModel.setMobile(dataSnapshot.child("mobile").getValue() != null? dataSnapshot.child("mobile").getValue().toString():"mobile");
+                       // driverModel.(dataSnapshot.child("mobile").getValue() != null? dataSnapshot.child("mobile").getValue().toString():"mobile");
+        }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // ...
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.i("Error ", "CustomerMap" + e.toString());
+            }
     }
 
     class AddressResultReceiver extends ResultReceiver {
@@ -1988,6 +2011,4 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         }
 
     }
-
-
 }
