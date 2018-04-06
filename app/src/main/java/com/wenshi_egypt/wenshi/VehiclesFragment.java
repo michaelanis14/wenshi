@@ -92,8 +92,6 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
             layout.addView(button);
         }
 
-
-
     }
 
     private void addNewVehicle(int vid) {

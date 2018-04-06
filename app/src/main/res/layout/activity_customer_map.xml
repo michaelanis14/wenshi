@@ -39,6 +39,19 @@
 
     </FrameLayout>
 
+   <RelativeLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:id="@+id/traceDriverLayout">
+       <fragment android:name="com.wenshi_egypt.wenshi.TraceDriverFragment"
+           android:id="@+id/headlines_fragment"
+           android:layout_alignParentBottom="true"
+           android:layout_width="match_parent"
+           android:layout_height="280dp" />
+   </RelativeLayout>
+
+
+
     <android.support.design.widget.NavigationView
         android:id="@+id/customer_nav_view"
         android:layout_width="250dp"
@@ -114,8 +127,9 @@
                                android:paddingTop="5dp"
                                android:text="@string/pickup"
                                android:layout_weight="1"
-                               android:textStyle="bold"
-                               android:textColor="@color/colorBlack" />
+                               android:textColor="@color/colorBlack"
+                               android:textSize="@dimen/font_20" />
+
 
 
                        </LinearLayout>
@@ -141,8 +155,9 @@
                                android:paddingTop="3dp"
                                android:text="@string/drop_off_location"
                                android:layout_weight="1"
-                               android:textStyle="bold"
-                               android:textColor="@color/colorBlack" />
+                               android:textColor="@color/colorBlack"
+                               android:textSize="@dimen/font_20"/>
+
 
                        </LinearLayout>
                    </LinearLayout>

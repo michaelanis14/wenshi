@@ -53,7 +53,7 @@
     <string name="drop_off_location">DROP OFF</string>
     <string name="choose_service_btn">CHOOSE SERVICE</string>
 
- <string name="button_call">Call</string>
+    <string name="button_call">Call</string>
 
     <string name="textView_help_Info">Help Info</string>
     <string name="textView_rate_and_charges">Rate and Charges</string>
@@ -160,7 +160,6 @@
     <string name="fui_sign_in_with_phone" translation_description="Sign in button text">Phone</string>
 
 
-
     <string name="Logout">LOGOUT</string>
     <string name="Profile">Profile</string>
     <string name="history">Account History</string>
@@ -175,7 +174,6 @@
         <item>KIA SPORTAGE</item>
         <item>KIA CARENS</item>
     </string-array>
-
 
 
     <string name="sedan">Sedan</string>
@@ -219,5 +217,4 @@
     <string name="family_inivitation_message">Wenshi Family Connect Request From</string>
     <string name="please_compelete_your_profile">Please Compelete your profile</string>
     <string name="languge">Language</string>
-
 </resources>
