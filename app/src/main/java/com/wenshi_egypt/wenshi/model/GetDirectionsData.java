@@ -6,6 +6,7 @@ package com.wenshi_egypt.wenshi.model;
 
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -19,14 +20,25 @@ import java.util.HashMap;
 
 public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
+    public AsyncResponse delegate = null;
     GoogleMap mMap;
     String url;
     String googleDirectionsData;
     LatLng latLng;
     Polyline polylineFinal;
     String duration = "";
-    String distance ="";
+    String distance = "";
     double timeSec;
+
+    public GetDirectionsData(AsyncResponse delegate) {
+        this.delegate = delegate;
+    }
+
+    public double getTimeSec() {
+        return timeSec;
+    }
+
+
 
     public String getDuration() {
         return duration;
@@ -35,18 +47,6 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
     public String getDistance() {
         return distance;
     }
-
-    // you may separate this or combined to caller class.
-    public interface AsyncResponse {
-        void gotDurationDistanceRout(String output);
-    }
-
-    public AsyncResponse delegate = null;
-
-    public GetDirectionsData(AsyncResponse delegate){
-        this.delegate = delegate;
-    }
-
 
     @Override
     protected String doInBackground(Object... objects) {
@@ -69,15 +69,20 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
 
     @Override
     protected void onPostExecute(String s) {
+        try {
+            String[] directionsList;
+            DataParser parser = new DataParser();
+            directionsList = parser.parseDirections(s);
+            distance = parser.getDistance();
+            duration = parser.getDuration();
+            timeSec = Double.parseDouble(parser.getTimeSec());
+            displayDirection(directionsList);
+            Log.i("JSON", duration + distance + timeSec);
 
-        String[] directionsList;
-        DataParser parser = new DataParser();
-        directionsList = parser.parseDirections(s);
-        distance = parser.getDistance();
-        duration = parser.getDuration();
-        timeSec = Double.parseDouble(parser.getTimeSec());
-        displayDirection(directionsList);
-        delegate.gotDurationDistanceRout(s);
+            delegate.gotDurationDistanceRout(s);
+        } catch (Exception e) {
+
+        }
 
     }
 
@@ -99,6 +104,11 @@ public class GetDirectionsData extends AsyncTask<Object, String, String> {
     public void clearDirections() {
         polylineFinal.remove();
 
+    }
+
+    // you may separate this or combined to caller class.
+    public interface AsyncResponse {
+        void gotDurationDistanceRout(String output);
     }
 
 

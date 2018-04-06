@@ -135,6 +135,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private Fragment currentFragment;
     private String duration;
     private String distance;
+    double timeSec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -668,15 +669,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -704,7 +696,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (id == R.id.nav_profile) {
             currentFragment = new DriverProfileFragment();
         } else if (id == R.id.nav_history) {
-            currentFragment = new CustomerHistoryFragment(false, getDriver().getID());
+         //   currentFragment = new CustomerHistoryFragment(false, getDriver().getID());
         }
         if (currentFragment != null) {
             driverViewStateControler(SIDENAV);
@@ -859,7 +851,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
 
         Object dataTransfer[] = new Object[2];
-        dataTransfer = new Object[5];
+        dataTransfer = new Object[6];
         String url = getDirectionsUrl();
         getDirectionsData = new GetDirectionsData(this);
         dataTransfer[0] = mMap;
@@ -877,6 +869,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
         dataTransfer[3] = duration;
         dataTransfer[4] = distance;
+        dataTransfer[5] = timeSec;
+
         getDirectionsData.execute(dataTransfer);
 
 
@@ -884,6 +878,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
 
     private String getDirectionsUrl() {
+
+       // Log.i("Client Status","origin=" + mLastLocation.getLatitude() + "," + mLastLocation.getLongitude() + "&destination=" + cutomerMod.getDestination().getLatitude() + "," + cutomerMod.getDestination().getLongitude());
         StringBuilder googleDirectionsUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
         googleDirectionsUrl.append("origin=" + mLastLocation.getLatitude() + "," + mLastLocation.getLongitude());
 
@@ -899,7 +895,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         }
 
 
-        googleDirectionsUrl.append("&departure_time=now&key=AIzaSyAgPwnT7C18Mv9PE7yXavg0kZ5lfSzKJW4");
+        googleDirectionsUrl.append("&departure_time=now&key="+getResources().getString(R.string.google_maps_key));
 
         return googleDirectionsUrl.toString();
     }

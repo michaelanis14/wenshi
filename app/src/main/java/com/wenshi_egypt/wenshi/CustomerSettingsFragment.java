@@ -62,7 +62,7 @@ public class CustomerSettingsFragment extends Fragment implements View.OnClickLi
         getView().findViewById(R.id.family_btn).setOnClickListener(this);
         getView().findViewById(R.id.history_btn).setOnClickListener(this);
         getView().findViewById(R.id.vehicles_btn).setOnClickListener(this);
-        getView().findViewById(R.id.inviteFriends_btn).setOnClickListener(this);
+        //getView().findViewById(R.id.inviteFriends_btn).setOnClickListener(this);
         getView().findViewById(R.id.about_btn).setOnClickListener(this);
         getView().findViewById(R.id.language_btn).setOnClickListener(this);
 

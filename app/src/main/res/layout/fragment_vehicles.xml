@@ -18,7 +18,12 @@
         android:gravity="start"
         android:orientation="vertical"
         android:id="@+id/vehicles_list_layout">
-
+        <TextView
+            android:id="@+id/noVehicles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/textView_no_vehicle"
+            />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

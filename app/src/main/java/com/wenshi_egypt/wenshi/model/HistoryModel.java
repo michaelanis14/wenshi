@@ -118,6 +118,8 @@ public class HistoryModel {
     }
 
     public void setDistance(String distance) {
+     //   Log.i("DISTANCE",""+distance);
+
         this.distance = distance;
     }
 
@@ -150,7 +152,7 @@ public class HistoryModel {
     }
 
     public void setTimeSec(double timeSec) {
-        Log.i("TIME IN SEC",""+timeSec);
+    //    Log.i("TIME IN SEC",""+timeSec);
         this.timeSec = timeSec;
     }
 
@@ -166,26 +168,41 @@ public class HistoryModel {
 
     public void calculateCost(boolean sedan) {
 
-
-        String tempDis = distance.replace("KM", "");
-        if (tempDis.contains("M")) {
-            tempDis = "1";
-        }
-
-        Double distanceDouble = Double.parseDouble(tempDis.trim());
-        if (distanceDouble <= 40.0) {
-            if (sedan) {
-                this.cost = 152 + (distanceDouble * 4.24) + ((timeSec / 60) * 2.125);
-            } else {
-                this.cost = 152 + (distanceDouble * 4.6) + ((timeSec / 60) * 2.125);
+        try {
+            if(distance == null && distance.isEmpty())
+                return;
+            String tempDis = "";
+            tempDis = distance.replace("KM", "");
+            if (tempDis.isEmpty() || tempDis.contains("M")) {
+                tempDis = "1";
             }
 
-        } else {
-            if (sedan) {
-                this.cost = 152 + (distanceDouble * 3.31) + ((timeSec / 60) * 2.125);
+            Double distanceDouble = Double.parseDouble(tempDis.trim());
+            distanceDouble = (distanceDouble/1000);
+            if (distanceDouble <= 40.0) {
+                Log.i("HISCOSTT",""+(distanceDouble)+" "+(timeSec / 60) );
+
+
+                if (sedan) {
+                    this.cost = 152 + ((distanceDouble) * 4.24) + ((timeSec / 60) * 2.125);
+                } else {
+                    this.cost = 152 + ((distanceDouble) * 4.6) + ((timeSec / 60) * 2.125);
+                }
+
             } else {
-                this.cost = 152 + (distanceDouble * 3.6) + ((timeSec / 60) * 2.125);
+                Log.i("HISCOSTT",""+(distanceDouble)+" "+(timeSec / 60) );
+
+                if (sedan) {
+                    this.cost = 152 + ((distanceDouble) * 3.31) + ((timeSec / 60) * 2.125);
+                } else {
+                    this.cost = 152 + ((distanceDouble) * 3.6) + ((timeSec / 60) * 2.125);
+                }
             }
         }
+
+    catch (Exception e){
+            Log.i("ERROR","History Fragment   " +e.toString());
+    }
+
     }
 }

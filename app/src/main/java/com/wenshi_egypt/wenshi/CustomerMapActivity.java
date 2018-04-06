@@ -13,6 +13,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.annotation.StyleRes;
@@ -37,9 +38,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -85,6 +88,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.transitionseverywhere.Slide;
+import com.transitionseverywhere.TransitionManager;
 import com.wenshi_egypt.wenshi.helpers.AppUtils;
 import com.wenshi_egypt.wenshi.helpers.FetchAddressIntentService;
 import com.wenshi_egypt.wenshi.model.GetDirectionsData;
@@ -124,16 +129,16 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     private static final int TRACEDRIVER = 7;
     private static final int TODESTINATION = 8;
     private static final int RATEDRIVER = 9;
-    private static boolean review = false;
     private static final int REQUEST_CODE_AUTOCOMPLETE = 114;
     static GoogleApiClient mGoogleApiClient;
+    private static boolean review = false;
     private static String TAG = "MAP LOCATION";
     final int MY_PERMISSION_REQ_CODE = 1234;
     final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
     public GetDirectionsData getDirectionsData;
 
     private Spinner vehicleSpinner;
-
+    private TextView cash;
     /**
      * The formatted location address.
      */
@@ -253,8 +258,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         // mLocationMarkerText = (TextView) findViewById(R.id.locationMarkertext);
         mPickupText = (TextView) findViewById(R.id.PickupLocality);
         mDestinationText = (TextView) findViewById(R.id.DestinationLocality);
-        mPickupTextRQ = (TextView) findViewById(R.id.PickupLocalityRQ);
-        mDestinationTextRQ = (TextView) findViewById(R.id.DestinationLocalityRQ);
+        mPickupTextRQ = (TextView) findViewById(R.id.currentLocation);
+        mDestinationTextRQ = (TextView) findViewById(R.id.headingLocation);
+        final ViewGroup transitionsContainer = (ViewGroup) findViewById(R.id.PickupLayout);
+
 
         setupLocation();
 
@@ -338,9 +345,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         CURRENTSTATE = -1;
 
-
+//REVIEW REQUEST VIEW
         vehicleSpinner = (Spinner) findViewById(R.id.vehicleSpinner);
-
+       cash = (TextView) findViewById(R.id.tripCost);
 
         // sendNotification("Michael", "This is a message to tell clients stop eating your feet");
 
@@ -487,7 +494,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     case SERVICECHOICE:
                         customerViewStateControler(DESTINATION);
                         user.setServiceType("ACCEDIENT");
-
                         break;
                     case DESTINATION:
                         showRout();
@@ -540,7 +546,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 // mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 break;
             case R.id.PickupLocality:
-                Log.i("locality","Locality pressed");
+                Log.i("locality", "Locality pressed");
                 customerViewStateControler(PICKUP);
                 openAutocompleteActivity();
                 break;
@@ -548,10 +554,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 // customerViewStateControler(DESTINATION);
                 openAutocompleteActivity();
                 break;
-            case R.id.PickupLocalityRQ:
+            case R.id.currentLocation:
+ Log.i("locality", "Locality pressed");
                 customerViewStateControler(PICKUP);
                 break;
-            case R.id.DestinationLocalityRQ:
+            case R.id.headingLocation:
                 customerViewStateControler(DESTINATION);
                 break;
 
@@ -704,9 +711,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         } else if (CURRENTSTATE == DESTINATION) {
             user.setDestination(location);
         }
-       // user.setDestinationAddress();
+        // user.setDestinationAddress();
     }
-//get address
+
+    //get address
     private void setLocationString(String location) {
         if (CURRENTSTATE == PICKUP) {
             user.setPickupAddress(location);
@@ -793,7 +801,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                                 model.linkProfData(false, driverModel);
                                 //   driverModel.linkProfData(false);
                                 Log.i("DRIVER MODEL", driverModel.toString());
-                                currentHistory = new HistoryModel("", "", ServerValue.TIMESTAMP.toString(), "", "", user.getName(), user.getID(), driverModel.getName(), driverModel.getID(), user.getvehicles().values().toArray()[(user.getVehicleSelectedIndex())].toString());
                                 customerViewStateControler(TRACEDRIVER);
 
                                 break;
@@ -992,8 +999,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     customerViewStateControler(SERVICECHOICE);
                     break;
                 case REVIEWREQ:
-                    if(review)
-                        review = false;
+                    if (review) review = false;
                     customerViewStateControler(DESTINATION);
                     break;
                 case READYTOREQ:
@@ -1019,14 +1025,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
 
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -1131,7 +1130,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             //familyViewSettingsFragment = new FamilyViewFragment();
             // fragment = familyViewSettingsFragment;
             customerViewStateControler(getCURRENTSTATE());
-           Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title)).setMessage(getString(R.string.family_inivitation_message) + getCustomer().getName()).setDeepLink(Uri.parse(getString(R.string.invitation_deep_link))).setCustomImage(Uri.parse(getString(R.string.invitation_custom_image))).setCallToActionText(getString(R.string.invitation_cta)).build();
+            Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title)).setMessage(getString(R.string.family_inivitation_message) + getCustomer().getName()).setDeepLink(Uri.parse(getString(R.string.invitation_deep_link))).setCustomImage(Uri.parse(getString(R.string.invitation_custom_image))).setCallToActionText(getString(R.string.invitation_cta)).build();
             startActivityForResult(intent, REQUEST_INVITE);
         } else if (tab == R.id.history_btn) {
             if (historySettingsFragment == null)
@@ -1143,11 +1142,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             if (vehiclesSettingsFragment == null) vehiclesSettingsFragment = new VehiclesFragment();
             fragment = vehiclesSettingsFragment;
             getSupportActionBar().setTitle(getResources().getString(R.string.vehicle));
-
-        } else if (tab == R.id.inviteFriends_btn) {
-            if (inviteSettingsFragment == null) inviteSettingsFragment = new InviteFragment();
-            fragment = inviteSettingsFragment;
-            getSupportActionBar().setTitle(getResources().getString(R.string.textView_invite));
 
         } else if (tab == R.id.about_btn) {
             if (aboutSettingsFragment == null) aboutSettingsFragment = new AboutFragment();
@@ -1163,10 +1157,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     if (i == 0) {
-                        setLocale("ar");
+                        setLanguage("ar");
                         recreate();
                     } else if (i == 1) {
-                        setLocale("en");
+                        setLanguage("en");
                         recreate();
                     }
                     dialogInterface.dismiss();
@@ -1199,19 +1193,41 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         //conf.setLocale(new Locale(lang)); // API 17+ only.
 // Use conf.locale = new Locale(...) if targeting lower versions
         res.updateConfiguration(conf, dm);
+    }
 
-        getBaseContext().getResources().updateConfiguration(conf, getBaseContext().getResources().getDisplayMetrics());
+    private void setLanguage(String lang) {
+
+        setLocale(new Locale(lang));
+
+
+    }
+
+    private void setLocale(Locale locale){
+        Resources resources = getResources();
+        Configuration configuration = resources.getConfiguration();
+        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
+            configuration.setLocale(locale);
+        } else{
+            configuration.locale=locale;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            getApplicationContext().createConfigurationContext(configuration);
+        } else {
+            resources.updateConfiguration(configuration,displayMetrics);
+        }
+
+        getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
         SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
-        editor.putString("My_Lang", lang);
+        editor.putString("My_Lang", locale.getLanguage());
+        Log.i("LOCALEE",getResources().getString(R.string.vehicle));
         editor.apply();
-
-
     }
 
     public void loadLocale() {
         SharedPreferences prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE);
         String language = prefs.getString("My_Lang", "");
-        setLocale(language);
+        setLanguage(language);
     }
 
 
@@ -1286,8 +1302,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 currentHistory.setId("" + hisCount);
             }
             String uid = userId;
-
-
+            
             DatabaseReference addHistory = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Trips").child(currentHistory.getId());
             addHistory.child("date").setValue(currentHistory.getDate());
             addHistory.child("startTime").setValue(currentHistory.getStartTime());
@@ -1338,6 +1353,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 state = false;
             }
         }
+        if(!state)
+            Toast.makeText(mContext, "Please Compelete your profile", Toast.LENGTH_SHORT).show();
+
         return state;
     }
 
@@ -1402,7 +1420,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         try {
             //    mLocationMarkerText.setText("Lat : " + mCenterLatLong.latitude + "," + "Long : " + mCenterLatLong.longitude + mAddressOutput);
             if (CURRENTSTATE == PICKUP) mPickupText.setText(mAddressOutput);
-            //destunation address
+                //destunation address
             else if (CURRENTSTATE == DESTINATION) mDestinationText.setText(mAddressOutput);
 
 
@@ -1564,7 +1582,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             }
 
         }
-        if(CURRENTSTATE == REVIEWREQ || force){
+        if (CURRENTSTATE == REVIEWREQ || force) {
             if (mReviewRequestMarker == null)
                 mReviewRequestMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(user.getPickup().getLatitude(), user.getPickup().getLongitude())).title(getDirectionsData.getDuration()));
 
@@ -1641,7 +1659,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 mPickupText.setEnabled(false);
+                TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.DestinationLayout), new Slide(Gravity.LEFT));
+
                 findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
+
                 mDestinationText.setEnabled(false);
 
                 getSupportActionBar().setTitle(getString(R.string.choose_service_btn));
@@ -1654,7 +1675,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mbtn2.setText(getResources().getString(R.string.carbroke));
                 mbtn3.setVisibility(View.GONE);
                 setMarker(false);
-                if (mChoiceMarker != null) mChoiceMarker.setVisibility(View.VISIBLE);
+                if (mChoiceMarker != null) mChoiceMarker.setVisibility(View.INVISIBLE);
                 CURRENTSTATE = customerState;
                 break;
 
@@ -1662,12 +1683,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
-               // findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
-                findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
+                findViewById(R.id.PickupLayout).setVisibility(View.GONE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 changeMap(user.getDestination());
                 mPickupText.setEnabled(false);
-
+                TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.DestinationLayout), new Slide(Gravity.RIGHT));
                 findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
                 mDestinationText.setEnabled(true);
                 getSupportActionBar().setTitle(getResources().getString(R.string.confirm_destination));
@@ -1840,52 +1860,52 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
     private void setReviewRequestData() {
 
-//        TextView pickUpPlace = (TextView) findViewById(R.id.currentLocation);
-//        pickUpPlace.setText(user.getPickupAddress());
-//        TextView dstPlace = (TextView) findViewById(R.id.headingLocation);
-//        dstPlace.setText(user.getDestinationAddress());
-//        TextView paymentMethod = (TextView) findViewById(R.id.paymentMethod);
-//        paymentMethod.setText(getString(R.string.radioButton_payment_cash));
-//        TextView cash = (TextView) findViewById(R.id.tripCost);
-//
-//        int count = 0;
-//        String [] arraySpinner = new String[ user.getvehicles().size()];
-//        final String [] vehicleId = new String[ user.getvehicles().size()];
-//       for (Map.Entry<String, VehicleModel>  vehicle : user.getvehicles().entrySet()) {
-//           Log.i("vehichles--- " , vehicle.getValue().getModel() + " id " + vehicle.getKey() );
-//           arraySpinner[count] =  vehicle.getValue().getModel();
-//           vehicleId[count] = vehicle.getKey();
-//           count++;
-//
-//        }
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-//                android.R.layout.simple_spinner_item, arraySpinner);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        vehicleSpinner.setAdapter(adapter);
-//
-//        vehicleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                user.setVehicleSelectedIndex(vehicleSpinner.getSelectedItemPosition());
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//            }
-//        });
-//
-//
-//
-//
-//        try {
-//            double distance =Double.parseDouble(getDirectionsData.getDistance().split(" ")[0]);
-//            cash.setText(distance*15+" LE");
-//
-//        }catch (Exception e){
-//            cash.setText("Contact Driver");
-//
-//        }
+        TextView pickUpPlace = (TextView) findViewById(R.id.currentLocation);
+        pickUpPlace.setText(user.getPickupAddress());
+        TextView dstPlace = (TextView) findViewById(R.id.headingLocation);
+        dstPlace.setText(user.getDestinationAddress());
+        TextView paymentMethod = (TextView) findViewById(R.id.paymentMethod);
+        paymentMethod.setText(getString(R.string.radioButton_payment_cash));
+        TextView cash = (TextView) findViewById(R.id.tripCost);
+
+        int count = 0;
+        String [] arraySpinner = new String[ user.getvehicles().size()];
+        final String [] vehicleId = new String[ user.getvehicles().size()];
+       for (Map.Entry<String, VehicleModel>  vehicle : user.getvehicles().entrySet()) {
+           Log.i("vehichles--- " , vehicle.getValue().getModel() + " id " + vehicle.getKey() );
+           arraySpinner[count] =  vehicle.getValue().getModel();
+           vehicleId[count] = vehicle.getKey();
+           count++;
+
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, arraySpinner);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        vehicleSpinner.setAdapter(adapter);
+
+        vehicleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                user.setVehicleSelectedIndex(vehicleSpinner.getSelectedItemPosition());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+
+
+        try {
+            double distance =Double.parseDouble(getDirectionsData.getDistance().split(" ")[0]);
+            cash.setText(distance*15+" LE");
+
+        }catch (Exception e){
+            cash.setText("Contact Driver");
+
+        }
     }
     private void onSpinnerItemClicked(){
         Log.i("Listenerr -- " , "hi");
@@ -1945,12 +1965,17 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         if (CURRENTSTATE == DESTINATION) customerViewStateControler(REVIEWREQ);
 
+        currentHistory = new HistoryModel("", "", ServerValue.TIMESTAMP.toString(), "", "", user.getName(), user.getID(), driverModel.getName(), driverModel.getID(), user.getvehicles().values().toArray()[(user.getVehicleSelectedIndex())].toString());
+
         if (currentHistory != null) {
-            currentHistory.setEta(duration);
-            currentHistory.setDistance(distance);
-            currentHistory.setTimeSec(timeSec);
+
+            currentHistory.setEta(getDirectionsData.getDuration());
+            currentHistory.setDistance(getDirectionsData.getDistance());
+            currentHistory.setTimeSec(getDirectionsData.getTimeSec());
             saveHistory();
+           this.cash.setText(currentHistory.getCost()+" L.E.");
         }
+
 
         // mBottomTextView.setText(getResources().getString(R.string.eta) + " " + getDirectionsData.getDuration());
         //   driverViewStateControler(ONROUT); //must be after showRout to get the correct duration

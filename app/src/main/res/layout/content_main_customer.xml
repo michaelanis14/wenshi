@@ -10,32 +10,28 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:divider="@drawable/empty_tall_divider"
+        android:padding="15dp"
+        android:showDividers="middle">
 
 
         <LinearLayout
             android:id="@+id/PickupLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/white"
             android:orientation="vertical"
-            android:background="@android:color/white">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:text="@string/pickup"
-                android:textSize="@dimen/font_12" />
+            android:layout_marginBottom="10dp">
 
             <TextView
                 android:id="@+id/PickupLocality"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:gravity="center"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:text="Click to change location"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="@string/pickup"
                 android:textSize="@dimen/font_22" />
         </LinearLayout>
 
@@ -43,27 +39,20 @@
             android:id="@+id/DestinationLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:text="@string/drop_off_location"
-                android:textSize="@dimen/font_12" />
+            android:background="@android:color/white"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/DestinationLocality"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:gravity="center"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:text="Click to change destination"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="@string/drop_off_location"
                 android:textSize="@dimen/font_22" />
         </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
