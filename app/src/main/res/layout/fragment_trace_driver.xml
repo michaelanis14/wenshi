@@ -16,7 +16,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Your driver will arrive after seconds!"
+                android:text="Your driver will arrive in 5 mins!"
                 android:background="@color/colorDarkGrey"
                 android:textColor="@color/tw__solid_white"
                 android:textSize="@dimen/font_20" />
@@ -101,7 +101,7 @@
                         android:textColor="@color/colorDarkGrey"
                         android:textSize="@dimen/font_24" />
                     <TextView
-                        android:id="@+id/winshType"
+                        android:id="@+id/winshType_traceDriver"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Renault Logan"
@@ -110,7 +110,7 @@
                         android:textColor="@color/colorDarkGrey"
                         android:textSize="@dimen/font_24" />
                     <TextView
-                        android:id="@+id/plateNumber"
+                        android:id="@+id/plateNumber_traceDriver"
                         android:layout_marginTop="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

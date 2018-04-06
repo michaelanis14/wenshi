@@ -10,6 +10,10 @@
 
     <color name="colorBlack">#000000</color>
     <color name="colorGrey">#d4d4d4</color>
+    <color name="colorLightGrey">#D0D0D0</color>
+    <color name="colorDarkGrey">#696969</color>
+    <color name="colorWhite">#FFFFFF</color>
+
     <color name="tw__solid_white">#f9f9f9</color>
     <color name="colorOrange">#FFA500</color>
 
