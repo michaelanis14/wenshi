@@ -440,7 +440,13 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
             if (myCurrent != null) myCurrent.remove();  //remove Old Marker
             LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            myCurrent = mMap.addMarker(new MarkerOptions().position(loc));
+            try{
+                myCurrent = mMap.addMarker(new MarkerOptions().position(loc));
+            }
+            catch (Exception e){
+
+            }
+
 
 
             //update FireBase
