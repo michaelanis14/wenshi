@@ -134,7 +134,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     public GetDirectionsData getDirectionsData;
 
     private Spinner vehicleSpinner;
-
+    private TextView cash;
     /**
      * The formatted location address.
      */
@@ -254,8 +254,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         // mLocationMarkerText = (TextView) findViewById(R.id.locationMarkertext);
         mPickupText = (TextView) findViewById(R.id.PickupLocality);
         mDestinationText = (TextView) findViewById(R.id.DestinationLocality);
-        mPickupTextRQ = (TextView) findViewById(R.id.PickupLocalityRQ);
-        mDestinationTextRQ = (TextView) findViewById(R.id.DestinationLocalityRQ);
+        mPickupTextRQ = (TextView) findViewById(R.id.currentLocation);
+        mDestinationTextRQ = (TextView) findViewById(R.id.headingLocation);
 
         setupLocation();
 
@@ -339,9 +339,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         CURRENTSTATE = -1;
 
-
+//REVIEW REQUEST VIEW
         vehicleSpinner = (Spinner) findViewById(R.id.vehicleSpinner);
-
+       cash = (TextView) findViewById(R.id.tripCost);
 
         // sendNotification("Michael", "This is a message to tell clients stop eating your feet");
 
@@ -548,11 +548,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 // customerViewStateControler(DESTINATION);
                 openAutocompleteActivity();
                 break;
-            case R.id.PickupLocalityRQ:
+            case R.id.currentLocation:
  Log.i("locality", "Locality pressed");
                 customerViewStateControler(PICKUP);
                 break;
-            case R.id.DestinationLocalityRQ:
+            case R.id.headingLocation:
                 customerViewStateControler(DESTINATION);
                 break;
 
@@ -795,7 +795,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                                 model.linkProfData(false, driverModel);
                                 //   driverModel.linkProfData(false);
                                 Log.i("DRIVER MODEL", driverModel.toString());
-                                currentHistory = new HistoryModel("", "", ServerValue.TIMESTAMP.toString(), "", "", user.getName(), user.getID(), driverModel.getName(), driverModel.getID(), user.getvehicles().values().toArray()[(user.getVehicleSelectedIndex())].toString());
                                 customerViewStateControler(TRACEDRIVER);
 
                                 break;
@@ -1835,7 +1834,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         dstPlace.setText(user.getDestinationAddress());
         TextView paymentMethod = (TextView) findViewById(R.id.paymentMethod);
         paymentMethod.setText(getString(R.string.radioButton_payment_cash));
-        TextView cash = (TextView) findViewById(R.id.tripCost);
+
 
         int count = 0;
         String [] arraySpinner = new String[ user.getvehicles().size()];
@@ -1866,15 +1865,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 
 
-
-        try {
-            double distance = Double.parseDouble(getDirectionsData.getDistance().split(" ")[0]);
-            cash.setText(distance * 15 + " LE");
-
-        } catch (Exception e) {
             cash.setText("Contact Driver");
 
-        }
+
     }
     private void onSpinnerItemClicked(){
         Log.i("Listenerr -- " , "hi");
@@ -1934,12 +1927,17 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         if (CURRENTSTATE == DESTINATION) customerViewStateControler(REVIEWREQ);
 
+        currentHistory = new HistoryModel("", "", ServerValue.TIMESTAMP.toString(), "", "", user.getName(), user.getID(), driverModel.getName(), driverModel.getID(), user.getvehicles().values().toArray()[(user.getVehicleSelectedIndex())].toString());
+
         if (currentHistory != null) {
-            currentHistory.setEta(duration);
-            currentHistory.setDistance(distance);
-            currentHistory.setTimeSec(timeSec);
+
+            currentHistory.setEta(getDirectionsData.getDuration());
+            currentHistory.setDistance(getDirectionsData.getDistance());
+            currentHistory.setTimeSec(getDirectionsData.getTimeSec());
             saveHistory();
+           this.cash.setText(currentHistory.getCost()+" L.E.");
         }
+
 
         // mBottomTextView.setText(getResources().getString(R.string.eta) + " " + getDirectionsData.getDuration());
         //   driverViewStateControler(ONROUT); //must be after showRout to get the correct duration

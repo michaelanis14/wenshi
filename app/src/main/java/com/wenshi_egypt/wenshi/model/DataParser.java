@@ -17,10 +17,14 @@ import java.util.List;
 
 class DataParser {
     public String getDuration() {
+
+        Log.i("JSON",duration );
         return duration;
     }
 
     public String getDistance() {
+        Log.i("JSON",distance);
+
         return distance;
     }
 
@@ -29,6 +33,8 @@ class DataParser {
     JSONArray jsonArray = null;
 
     public String getTimeSec() {
+
+        Log.i("JSON",timeSec);
         return timeSec;
     }
 
@@ -46,14 +52,13 @@ class DataParser {
         if(googleDirectionsJson != null)
         try {
 
-            duration = googleDirectionsJson.getJSONObject(0).getJSONObject("duration_in_traffic").getString("text");
+            duration = googleDirectionsJson.getJSONObject(0).getJSONObject("duration").getString("text");
             distance = googleDirectionsJson.getJSONObject(0).getJSONObject("distance").getString("value");
-            timeSec = (googleDirectionsJson.getJSONObject(0).getJSONObject("duration_in_traffic").getString("value"));
+            timeSec = (googleDirectionsJson.getJSONObject(0).getJSONObject("duration").getString("value"));
             googleDirectionsMap.put("duration" , duration);
             googleDirectionsMap.put("distance", distance);
             googleDirectionsMap.put("timeSec", timeSec);
 
-         //   Log.i("JSON", googleDirectionsJson.getJSONObject(0).toString());
 
         } catch (JSONException e) {
             e.printStackTrace();
