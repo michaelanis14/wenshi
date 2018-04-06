@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
                 String name = user.getDisplayName();
                 String email = user.getEmail();
                 String mobil = user.getPhoneNumber();
-                UserModel currenctUserModel = new UserModel(uid, name, email, mobil);
+                UserModel currenctUserModel = new UserModel(uid, name, email, mobil,4.5);
 
 
                 if (customer) {

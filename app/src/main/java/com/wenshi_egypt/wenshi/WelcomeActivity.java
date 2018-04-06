@@ -52,7 +52,7 @@ public class WelcomeActivity extends AppCompatActivity {
             String name = user.getDisplayName();
             String email = user.getEmail();
             String mobil = user.getPhoneNumber();
-            currenctUserModel = new UserModel(uid, name, email, mobil);
+            currenctUserModel = new UserModel(uid, name, email, mobil,4.5);
 
 
             isDriverRef = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(uid);

@@ -278,11 +278,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             //locat.setLongitude(Double.parseDouble(longt));
 
 
-                            cutomerMod = new UserModel(id, name, email, mobile);
+                            cutomerMod = new UserModel(id, name, email, mobile,4.5);
                             //cutomerMod.setVehicle(defaultVehicle);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            cutomerMod = new UserModel("", "", "",  "");
+                            cutomerMod = new UserModel("", "", "",  "",4.5);
                         }
 
 
