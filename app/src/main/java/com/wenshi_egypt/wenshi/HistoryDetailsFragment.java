@@ -3,102 +3,55 @@ package com.wenshi_egypt.wenshi;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.wenshi_egypt.wenshi.model.HistoryModel;
 import com.wenshi_egypt.wenshi.model.VehicleModel;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HistoryDetailsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link HistoryDetailsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-
 public class HistoryDetailsFragment extends Fragment {
 
-    HistoryModel HISTORY_MODEL ;
+    HistoryModel HISTORY_MODEL;
+    private EditText date, startTime, endTime, eta, distance, clientName, clientID, driverName, driverID, cost, completed, tripID;
 
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
 
     public HistoryDetailsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HistoryDetailsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static HistoryDetailsFragment newInstance(String param1, String param2) {
         HistoryDetailsFragment fragment = new HistoryDetailsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        TextView textView = new TextView(getActivity());
-        textView.setText(R.string.hello_blank_fragment);
-        return textView;
-    }
+        return inflater.inflate(R.layout.fragment_history_details, container, false);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
-
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
-        }
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        date = getActivity().findViewById(R.id.editText_date);
+        startTime = getActivity().findViewById(R.id.editText_startTime);
+        endTime = getActivity().findViewById(R.id.editText_endTime);
+        eta = getActivity().findViewById(R.id.editText_eta);
+        distance = getActivity().findViewById(R.id.editText_distance);
+        clientName = getActivity().findViewById(R.id.editText_clientName);
+        clientID = getActivity().findViewById(R.id.editText_cleintID);
+        driverName = getActivity().findViewById(R.id.editText_driverName);
+        driverID = getActivity().findViewById(R.id.editText_driverID);
+        cost = getActivity().findViewById(R.id.editText_cost);
+        completed = getActivity().findViewById(R.id.editText_compeleted);
+        tripID = getActivity().findViewById(R.id.editText_tripID);
     }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
 
     @Override
     public void onStart() {
@@ -107,29 +60,31 @@ public class HistoryDetailsFragment extends Fragment {
         if (args != null) {
             HISTORY_MODEL = ((HistoryModel) args.getParcelable("DATA"));
             if (HISTORY_MODEL != null && !HISTORY_MODEL.getId().isEmpty()) {
-
-                Log.i("HISTORY DETAILS",HISTORY_MODEL.getClientName());
-            } else {
+                fillHistory();
             }
-        } else {
         }
-
-//            Toast.makeText(getActivity(), "VISSS", Toast.LENGTH_LONG).show();
-
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+     private void fillHistory() {
+        try {
+            if (HISTORY_MODEL != null && HISTORY_MODEL.getId() != null && !HISTORY_MODEL.getId().isEmpty()) {
+                date.setText(HISTORY_MODEL.getDate() != null ? HISTORY_MODEL.getDate().toString() : "");
+                startTime.setText(HISTORY_MODEL.getStartTime() != null ? HISTORY_MODEL.getStartTime().toString() : "");
+                endTime.setText(HISTORY_MODEL.getEndTime() != null ? HISTORY_MODEL.getEndTime().toString() : "");
+                eta.setText(HISTORY_MODEL.getEta() != null ? HISTORY_MODEL.getEta().toString() : "");
+                distance.setText(HISTORY_MODEL.getDistance() != null ? (Double.parseDouble(HISTORY_MODEL.getDistance().toString()) / 1000) + " KM" : "");
+                clientName.setText(HISTORY_MODEL.getClientName() != null ? HISTORY_MODEL.getClientName().toString() : "");
+                clientID.setText(HISTORY_MODEL.getCleintID() != null ? HISTORY_MODEL.getCleintID().toString() : "");
+                driverName.setText(HISTORY_MODEL.getDriverName() != null ? HISTORY_MODEL.getDriverName().toString() : "");
+                driverID.setText(HISTORY_MODEL.getDriverID() != null ? HISTORY_MODEL.getDriverID().toString() : "");
+                cost.setText(HISTORY_MODEL.getCost() != null ? HISTORY_MODEL.getCost().toString() : "");
+                completed.setText(HISTORY_MODEL.isCompeleted() ? getResources().getString(R.string.completed) : getResources().getString(R.string.canceled));
+                tripID.setText(HISTORY_MODEL.getId() != null ? HISTORY_MODEL.getId().toString() : "");
+
+            }
+        }catch (Exception e){
+            Log.i("Error","HistoryDetaislFragment"+e.toString());
+        }
     }
+
 }

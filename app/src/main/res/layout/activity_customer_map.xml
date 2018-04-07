@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/customer_drawer_layout"
@@ -10,46 +9,46 @@
     tools:openDrawer="start">
 
 
-
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/container_toolbar">
+
         <RelativeLayout
             android:id="@+id/confirm_address_map_wrapper"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <fragment
-            android:id="@+id/customer_map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context="com.wenshi_egypt.wenshi.CustomerMapActivity" />
+            <fragment
+                android:id="@+id/customer_map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.wenshi_egypt.wenshi.CustomerMapActivity" />
+
             <ImageView
                 android:id="@+id/confirm_address_map_custom_marker"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/add_marker"/>
+                android:src="@drawable/add_marker" />
         </RelativeLayout>
-
 
 
     </FrameLayout>
 
-   <RelativeLayout
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:id="@+id/traceDriverLayout">
-       <fragment android:name="com.wenshi_egypt.wenshi.TraceDriverFragment"
-           android:id="@+id/headlines_fragment"
-           android:layout_alignParentBottom="true"
-           android:layout_width="match_parent"
-           android:layout_height="280dp" />
-   </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/traceDriverLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <fragment
+            android:id="@+id/headlines_fragment"
+            android:name="com.wenshi_egypt.wenshi.TraceDriverFragment"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_alignParentBottom="true" />
+    </RelativeLayout>
 
 
     <android.support.design.widget.NavigationView
@@ -60,8 +59,7 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer"
-        app:theme="@style/ToolbarColoredBackArrow"
-        >
+        app:theme="@style/ToolbarColoredBackArrow">
 
     </android.support.design.widget.NavigationView>
 
@@ -71,11 +69,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-            <include
-                layout="@layout/app_bar_main_customer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
+        <include
+            layout="@layout/app_bar_main_customer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
 
     </LinearLayout>
@@ -90,104 +87,78 @@
             android:id="@+id/reviewReq"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
-            >
+            android:padding="10dp"
+            app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="240dp"
                 android:layout_alignParentBottom="true"
-                android:orientation="vertical"
-                android:background="@android:color/white">
-               <LinearLayout
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   android:layout_weight="1.2"
-                   android:orientation="horizontal">
-                   <ImageView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:layout_gravity="left"
-                       android:background="#ffffff"
-                       android:src="@drawable/from_to_icon"
-                       />
-                   <LinearLayout
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:orientation="vertical">
-                       <LinearLayout
-                           android:id="@+id/PickupLayout"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content"
-                           android:orientation="vertical"
-                           android:background="@android:color/white">
-                           <TextView
-                               android:id="@+id/currentLocation"
-                               android:layout_width="wrap_content"
-                               android:singleLine="true"
-                               android:layout_height="40dp"
-                               android:paddingTop="5dp"
-                               android:text="@string/pickup"
-                               android:layout_weight="1"
-                               android:textColor="@color/colorBlack"
-                               android:textSize="@dimen/font_20" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/currentLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:drawableLeft="@drawable/circle_holo"
+                    android:paddingLeft="5dp"
+                    android:singleLine="true"
+                    android:text="@string/pickup"
+                    android:gravity="center"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/font_20"
+                    android:background="@android:color/white"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#D0D0D0" />
+
+                <TextView
+                    android:id="@+id/headingLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:drawableLeft="@drawable/circle_orange"
+                    android:paddingLeft="5dp"
+                    android:singleLine="true"
+                    android:text="@string/drop_off_location"
+                    android:gravity="center"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/font_20"
+                    android:background="@android:color/white"
+                    />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="#D0D0D0" />
 
 
-
-                       </LinearLayout>
-
-                       <LinearLayout
-                           android:id="@+id/DestinationLayout"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content"
-                           android:orientation="vertical"
-                           android:paddingTop="10dp"
-                           android:background="@android:color/white">
-                           <View
-                               android:layout_width="fill_parent"
-                               android:layout_height="1dp"
-                               android:layout_weight="1"
-                               android:paddingTop="20dp"
-                               android:background="#D0D0D0" />
-                           <TextView
-                               android:id="@+id/headingLocation"
-                               android:layout_width="wrap_content"
-                               android:singleLine="true"
-                               android:layout_height="40dp"
-                               android:paddingTop="3dp"
-                               android:text="@string/drop_off_location"
-                               android:layout_weight="1"
-                               android:textColor="@color/colorBlack"
-                               android:textSize="@dimen/font_20"/>
-
-
-                       </LinearLayout>
-                   </LinearLayout>
-
-               </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="#f5f5ef">
+                    android:background="#f5f5ef"
+                    android:orientation="vertical">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/dollar_sign" />
+
+
+
                         <TextView
                             android:id="@+id/paymentMethod"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/radioButton_payment_cash"
                             android:layout_gravity="center"
-                            android:layout_weight="1"
+                            android:layout_weight="0.5"
+                            android:text="@string/radioButton_payment_cash"
                             android:textColor="@color/colorBlack"
                             android:textSize="@dimen/font_24" />
 
@@ -195,65 +166,79 @@
                             android:layout_width="1dp"
                             android:layout_height="fill_parent"
                             android:background="#D0D0D0" />
+
                         <TextView
                             android:id="@+id/tripCost"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="0.5"
+                            android:gravity="left"
                             android:paddingLeft="30dp"
                             android:text="@string/fare"
-                            android:layout_weight="0.5"
-                            android:layout_gravity="center"
-                            android:gravity="left"
                             android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/font_19"
-                            />
+                            android:textSize="@dimen/font_19" />
                     </LinearLayout>
+
                     <View
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
-                        android:paddingTop="20dp"
-                        android:background="#D0D0D0" />
+                        android:background="#D0D0D0"
+                        android:paddingTop="20dp" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="horizontal">
 
-
-                                <Spinner
-                                    android:id="@+id/vehicleSpinner"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:dropDownWidth="wrap_content"
-                                    android:layout_weight="0.5"
-                                    android:layout_gravity="center"
-                                    android:gravity="right"
-                                    android:textSize="@dimen/font_24"
-                                    android:entries="@array/vehicle_arrays"
-                                    android:prompt="@string/vehicle_prompt" />
-                            </LinearLayout>
-
-                        <Button
-                            android:id="@+id/FindDriverBtn"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/find_driver"
-                            android:textSize="@dimen/font_24"
-                            android:textColor="@color/tw__solid_white"
-                            android:background="@color/colorBlack"/>
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+                            <Spinner
+                                android:id="@+id/serviceSpinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="0.5"
+                                android:dropDownWidth="wrap_content"
+                                android:gravity="start"
+                                android:textSize="@dimen/font_24" />
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="fill_parent"
+                                android:background="#D0D0D0" />
+
+                            <Spinner
+                                android:id="@+id/vehicleSpinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="0.5"
+                                android:dropDownWidth="wrap_content"
+                                android:gravity="end"
+                                android:textSize="@dimen/font_24" />
+                        </LinearLayout>
+
+
 
                     </LinearLayout>
 
 
-
                 </LinearLayout>
-
+                <Button
+                    android:id="@+id/FindDriverBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/colorBlack"
+                    android:text="@string/find_driver"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/tw__solid_white" />
             </LinearLayout>
+
+
         </RelativeLayout>
 
 
@@ -273,9 +258,9 @@
                 android:id="@+id/bottom_view_btn1"
                 android:layout_width="330dp"
                 android:layout_height="40dp"
-                android:layout_margin="10dp"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
+                android:layout_margin="10dp"
                 android:gravity="center"
                 android:textColor="@color/tw__solid_white" />
 
@@ -351,14 +336,13 @@
                 android:textColor="@color/tw__solid_white" />
 
 
-
             <Button
                 android:id="@+id/bottom_down_btn3"
                 android:layout_width="330dp"
                 android:layout_height="40dp"
-                android:layout_margin="10dp"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
+                android:layout_margin="10dp"
                 android:gravity="center"
                 android:textColor="@color/tw__solid_white" />
         </LinearLayout>

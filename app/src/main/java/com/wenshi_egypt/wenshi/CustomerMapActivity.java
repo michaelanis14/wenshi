@@ -114,7 +114,7 @@ import com.google.android.gms.common.api.Status;
 
 import com.wenshi_egypt.wenshi.model.VehicleModel;
 
-public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, HistoryDetailsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, CustomerSettingsFragment.OnFragmentInteractionListener, RateDriverFragment.OnFragmentInteractionListener, CustomerHistoryFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptionsFragment.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, AdapterView.OnItemClickListener, TraceDriverFragment.OnFragmentInteractionListener {
+public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, CustomerSettingsFragment.OnFragmentInteractionListener, RateDriverFragment.OnFragmentInteractionListener, CustomerHistoryFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptionsFragment.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, AdapterView.OnItemClickListener, TraceDriverFragment.OnFragmentInteractionListener {
 
 
     public static final int PICKUP = 0;
@@ -191,6 +191,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     double timeSec;
     DatabaseReference addHistory;
     private Spinner vehicleSpinner;
+    private Spinner serviceSpinner;
     private TextView cash;
     private int CURRENTSTATE;
     private GoogleMap mMap;
@@ -353,6 +354,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 //REVIEW REQUEST VIEW
         vehicleSpinner = (Spinner) findViewById(R.id.vehicleSpinner);
         cash = (TextView) findViewById(R.id.tripCost);
+        serviceSpinner = (Spinner) findViewById(R.id.serviceSpinner);
 
         // sendNotification("Michael", "This is a message to tell clients stop eating your feet");
 
@@ -485,7 +487,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             mGoogleApiClient.connect();
         }
     }
-
+///ON CLICK
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bottom_view_btn1:
@@ -496,7 +498,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                         break;
                     case SERVICECHOICE:
                         customerViewStateControler(DESTINATION);
-                        user.setServiceType("ACCEDIENT");
+                        user.setServiceType("Accident");
                         break;
                     case DESTINATION:
                         showRout();
@@ -521,7 +523,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             case R.id.bottom_down_btn2:
                 switch (CURRENTSTATE) {
                     case SERVICECHOICE:
-                        user.setServiceType("CARBROKEDOWN");
+                        user.setServiceType("Broke Down");
                         customerViewStateControler(DESTINATION);
                         break;
                     case REQ:
@@ -775,7 +777,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                                 locat.setLongitude(location.longitude);
                                 driverModel.setCurrentLocation(locat);
                             }
-                            mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.wensh_marker)).title("Wenshi"));
+                            mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude))
+                                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.wensh_marker))
+                                    .title("Wenshi"));
                             markers.put(mDriverMarker.getId(), mDriverMarker);
                             marksCameraUpdate();
                             //   getDistanceBetweenPickUpToDriver(new LatLng(location.latitude, location.longitude));
@@ -943,6 +947,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             } else {
                 currentHistory.setCost(50.0);
                 currentHistory.setCompeleted(false);
+                currentHistory.setEndTime(currentDate);
                 saveHistory();
             }
             currentHistory.setId("");
@@ -1017,6 +1022,22 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 ft.setCustomAnimations(R.anim.anim_slide_in_right, R.anim.anim_slide_out_right);
                 ft.replace(R.id.mainFrame, vehiclesSettingsFragment);
                 ft.commit();
+            }
+
+
+        } else if (findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE && (historyDetailsFragment != null && historyDetailsFragment.isResumed())) {
+
+
+            getSupportActionBar().setTitle(getResources().getString(R.string.history));
+            if (historySettingsFragment != null) {
+                mBottomSheet.setVisibility(View.GONE);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                // ft.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+                ft.setCustomAnimations(R.anim.anim_slide_in_right, R.anim.anim_slide_out_right);
+                ft.replace(R.id.mainFrame, historySettingsFragment);
+                ft.commit();
+            } else {
+                customerViewStateControler(CURRENTSTATE);
             }
 
 
@@ -1689,7 +1710,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.PickupLayout), new Slide(Gravity.LEFT));
                 findViewById(R.id.PickupLayout).setVisibility(View.GONE);
 
-              //  findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
+                //  findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 mPickupText.setEnabled(false);
 
                 TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.DestinationLayout), new Slide(Gravity.LEFT));
@@ -1790,8 +1811,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 // findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
 
-                findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
-                findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
+                findViewById(R.id.PickupLayout).setVisibility(View.GONE);
+                findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
 
@@ -1814,8 +1835,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
-                findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
-                findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
+                findViewById(R.id.PickupLayout).setVisibility(View.GONE);
+                findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
 
@@ -1919,7 +1940,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, arraySpinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         vehicleSpinner.setAdapter(adapter);
-
         vehicleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -1931,6 +1951,26 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
             }
         });
+
+        String[] serviceSpinnerArray = {"Accident", "Broke Down"};
+        ArrayAdapter<String> serviceSpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, serviceSpinnerArray);
+        serviceSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        serviceSpinner.setAdapter(serviceSpinnerAdapter);
+        if (user.getServiceType().toString().equals("Accident")) serviceSpinner.setSelection(0);
+        else serviceSpinner.setSelection(1);
+        serviceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.i("servicess--- ", serviceSpinner.getSelectedItem().toString());
+                user.setServiceType(serviceSpinner.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
 
     }
 

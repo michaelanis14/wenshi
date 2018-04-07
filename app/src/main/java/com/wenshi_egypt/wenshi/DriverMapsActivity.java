@@ -108,6 +108,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     LinkedHashMap<String, DataSnapshot> requestsMap;
     boolean onRout;
     Marker mCustomerMarker;
+    double timeSec;
     private int CURRENTSTATE;
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
@@ -135,7 +136,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private Fragment currentFragment;
     private String duration;
     private String distance;
-    double timeSec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,10 +175,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         navigationView.bringToFront();
         navigationView.requestLayout();
 
-        View hView =  navigationView.getHeaderView(0);
-        TextView nav_user = (TextView)hView.findViewById(R.id.textViewUsernameNav);
+        View hView = navigationView.getHeaderView(0);
+        TextView nav_user = (TextView) hView.findViewById(R.id.textViewUsernameNav);
         nav_user.setText(driverMod.getName());
-        Button logout = (Button)hView.findViewById(R.id.nav_header_logout);
+        Button logout = (Button) hView.findViewById(R.id.nav_header_logout);
         logout.setOnClickListener(this);
         //hide the accept request buttons
         //
@@ -236,7 +236,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
         findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
 
-       // getSupportActionBar().setTitle("Wenshi Driver");
+        // getSupportActionBar().setTitle("Wenshi Driver");
 
 
         swtch_onlineOffline.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -258,7 +258,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             driverAvalbl.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                    if (requestsMap.size() == 0 && !requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")&& !dataSnapshot.getKey().equals("Accept")) {
+                    if (requestsMap.size() == 0 && !requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant") && !dataSnapshot.getKey().equals("Accept")) {
                         //    Log.i("CHILD ADDED",prevChildKey);
                         GeoFire geoDriverLocation = new GeoFire(driverAvalbl.child(dataSnapshot.getKey()));
                         try {
@@ -269,8 +269,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             String mobile = cust.getString("mobile");
                             //  String lat = cust.getString("Latitude");
                             //  String longt = cust.getString("Longitude");
-                           // String address = cust.getString("address");
-                         //   VehicleModel defaultVehicle = new VehicleModel("",cust.getJSONObject("Vehicle").getString("type"), cust.getJSONObject("Vehicle").getString("model"),true,"","");
+                            // String address = cust.getString("address");
+                            //   VehicleModel defaultVehicle = new VehicleModel("",cust.getJSONObject("Vehicle").getString("type"), cust.getJSONObject("Vehicle").getString("model"),true,"","");
 
 
                             // Location locat = new Location("dummyprovider");
@@ -278,11 +278,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             //locat.setLongitude(Double.parseDouble(longt));
 
 
-                            cutomerMod = new UserModel(id, name, email, mobile,4.5);
+                            cutomerMod = new UserModel(id, name, email, mobile, 4.5);
                             //cutomerMod.setVehicle(defaultVehicle);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            cutomerMod = new UserModel("", "", "",  "",4.5);
+                            cutomerMod = new UserModel("", "", "", "", 4.5);
                         }
 
 
@@ -304,7 +304,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                                     driverViewStateControler(NEWREQ);
                                     marksCameraUpdate();
                                     hidePopup();
-                                    showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : ", "CAR MODEL : " , "SERVICE : Wenshi");
+                                    showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : ", "CAR MODEL : ", "SERVICE : Wenshi");
 
                                 }
                             }
@@ -337,7 +337,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
 
                     } else if (!requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
-                      //  requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
+                        //  requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
                     }
                 }
 
@@ -436,18 +436,16 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (mGoogleApiClient != null)
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            if(CURRENTSTATE == ONROUT || CURRENTSTATE == TODISTINATION)  // need more optimizations TODO: remove
+            if (CURRENTSTATE == ONROUT || CURRENTSTATE == TODISTINATION)  // need more optimizations TODO: remove
                 showRout();
 
             if (myCurrent != null) myCurrent.remove();  //remove Old Marker
             LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            try{
+            try {
                 myCurrent = mMap.addMarker(new MarkerOptions().position(loc));
-            }
-            catch (Exception e){
+            } catch (Exception e) {
 
             }
-
 
 
             //update FireBase
@@ -696,7 +694,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (id == R.id.nav_profile) {
             currentFragment = new DriverProfileFragment();
         } else if (id == R.id.nav_history) {
-         //   currentFragment = new CustomerHistoryFragment(false, getDriver().getID());
+            //   currentFragment = new CustomerHistoryFragment(false, getDriver().getID());
         }
         if (currentFragment != null) {
             driverViewStateControler(SIDENAV);
@@ -808,8 +806,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         switch (view.getId()) {
             case R.id.btn_1:
                 if (CURRENTSTATE == NEWREQ) acceptRequest();
-                if (CURRENTSTATE == ARRIVED)
-                    driverViewStateControler(TODISTINATION);
+                if (CURRENTSTATE == ARRIVED) driverViewStateControler(TODISTINATION);
                 break;
             case R.id.btn_2:
                 switch (CURRENTSTATE) {
@@ -820,7 +817,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         driverViewStateControler(TODISTINATION);
                         break;
                 }
-            case  R.id.nav_header_logout:
+            case R.id.nav_header_logout:
                 FirebaseAuth.getInstance().signOut();
                 Intent customerWelcome = new Intent(DriverMapsActivity.this, WelcomeActivity.class);
                 startActivity(customerWelcome);
@@ -847,7 +844,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         } catch (Exception e) {
 
         }
-     //   displayLocation();
+        //   displayLocation();
 
 
         Object dataTransfer[] = new Object[2];
@@ -879,7 +876,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
     private String getDirectionsUrl() {
 
-       // Log.i("Client Status","origin=" + mLastLocation.getLatitude() + "," + mLastLocation.getLongitude() + "&destination=" + cutomerMod.getDestination().getLatitude() + "," + cutomerMod.getDestination().getLongitude());
+        // Log.i("Client Status","origin=" + mLastLocation.getLatitude() + "," + mLastLocation.getLongitude() + "&destination=" + cutomerMod.getDestination().getLatitude() + "," + cutomerMod.getDestination().getLongitude());
         StringBuilder googleDirectionsUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
         googleDirectionsUrl.append("origin=" + mLastLocation.getLatitude() + "," + mLastLocation.getLongitude());
 
@@ -895,7 +892,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         }
 
 
-        googleDirectionsUrl.append("&departure_time=now&key="+getResources().getString(R.string.google_maps_key));
+        googleDirectionsUrl.append("&departure_time=now&key=" + getResources().getString(R.string.google_maps_key));
 
         return googleDirectionsUrl.toString();
     }

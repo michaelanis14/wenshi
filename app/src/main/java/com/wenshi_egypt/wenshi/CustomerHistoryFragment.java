@@ -116,7 +116,8 @@ public class CustomerHistoryFragment extends Fragment implements View.OnClickLis
     public void onClick(View view) {
 
 
-        if (((CustomerMapActivity) getActivity()).historyDetailsFragment == null) ((CustomerMapActivity) getActivity()).historyDetailsFragment = new HistoryDetailsFragment();
+        if (((CustomerMapActivity) getActivity()).historyDetailsFragment == null)
+            ((CustomerMapActivity) getActivity()).historyDetailsFragment = new HistoryDetailsFragment();
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
 

@@ -32,6 +32,8 @@
                 android:gravity="center"
                 android:singleLine="true"
                 android:text="@string/pickup"
+                android:paddingLeft="5dp"
+                android:drawableLeft="@drawable/circle_holo"
                 android:textSize="@dimen/font_22" />
         </LinearLayout>
 
@@ -49,7 +51,9 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:singleLine="true"
+                android:paddingLeft="5dp"
                 android:text="@string/drop_off_location"
+                android:drawableLeft="@drawable/circle_orange"
                 android:textSize="@dimen/font_22" />
         </LinearLayout>
 

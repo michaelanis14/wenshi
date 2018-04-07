@@ -1,26 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/vehicles_add_new_Layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="15dp"
-    >
-    <TextView
-        android:id="@+id/textView_vehicle_model"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:labelFor="@id/editText_newModel"
-        android:text="@string/textView_vehicle_model"
-        android:textColor="@color/colorBlack" />
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="15dp">
 
-    <EditText
-        android:id="@+id/editText_newModel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:lines="1"
-        />
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/editText_date"
+                android:text="@string/textView_date"
+                android:visibility="gone"
+                android:textColor="@color/colorBlack" />
+
+            <EditText
+                android:id="@+id/editText_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="26"
+                android:enabled="false"
+                android:visibility="gone"
+                android:lines="1" />
+
+            <TextView
+                android:id="@+id/startTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/editText_startTime"
+                android:text="@string/textView_startTime"
+                android:textColor="@color/colorBlack" />
+
+            <EditText
+                android:id="@+id/editText_startTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="26"
+                android:enabled="false"
+                android:lines="1" />
+
+            <TextView
+                android:id="@+id/textView_endTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/editText_endTime"
+                android:text="@string/textView_endTime"
+                android:textColor="@color/colorBlack" />
+
+            <EditText
+                android:id="@+id/editText_endTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="26"
+                android:enabled="false"
+                android:lines="1" />
+
+            <TextView
+                android:id="@+id/textView_eta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/editText_eta"
+                android:text="@string/textView_eta"
+                android:textColor="@color/colorBlack" />
+
+            <EditText
+                android:id="@+id/editText_eta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="26"
+                android:enabled="false"
+                android:lines="1" />
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/editText_distance"
+                android:text="@string/distance"
+                android:textColor="@color/colorBlack" />
+
+            <EditText
+                android:id="@+id/editText_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="26"
+                android:enabled="false"
+                android:lines="1" />
+
+            <TextView
+                android:id="@+id/textView_clientName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/editText_clientName"
+                android:text="@string/textView_clientName"
+                android:textColor="@color/colorBlack" />
+
+            <EditText
+                android:id="@+id/editText_clientName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="26"
+                android:enabled="false"
+                android:lines="1" />
 
 
+            <TextView
+                android:id="@+id/textView_driverName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/editText_driverName"
+                android:text="@string/textView_driverName"
+                android:textColor="@color/colorBlack" />
+
+            <EditText
+                android:id="@+id/editText_driverName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="26"
+                android:enabled="false"
+                android:lines="1" />
+
+
+            <TextView
+                android:id="@+id/textView_cost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/editText_cost"
+                android:text="@string/textView_cost"
+                android:textColor="@color/colorBlack" />
+
+            <EditText
+                android:id="@+id/editText_cost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="26"
+                android:enabled="false"
+                android:lines="1" />
+
+            <TextView
+                android:id="@+id/textView_compeleted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/editText_compeleted"
+                android:text="@string/textView_compeleted"
+                android:textColor="@color/colorBlack" />
+
+            <EditText
+                android:id="@+id/editText_compeleted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="26"
+                android:enabled="false"
+                android:lines="1" />
+
+            <TextView
+                android:id="@+id/textView_driverID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/editText_driverID"
+                android:text="@string/textView_driverID"
+                android:textSize="10sp"
+                android:textColor="@color/colorBlack" />
+
+            <EditText
+                android:id="@+id/editText_driverID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="35"
+                android:textSize="10sp"
+                android:enabled="false"
+                android:lines="1" />
+            <TextView
+                android:id="@+id/textView_cleintID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/editText_cleintID"
+                android:text="@string/textView_cleintID"
+                android:textSize="10sp"
+                android:textColor="@color/colorBlack" />
+
+            <EditText
+                android:id="@+id/editText_cleintID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="35"
+                android:textSize="10sp"
+                android:enabled="false"
+                android:lines="1" />
+            <TextView
+                android:id="@+id/textView_tripID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/editText_tripID"
+                android:text="@string/textView_tripID"
+                android:textSize="10sp"
+                android:textColor="@color/colorBlack" />
+
+            <EditText
+                android:id="@+id/editText_tripID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="26"
+                android:textSize="10sp"
+                android:enabled="false"
+                android:lines="1" />
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
