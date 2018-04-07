@@ -29,8 +29,6 @@ class DataParser {
     JSONArray jsonArray = null;
 
     public String getTimeSec() {
-
-        Log.i("JSON",timeSec);
         return timeSec;
     }
 
@@ -73,7 +71,6 @@ class DataParser {
         String latitude = "";
         String longitude = "";
         String reference = "";
-        Log.d("getPlace", "Entered");
 
 
         try {

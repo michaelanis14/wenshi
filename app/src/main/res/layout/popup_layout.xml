@@ -7,16 +7,7 @@
     android:orientation="vertical"
     android:background="@color/tw__solid_white"
     >
-    <ImageButton
-        android:id="@+id/ib_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/com_facebook_close"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:background="@null"
-        android:visibility="gone"
-        android:contentDescription="@string/todo" />
+
 
     <TextView
         android:id="@+id/title_popup"

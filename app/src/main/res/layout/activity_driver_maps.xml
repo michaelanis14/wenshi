@@ -86,7 +86,6 @@
             android:id="@+id/driver_bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:background="@android:color/background_light"
             android:orientation="vertical"
             app:behavior_hideable="false"
             app:behavior_peekHeight="60dp"
@@ -99,15 +98,30 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
             </LinearLayout>
+
+
+
             <Button
                 android:id="@+id/btn_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/accept" />
+                android:layout_width="330dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/accept"
+                android:textColor="@color/tw__solid_white" />
+
+
             <Button
                 android:id="@+id/btn_2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_width="330dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@color/tw__solid_white" />
 
         </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>

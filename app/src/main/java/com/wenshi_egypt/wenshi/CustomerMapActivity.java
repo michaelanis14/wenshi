@@ -76,6 +76,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -97,7 +98,10 @@ import com.wenshi_egypt.wenshi.model.HistoryModel;
 import com.wenshi_egypt.wenshi.model.Model;
 import com.wenshi_egypt.wenshi.model.UserModel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -110,7 +114,7 @@ import com.google.android.gms.common.api.Status;
 
 import com.wenshi_egypt.wenshi.model.VehicleModel;
 
-public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, ProfileFragment.OnFragmentInteractionListener, CustomerSettingsFragment.OnFragmentInteractionListener, RateDriverFragment.OnFragmentInteractionListener, CustomerHistoryFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptionsFragment.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, AdapterView.OnItemClickListener,TraceDriverFragment.OnFragmentInteractionListener {
+public class CustomerMapActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, HistoryDetailsFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, CustomerSettingsFragment.OnFragmentInteractionListener, RateDriverFragment.OnFragmentInteractionListener, CustomerHistoryFragment.OnFragmentInteractionListener, VehiclesFragment.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener, PaymentOptionsFragment.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener, RateAndChargesFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener, InviteFragment.OnFragmentInteractionListener, FamilyViewFragment.OnFragmentInteractionListener, FamilyRequestFragment.OnFragmentInteractionListener, ReviewRequestFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, AdapterView.OnItemClickListener, TraceDriverFragment.OnFragmentInteractionListener {
 
 
     public static final int PICKUP = 0;
@@ -181,9 +185,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     VehiclesFragment vehiclesSettingsFragment;
     InviteFragment inviteSettingsFragment;
     AboutFragment aboutSettingsFragment;
+    HistoryDetailsFragment historyDetailsFragment;
     //VHICLES TAB//
     AddNewVehicleFragment vehicleDetailsFragment;
     double timeSec;
+    DatabaseReference addHistory;
     private Spinner vehicleSpinner;
     private TextView cash;
     private int CURRENTSTATE;
@@ -243,7 +249,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         // user.setVehicle(new VehicleModel("KIA", "RIO 2014"));
         mChoiceMarker = (ImageView) findViewById(R.id.confirm_address_map_custom_marker);
-        driverModel = new UserModel("", "", "", "",4.5);
+        driverModel = new UserModel("", "", "", "", 4.5);
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.customer_map);
         mapFragment.getMapAsync(this);
@@ -769,7 +775,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                                 locat.setLongitude(location.longitude);
                                 driverModel.setCurrentLocation(locat);
                             }
-                            mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).title("Wenshi"));
+                            mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.wensh_marker)).title("Wenshi"));
                             markers.put(mDriverMarker.getId(), mDriverMarker);
                             marksCameraUpdate();
                             //   getDistanceBetweenPickUpToDriver(new LatLng(location.latitude, location.longitude));
@@ -799,6 +805,15 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                                 model.linkProfData(false, driverModel);
                                 //   driverModel.linkProfData(false);
                                 Log.i("DRIVER MODEL", driverModel.toString());
+
+
+                                Calendar calendar1 = Calendar.getInstance();
+                                SimpleDateFormat formatter1 = new SimpleDateFormat("dd/M/yyyy h:mm");
+                                String currentDate = formatter1.format(calendar1.getTime());
+
+                                Log.i("Time MODEL", currentDate);
+
+                                currentHistory.setStartTime(currentDate);
                                 customerViewStateControler(TRACEDRIVER);
 
                                 break;
@@ -914,6 +929,31 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         for (String driverID : driversID) {
             requestDriver.child(driverID).child("Requests").child(userId).removeValue();
         }
+        try {
+            Calendar calendar1 = Calendar.getInstance();
+            SimpleDateFormat formatter1 = new SimpleDateFormat("dd/M/yyyy h:mm");
+            String currentDate = formatter1.format(calendar1.getTime());
+            Date date2 = formatter1.getCalendar().getTime();
+            Date date1 = formatter1.parse(currentHistory.getStartTime());
+            long mills = date2.getTime() - date1.getTime();
+            int mins = (int) ((mills / (1000 * 60)) % 60);
+
+            if (mins <= 3) {
+                addHistory.removeValue();
+            } else {
+                currentHistory.setCost(50.0);
+                currentHistory.setCompeleted(false);
+                saveHistory();
+            }
+            currentHistory.setId("");
+        } catch (Exception e) {
+            Log.i("Error", "CustomerMap" + e.toString());
+        }
+
+
+//  Toast.makeText(context,"databse date:-"+datadb+"Current Date :-"+currentDate,Toast.LENGTH_LONG).show();
+
+
         //Intialize nearest driver query variables
         if (geoQuery != null) geoQuery.removeAllListeners();
         driverFound = false;
@@ -1051,7 +1091,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
         findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
         findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
-       // findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
+        // findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
         findViewById(R.id.customer_nav_view).bringToFront();
         findViewById(R.id.customer_nav_view).requestLayout();
 
@@ -1303,7 +1343,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             }
             String uid = userId;
 
-            DatabaseReference addHistory = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Trips").child(currentHistory.getId());
+            addHistory = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Trips").child(currentHistory.getId());
             addHistory.child("date").setValue(currentHistory.getDate());
             addHistory.child("startTime").setValue(currentHistory.getStartTime());
             addHistory.child("endTime").setValue(currentHistory.getEndTime());
@@ -1318,18 +1358,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             addHistory.child("timeSec").setValue("" + currentHistory.getTimeSec());
             addHistory.child("compeleted").setValue(currentHistory.isCompeleted() + "");
 
-
-            boolean value = true;
-            if (user.getvehicles().size() == 1) {
-
-                Map.Entry<String, VehicleModel> entry = user.getvehicles().entrySet().iterator().next();
-                value = entry.getValue().isType();
-            } else if (user.getvehicles().size() > 1) {
-                VehicleModel[] vicls = ((VehicleModel[]) user.getvehicles().values().toArray());
-                VehicleModel vicl = vicls[user.getVehicleSelectedIndex()];
-                value = vicl.isType();
-            }
-            currentHistory.calculateCost(value);
             addHistory.child("cost").setValue(currentHistory.getCost());
             addHistory.child("compeleted").setValue(currentHistory.isCompeleted());
 
@@ -1657,10 +1685,14 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
                 //findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
-                findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
-                mPickupText.setEnabled(false);
-                TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.DestinationLayout), new Slide(Gravity.LEFT));
 
+                TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.PickupLayout), new Slide(Gravity.LEFT));
+                findViewById(R.id.PickupLayout).setVisibility(View.GONE);
+
+              //  findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
+                mPickupText.setEnabled(false);
+
+                TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.DestinationLayout), new Slide(Gravity.LEFT));
                 findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
 
                 mDestinationText.setEnabled(false);
@@ -1681,6 +1713,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
             case DESTINATION:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                BottomSheetBehavior.from(findViewById(R.id.reviewReq)).setState(BottomSheetBehavior.STATE_COLLAPSED);
                 findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.GONE);
@@ -1703,7 +1736,10 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             case REVIEWREQ:
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
-                findViewById(R.id.DestinationLayout).setVisibility(View.INVISIBLE);
+
+                TransitionManager.beginDelayedTransition((ViewGroup) findViewById(R.id.DestinationLayout), new Slide(Gravity.LEFT));
+                findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
+
                 findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
                 //findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
                 findViewById(R.id.reviewReq).setVisibility(View.VISIBLE);
@@ -1714,6 +1750,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 setReviewRequestData();
                 getSupportActionBar().setTitle(getString(R.string.request_wenshi));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+                BottomSheetBehavior.from(findViewById(R.id.reviewReq)).setState(BottomSheetBehavior.STATE_EXPANDED);
+
                 mbtn1.setVisibility(View.INVISIBLE);
                 mbtn1.setText(getResources().getString(R.string.find_driver));
                 //setMarker(false); // delay the set Marker one step behind
@@ -1725,7 +1764,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
                 findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
-               // findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
+                // findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
                 findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
@@ -1748,7 +1787,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
                 findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
-               // findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
+                // findViewById(R.id.traceDriverLayout).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
 
                 findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
@@ -1866,7 +1905,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         dstPlace.setText(user.getDestinationAddress());
         TextView paymentMethod = (TextView) findViewById(R.id.paymentMethod);
         paymentMethod.setText(getString(R.string.radioButton_payment_cash));
-        TextView cash = (TextView) findViewById(R.id.tripCost);
 
         int count = 0;
         String[] arraySpinner = new String[user.getvehicles().size()];
@@ -1894,15 +1932,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             }
         });
 
-
-        try {
-            double distance =Double.parseDouble(getDirectionsData.getDistance().split(" ")[0]);
-            cash.setText(distance*15+" LE");
-
-        }catch (Exception e){
-            cash.setText("Contact Driver");
-
-        }
     }
 
     private void onSpinnerItemClicked() {
@@ -1920,7 +1949,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 googleDirectionsUrl.append("&destination=" + driverModel.getCurrentLocation().getLatitude() + "," + driverModel.getCurrentLocation().getLongitude());
         }
 
-        googleDirectionsUrl.append("&departure_time=now&key=AIzaSyCvKJJXSQLXM-BmWYpMck1YT1hiG9u8L5c");
+        googleDirectionsUrl.append("&departure_time=now&key=" + getResources().getString(R.string.google_maps_key));
 
         return googleDirectionsUrl.toString();
     }
@@ -1963,14 +1992,24 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         if (CURRENTSTATE == DESTINATION) customerViewStateControler(REVIEWREQ);
 
-        currentHistory = new HistoryModel("", "", ServerValue.TIMESTAMP.toString(), "", "", user.getName(), user.getID(), driverModel.getName(), driverModel.getID(), user.getvehicles().values().toArray()[(user.getVehicleSelectedIndex())].toString());
+        if (currentHistory == null || currentHistory.getId().isEmpty())
+            currentHistory = new HistoryModel("", "", "", "", "", user.getName(), user.getID(), driverModel.getName(), driverModel.getID(), user.getvehicles().values().toArray()[(user.getVehicleSelectedIndex())].toString());
 
         if (currentHistory != null) {
 
             currentHistory.setEta(getDirectionsData.getDuration());
             currentHistory.setDistance(getDirectionsData.getDistance());
             currentHistory.setTimeSec(getDirectionsData.getTimeSec());
-            saveHistory();
+            boolean value = true;
+            if (user.getvehicles().size() == 1) {
+                Map.Entry<String, VehicleModel> entry = user.getvehicles().entrySet().iterator().next();
+                value = entry.getValue().isType();
+            } else if (user.getvehicles().size() > 1) {
+                VehicleModel[] vicls = ((VehicleModel[]) user.getvehicles().values().toArray());
+                VehicleModel vicl = vicls[user.getVehicleSelectedIndex()];
+                value = vicl.isType();
+            }
+            currentHistory.calculateCost(value);
             this.cash.setText(currentHistory.getCost() + " L.E.");
         }
 
@@ -1987,30 +2026,35 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     }
 
     private void getDriverProfile() {
-            try {
-                if (driverModel == null || driverModel.getID() == null || driverModel.getID().isEmpty())
-                    return;
+        try {
+            if (driverModel == null || driverModel.getID() == null || driverModel.getID().isEmpty())
+                return;
 
-                DatabaseReference getVehicles = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverModel.getID()).child("Profile");
-                getVehicles.addListenerForSingleValueEvent(new ValueEventListener() {
+            DatabaseReference getVehicles = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverModel.getID()).child("Profile");
+            getVehicles.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        driverModel.setName(dataSnapshot.child("name").getValue() != null? dataSnapshot.child("name").getValue().toString():"Driver");
-                        driverModel.setMobile(dataSnapshot.child("mobile").getValue() != null? dataSnapshot.child("mobile").getValue().toString():"mobile");
-                       // driverModel.(dataSnapshot.child("mobile").getValue() != null? dataSnapshot.child("mobile").getValue().toString():"mobile");
-        }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // ...
+                    driverModel.setName(dataSnapshot.child("name").getValue() != null ? dataSnapshot.child("name").getValue().toString() : "Driver");
+                    driverModel.setMobile(dataSnapshot.child("mobile").getValue() != null ? dataSnapshot.child("mobile").getValue().toString() : "mobile");
+                    // driverModel.(dataSnapshot.child("mobile").getValue() != null? dataSnapshot.child("mobile").getValue().toString():"mobile");
+                    if (currentHistory != null) {
+                        currentHistory.setDriverID(driverModel.getID());
+                        currentHistory.setDriverName(driverModel.getName());
+                        saveHistory();
                     }
-                });
+                }
 
-            } catch (Exception e) {
-                Log.i("Error ", "CustomerMap" + e.toString());
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // ...
+                }
+            });
+
+        } catch (Exception e) {
+            Log.i("Error ", "CustomerMap" + e.toString());
+        }
     }
 
     class AddressResultReceiver extends ResultReceiver {

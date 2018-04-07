@@ -4,10 +4,14 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.wenshi_egypt.wenshi.model.HistoryModel;
+import com.wenshi_egypt.wenshi.model.VehicleModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,7 +21,12 @@ import android.widget.TextView;
  * Use the {@link HistoryDetailsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+
 public class HistoryDetailsFragment extends Fragment {
+
+    HistoryModel HISTORY_MODEL ;
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -88,6 +97,25 @@ public class HistoryDetailsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Bundle args = getArguments();
+        if (args != null) {
+            HISTORY_MODEL = ((HistoryModel) args.getParcelable("DATA"));
+            if (HISTORY_MODEL != null && !HISTORY_MODEL.getId().isEmpty()) {
+
+                Log.i("HISTORY DETAILS",HISTORY_MODEL.getClientName());
+            } else {
+            }
+        } else {
+        }
+
+//            Toast.makeText(getActivity(), "VISSS", Toast.LENGTH_LONG).show();
+
     }
 
     /**

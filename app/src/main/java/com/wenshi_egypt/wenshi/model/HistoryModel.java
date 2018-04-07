@@ -1,11 +1,22 @@
 package com.wenshi_egypt.wenshi.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.text.DecimalFormat;
 
-public class HistoryModel {
+public class HistoryModel implements Parcelable {
 
+    public static final Parcelable.Creator<HistoryModel> CREATOR = new Parcelable.Creator<HistoryModel>() {
+        public HistoryModel createFromParcel(Parcel in) {
+            return new HistoryModel(in);
+        }
+
+        public HistoryModel[] newArray(int size) {
+            return new HistoryModel[size];
+        }
+    };
     private String id;
     private String date;
     private String startTime;
@@ -36,6 +47,7 @@ public class HistoryModel {
         this.driverID = driverID;
         this.driverName = driverName;
     }
+
     public HistoryModel(String id, String date, String startTime, String eta, String distance, String clientName, String cleintID, String driverName, String driverID, String vehicleDetails) {
         this.id = id;
         this.date = date;
@@ -47,6 +59,24 @@ public class HistoryModel {
         this.driverID = driverID;
         this.driverName = driverName;
         this.vehicleDetails = vehicleDetails;
+    }
+
+    private HistoryModel(Parcel in) {
+        id = in.readString();
+        date = in.readString();
+        endTime = in.readString();
+        eta = in.readString();
+        startTime = in.readString();
+        distance = in.readString();
+        clientName = in.readString();
+        cleintID = in.readString();
+        driverName = in.readString();
+        driverID = in.readString();
+        vehicleDetails = in.readString();
+        cost  = in.readDouble();
+        timeSec  = in.readDouble();
+        compeleted = in.readByte() != 0;
+
     }
 
     public String getId() {
@@ -118,7 +148,7 @@ public class HistoryModel {
     }
 
     public void setDistance(String distance) {
-     //   Log.i("DISTANCE",""+distance);
+        //   Log.i("DISTANCE",""+distance);
 
         this.distance = distance;
     }
@@ -152,7 +182,7 @@ public class HistoryModel {
     }
 
     public void setTimeSec(double timeSec) {
-    //    Log.i("TIME IN SEC",""+timeSec);
+        //    Log.i("TIME IN SEC",""+timeSec);
         this.timeSec = timeSec;
     }
 
@@ -169,8 +199,7 @@ public class HistoryModel {
     public void calculateCost(boolean sedan) {
 
         try {
-            if(distance == null && distance.isEmpty())
-                return;
+            if (distance == null && distance.isEmpty()) return;
             String tempDis = "";
             tempDis = distance.replace("KM", "");
             if (tempDis.isEmpty() || tempDis.contains("M")) {
@@ -178,9 +207,9 @@ public class HistoryModel {
             }
 
             Double distanceDouble = Double.parseDouble(tempDis.trim());
-            distanceDouble = (distanceDouble/1000);
+            distanceDouble = (distanceDouble / 1000);
             if (distanceDouble <= 40.0) {
-                Log.i("HISCOSTT",""+(distanceDouble)+" "+(timeSec / 60) );
+                Log.i("HISCOSTT", "" + (distanceDouble) + " " + (timeSec / 60));
 
 
                 if (sedan) {
@@ -190,7 +219,7 @@ public class HistoryModel {
                 }
 
             } else {
-                Log.i("HISCOSTT",""+(distanceDouble)+" "+(timeSec / 60) );
+                Log.i("HISCOSTT", "" + (distanceDouble) + " " + (timeSec / 60));
 
                 if (sedan) {
                     this.cost = 152 + ((distanceDouble) * 3.31) + ((timeSec / 60) * 2.125);
@@ -198,11 +227,32 @@ public class HistoryModel {
                     this.cost = 152 + ((distanceDouble) * 3.6) + ((timeSec / 60) * 2.125);
                 }
             }
+        } catch (Exception e) {
+            Log.i("ERROR", "History Fragment   " + e.toString());
         }
 
-    catch (Exception e){
-            Log.i("ERROR","History Fragment   " +e.toString());
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(date);
+        parcel.writeString(startTime);
+        parcel.writeString(endTime);
+        parcel.writeString(eta);
+        parcel.writeString(distance);
+        parcel.writeString(clientName);
+        parcel.writeString(cleintID);
+        parcel.writeString(driverName);
+        parcel.writeString(driverID);
+        parcel.writeString(vehicleDetails);
+        parcel.writeByte((byte) (compeleted ? 1 : 0));     //if myBoolean == true, byte == 1
+        parcel.writeDouble(cost);
+        parcel.writeDouble(timeSec);
     }
 }

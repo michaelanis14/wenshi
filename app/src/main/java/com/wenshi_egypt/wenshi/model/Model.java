@@ -54,27 +54,7 @@ public class Model {
         return result;
     }
 
-    ArrayList<TripModel> getTripsData(String id, boolean userOrDriver) {
-        //setDBReferences(userOrDriver);
-        final ArrayList<TripModel> result = new ArrayList<TripModel>();
 
-        historicRef.orderByKey().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                @SuppressWarnings("unchecked") HashMap<TripModel, TripModel> value = (HashMap<TripModel, TripModel>) dataSnapshot.getValue();
-                result.add(value.get("date"));
-                result.add(value.get("from"));
-                result.add(value.get("to"));
-                result.add(value.get("cost"));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        return result;
-    }
 
 
     public void linkProfData(boolean userOrDriver, final UserModel user) {

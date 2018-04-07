@@ -116,15 +116,15 @@ public class CustomerHistoryFragment extends Fragment implements View.OnClickLis
     public void onClick(View view) {
 
 
-        if (((CustomerMapActivity) getActivity()).vehicleDetailsFragment == null) ((CustomerMapActivity) getActivity()).vehicleDetailsFragment = new AddNewVehicleFragment();
+        if (((CustomerMapActivity) getActivity()).historyDetailsFragment == null) ((CustomerMapActivity) getActivity()).historyDetailsFragment = new HistoryDetailsFragment();
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
 
             Bundle args = new Bundle();
-            args.putParcelable("DATA", ((CustomerMapActivity) getActivity()).getCustomer().getvehicles().get(view.getId()+""));
-            ((CustomerMapActivity) getActivity()).vehicleDetailsFragment.setArguments(args);
+            args.putParcelable("DATA", ((HistoryModel)((CustomerMapActivity) getActivity()).getCustomer().getHistory().values().toArray()[view.getId()]));
+            ((CustomerMapActivity) getActivity()).historyDetailsFragment.setArguments(args);
 
-        ft.replace(R.id.mainFrame, ((CustomerMapActivity) getActivity()).vehicleDetailsFragment);
+        ft.replace(R.id.mainFrame, ((CustomerMapActivity) getActivity()).historyDetailsFragment);
         ft.commit();
     }
 
@@ -144,12 +144,14 @@ public class CustomerHistoryFragment extends Fragment implements View.OnClickLis
          try {
 
              getView().findViewById(R.id.noHistory).setVisibility(View.GONE);
+             int i = 0;
             for (Map.Entry<String, HistoryModel> historyItem : user.getHistory().entrySet()) {
                 Button button = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
-                button.setText(historyItem.getValue().getDate() + " " + historyItem.getValue().getStartTime() + " " + historyItem.getValue().getCost() + " LE");
-                button.setId(Integer.parseInt(historyItem.getKey()));
+                button.setText(historyItem.getValue().getDate() + " " + historyItem.getValue().getStartTime() + "  -  " + historyItem.getValue().getCost() + " LE");
+                button.setId(i);
                 button.setOnClickListener(this);
                 layout.addView(button);
+                i++;
             }
 
          }
