@@ -162,7 +162,7 @@
 
     <string name="Logout">LOGOUT</string>
     <string name="Profile">Profile</string>
-    <string name="history">Account History</string>
+    <string name="history">History</string>
     <string name="Promo_code">Promo Code</string>
     <string name="reset_password">Reset Password</string>
     <string name="fields_cannot_empty">Please fill all required fields</string>

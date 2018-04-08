@@ -41,6 +41,24 @@ public class UserModel implements Parcelable {
     Location currentLocation;
     String vehicleSelected = "";
     int vehicleSelectedIndex = 0;
+
+    public String getDriverCarType() {
+        return driverCarType;
+    }
+
+    public void setDriverCarType(String driverCarType) {
+        this.driverCarType = driverCarType;
+    }
+
+    public String getDriverPlateNo() {
+        return driverPlateNo;
+    }
+
+    public void setDriverPlateNo(String driverPlateNo) {
+        this.driverPlateNo = driverPlateNo;
+    }
+
+    String driverCarType,driverPlateNo;
     double rating;
     LinkedHashMap<String, VehicleModel> vehicles = new LinkedHashMap<String, VehicleModel>();
     LinkedHashMap<String, HistoryModel> history = new LinkedHashMap<String, HistoryModel>();

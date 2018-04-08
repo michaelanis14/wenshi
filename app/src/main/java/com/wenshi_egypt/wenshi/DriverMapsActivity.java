@@ -2,10 +2,15 @@ package com.wenshi_egypt.wenshi;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -23,6 +28,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -72,6 +78,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class DriverMapsActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DriverProfileFragment.OnFragmentInteractionListener, CustomerHistoryFragment.OnFragmentInteractionListener, OnNavigationItemSelectedListener, com.google.android.gms.location.LocationListener {
@@ -140,6 +147,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadLocale();
         setContentView(R.layout.activity_driver_maps);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -184,6 +192,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         //
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        driverMod.setID(userId);
         driverAvalbl = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests");
         driver = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId);
         geoFireDriverLocation = new GeoFire(driverLocation);
@@ -247,6 +256,33 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
         });
         //       Log.i("mBottomSheetBehavio", "" + mBottomSheetBehavior.getPeekHeight());
+
+        getDriverProfile();
+
+    }
+
+    private void getDriverProfile() {
+        DatabaseReference getProfile = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userId).child("Profile");
+        getProfile.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.child("carType") != null && (dataSnapshot.child("carType").getValue() != null))
+                    driverMod.setDriverCarType(dataSnapshot.child("carType").getValue().toString());
+                if (dataSnapshot.child("plateNo") != null && (dataSnapshot.child("plateNo").getValue() != null))
+                    driverMod.setDriverPlateNo(dataSnapshot.child("plateNo").getValue().toString());
+                if ( (driverMod.getMobile() == null || driverMod.getMobile().toString().isEmpty()) &&dataSnapshot.child("mobile") != null && (dataSnapshot.child("mobile").getValue() != null))
+                    driverMod.setMobile(dataSnapshot.child("mobile").getValue().toString());
+
+                      checkDriverProfile();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // ...
+            }
+        });
+
     }
 
 
@@ -565,13 +601,20 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     }
 
     private void clearMarkers() {
-        if (this.markers != null) {
-            for (Marker marker : this.markers.values()) {
-                marker.remove();
+        try {
+            if (this.markers != null) {
+                for (Marker marker : this.markers.values()) {
+                    marker.remove();
+                }
+                this.markers.clear();
             }
-            this.markers.clear();
+            if(this.mMap != null){
+                mMap.clear();
+            }
+
+        }catch (Exception e){
+            Log.i("Error","DriverMap"+e.toString());
         }
-        mMap.clear();
     }
 
     /**
@@ -661,8 +704,12 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         } else if (currentFragment != null) {
             driverViewStateControler(CURRENTSTATE);
             currentFragment = null;
-        } else {
-            super.onBackPressed();
+        }
+        else if(findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE) {
+            driverViewStateControler(CURRENTSTATE);
+
+        } else{
+         //   super.onBackPressed();
         }
     }
 
@@ -692,9 +739,33 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         currentFragment = null;
 
         if (id == R.id.nav_profile) {
-            currentFragment = new DriverProfileFragment();
+            viewProfilEdit();
+            return true;
         } else if (id == R.id.nav_history) {
             //   currentFragment = new CustomerHistoryFragment(false, getDriver().getID());
+        }
+        else if(id == R.id.nav_language){
+
+
+            final String[] languageList = {"Arabic", "English"};
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(DriverMapsActivity.this);
+            mBuilder.setTitle("Choose Language ...");
+
+            mBuilder.setSingleChoiceItems(languageList, 0, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    if (i == 0) {
+                        setLanguage("ar");
+                        recreate();
+                    } else if (i == 1) {
+                        setLanguage("en");
+                        recreate();
+                    }
+                    dialogInterface.dismiss();
+                }
+            });
+            AlertDialog mDialog = mBuilder.create();
+            mDialog.show();
         }
         if (currentFragment != null) {
             driverViewStateControler(SIDENAV);
@@ -709,6 +780,53 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         return true;
     }
 
+
+    private void setLanguage(String lang) {
+
+        setLocale(new Locale(lang));
+
+
+    }
+
+    private void setLocale(Locale locale) {
+        Resources resources = getResources();
+        Configuration configuration = resources.getConfiguration();
+        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            configuration.setLocale(locale);
+        } else {
+            configuration.locale = locale;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            getApplicationContext().createConfigurationContext(configuration);
+        } else {
+            resources.updateConfiguration(configuration, displayMetrics);
+        }
+
+        getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
+        SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
+        editor.putString("My_Lang", locale.getLanguage());
+        Log.i("LOCALEE", getResources().getString(R.string.vehicle));
+        editor.apply();
+    }
+
+    public void loadLocale() {
+        SharedPreferences prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE);
+        String language = prefs.getString("My_Lang", "");
+        setLanguage(language);
+    }
+    public void viewProfilEdit(){
+        currentFragment = new DriverProfileFragment();
+        if (currentFragment != null) {
+            driverViewStateControler(SIDENAV);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.mainFrame, currentFragment);
+            ft.commit();
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.driver_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
+    }
     @Override
     public void onFragmentInteraction(Uri uri) {
         // NOTE:  Code to replace the toolbar title based current visible fragment
@@ -913,7 +1031,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             case ONLINE:
                 Log.i("STATE", "ONLINE");
                 clearMarkers();
-
+                requestsMap.clear();
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 swtch_onlineOffline.setVisibility(View.VISIBLE);
                 mBottomTextView.setText(getResources().getString(R.string.online));
@@ -1073,5 +1191,31 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         }
     }
 
+
+    private boolean checkDriverProfile() {
+        boolean state = true;
+        if (driverMod != null) {
+            if (driverMod.getName() == null || driverMod.getName().isEmpty()) {
+                state = false;
+            }
+            if (driverMod.getEmail() == null || driverMod.getEmail().isEmpty()) {
+                state = false;
+            }
+            if (driverMod.getMobile() == null || driverMod.getMobile().isEmpty()) {
+                state = false;
+            }
+            if (driverMod.getDriverCarType() == null || driverMod.getDriverCarType().isEmpty()) {
+                state = false;
+            }
+            if (driverMod.getDriverPlateNo() == null || driverMod.getDriverPlateNo().isEmpty()) {
+                state = false;
+            }
+        }
+        if (!state) {
+            Toast.makeText(mContext, "Please Compelete your profile", Toast.LENGTH_SHORT).show();
+            viewProfilEdit();
+        }
+        return state;
+    }
 
 }
