@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -13,17 +13,19 @@ android:layout_height="match_parent">
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="35dp"
             android:contextClickable="true"
             app:itemIconTint="@color/colorBlack"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/MerplyAppTheme.PopupOverlay"
-            app:titleTextColor="@color/cardview_dark_background" />
+            app:titleTextColor="@color/cardview_dark_background"
+            />
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main"
-    android:id="@+id/main_content_NAV"/>
+    <include
+        android:id="@+id/main_content_NAV"
+        layout="@layout/content_main" />
 
 
 </android.support.design.widget.CoordinatorLayout>

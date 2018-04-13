@@ -33,6 +33,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -149,6 +150,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
     private HistoryModel currentDriverHistory;
     private VehicleModel customerVehicle;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -267,6 +269,14 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        // return true so that the menu pop up is opened
+        return true;
+    }
     private void getDriverProfile() {
         DatabaseReference getProfile = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userId).child("Profile");
         getProfile.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -748,11 +758,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_cancel) {
             return true;
-        } else if (id == R.id.action_signout) {
-            FirebaseAuth.getInstance().signOut();
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -1068,6 +1075,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
                 bottomButton1_btn.setVisibility(View.INVISIBLE);
+                if (menu != null) menu.findItem(R.id.action_cancel).setVisible(false);
                 CURRENTSTATE = driverState;
                 break;
             case NEWREQ:
@@ -1081,6 +1089,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton1_btn.setVisibility(View.VISIBLE);
                 bottomButton1_btn.setText(getResources().getString(R.string.accept));
                 CURRENTSTATE = driverState;
+                if (menu != null) menu.findItem(R.id.action_cancel).setVisible(true);
                 break;
             case ONROUT:
                 Log.i("STATE", "ONROUT");
@@ -1092,6 +1101,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton1_btn.setVisibility(View.INVISIBLE);
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
                 CURRENTSTATE = driverState;
+                if (menu != null) menu.findItem(R.id.action_cancel).setVisible(true);
                 break;
             case ARRIVE:
                 Log.i("STATE", "ARR");
@@ -1112,6 +1122,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
                 clearMarkers();
                 requestsMap.clear();
+                if (menu != null) menu.findItem(R.id.action_cancel).setVisible(false);
                 CURRENTSTATE = driverState;
                 break;
             case SIDENAV:
@@ -1131,6 +1142,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton1_btn.setVisibility(View.GONE);
                 bottomButton2_btn.setVisibility(View.VISIBLE);
                 bottomButton2_btn.setText(getResources().getString(R.string.arrived));
+
                 CURRENTSTATE = driverState;
                 break;
             case ARRIVED:
@@ -1172,7 +1184,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton1_btn.setVisibility(View.INVISIBLE);
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
+                if (menu != null) menu.findItem(R.id.action_cancel).setVisible(true);
                 CURRENTSTATE = driverState;
                 showRout();
                 break;

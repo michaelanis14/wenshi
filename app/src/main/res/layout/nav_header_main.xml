@@ -19,35 +19,35 @@
         android:layout_height="wrap_content"
         android:paddingTop="18dp"
         app:srcCompat="@mipmap/wenshi_logo_round" />
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
 
-    <TextView
-        android:id="@+id/textViewUsernameNav"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:paddingTop="40dp"
-        android:gravity="top|left"
-        android:textColor="@color/colorBlack" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textViewUsernameNav"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:gravity="top|left"
+            android:paddingTop="40dp"
+            android:textColor="@color/colorBlack" />
 
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/nav_header_logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/tw__solid_white"
-        android:text="@string/Logout"
-        android:paddingLeft="100dp"
-        android:gravity="right"
-        android:stateListAnimator="@null"
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/nav_header_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/tw__solid_white"
+            android:gravity="right"
+            android:paddingLeft="100dp"
+            android:stateListAnimator="@null"
+            android:text="@string/Logout"
 
-        />
-</LinearLayout>
+            />
+    </LinearLayout>
 
 
 </LinearLayout>

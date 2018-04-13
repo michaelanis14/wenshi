@@ -40,14 +40,16 @@
     <RelativeLayout
         android:id="@+id/traceDriverLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <fragment
-            android:id="@+id/headlines_fragment"
+            android:id="@+id/traceDriver_fragment"
             android:name="com.wenshi_egypt.wenshi.TraceDriverFragment"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_alignParentBottom="true" />
+            android:layout_height="240dp"
+            android:layout_alignParentBottom="true"
+            />
     </RelativeLayout>
 
 
@@ -65,6 +67,7 @@
 
 
     <LinearLayout
+        android:id="@+id/trace_driver_bottom"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -101,15 +104,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
                     android:layout_weight="1"
+                    android:background="@android:color/white"
                     android:drawableLeft="@drawable/circle_holo"
+                    android:gravity="center"
                     android:paddingLeft="5dp"
                     android:singleLine="true"
                     android:text="@string/pickup"
-                    android:gravity="center"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/font_20"
-                    android:background="@android:color/white"
-                    />
+                    android:textSize="@dimen/font_20" />
 
                 <View
                     android:layout_width="match_parent"
@@ -121,15 +123,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
                     android:layout_weight="1"
+                    android:background="@android:color/white"
                     android:drawableLeft="@drawable/circle_orange"
+                    android:gravity="center"
                     android:paddingLeft="5dp"
                     android:singleLine="true"
                     android:text="@string/drop_off_location"
-                    android:gravity="center"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/font_20"
-                    android:background="@android:color/white"
-                    />
+                    android:textSize="@dimen/font_20" />
 
                 <View
                     android:layout_width="fill_parent"
@@ -149,7 +150,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="horizontal">
-
 
 
                         <TextView
@@ -197,6 +197,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:orientation="horizontal">
+
                             <Spinner
                                 android:id="@+id/serviceSpinner"
                                 android:layout_width="match_parent"
@@ -206,6 +207,7 @@
                                 android:dropDownWidth="wrap_content"
                                 android:gravity="start"
                                 android:textSize="@dimen/font_24" />
+
                             <View
                                 android:layout_width="1dp"
                                 android:layout_height="fill_parent"
@@ -223,18 +225,18 @@
                         </LinearLayout>
 
 
-
                     </LinearLayout>
 
 
                 </LinearLayout>
+
                 <Button
                     android:id="@+id/FindDriverBtn"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
+                    android:layout_marginTop="4dp"
                     android:background="@color/colorBlack"
                     android:text="@string/find_driver"
-                    android:layout_marginTop="4dp"
                     android:textColor="@color/tw__solid_white" />
             </LinearLayout>
 

@@ -1,15 +1,19 @@
 package com.wenshi_egypt.wenshi;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wenshi_egypt.wenshi.model.UserModel;
 
@@ -17,108 +21,57 @@ import java.sql.Driver;
 
 
 public class TraceDriverFragment extends Fragment implements View.OnClickListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    private UserModel driver;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
-    public TraceDriverFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TraceDriverFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static TraceDriverFragment newInstance(String param1, String param2) {
-        TraceDriverFragment fragment = new TraceDriverFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private UserModel driverModel;
+    private TextView eta, driverName, winshType, plateNo;
+    private Button callDriver;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_trace_driver, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        driver = ((DriverMapsActivity)getActivity()).getDriver();
-//        ((TextView)getView().findViewById(R.id.driverName)).setText(driver.getName());
-//        ((TextView)getView().findViewById(R.id.winshType_traceDriver)).setText(driver.getVehicleSelected());
-//        ((TextView)getView().findViewById(R.id.etaTraceDriver)).setText("Your captain will arrive in " + ((CustomerMapActivity)getActivity()).getDirectionsData.getDuration()+ " mins!");
-//
+        eta = ((TextView) getView().findViewById(R.id.etaTraceDriver));
+        driverName = ((TextView) getView().findViewById(R.id.driverName));
+        winshType = ((TextView) getView().findViewById(R.id.winshType_traceDriver));
+        plateNo = ((TextView) getView().findViewById(R.id.plateNumber_traceDriver));
+        callDriver = ((Button) getView().findViewById(R.id.button_call_driver));
+        callDriver.setOnClickListener(this);
+
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    public void onResume() {
+        super.onResume();
+        Bundle args = getArguments();
+        if (args != null) {
         }
-    }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+        if(((CustomerMapActivity) getActivity()).getGetDirectionsData() != null)
+        eta.setText(getResources().getString(R.string.your_wenshi_will_arrive_in) + " " + ((CustomerMapActivity) getActivity()).getGetDirectionsData().getDuration());
+        driverModel = ((CustomerMapActivity) getActivity()).getDriverModel();
+        driverName.setText(driverModel.getName());
+        winshType.setText(driverModel.getDriverCarType());
+        plateNo.setText(driverModel.getDriverPlateNo());
     }
 
     @Override
     public void onClick(View view) {
+        if (view.getId() == R.id.button_call_driver) {
+            if (driverModel != null && driverModel.getMobile() != null)
+                startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", driverModel.getMobile(), null)));
+            else {
+                Toast.makeText(getActivity(), getResources().getString(R.string.fui_error_too_many_attempts), Toast.LENGTH_SHORT).show();
 
+            }
+        }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

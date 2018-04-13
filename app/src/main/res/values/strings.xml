@@ -226,4 +226,5 @@
     <string name="canceled">Canceled</string>
     <string name="textView_tripID">Trip ID</string>
     <string name="textView_driverProfile_PlateNo_label">Plate No</string>
+    <string name="your_wenshi_will_arrive_in">Your Wenshi will arrive in</string>
 </resources>

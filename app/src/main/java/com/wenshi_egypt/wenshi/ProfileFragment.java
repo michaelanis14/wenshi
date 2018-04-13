@@ -52,10 +52,10 @@ import java.util.concurrent.TimeUnit;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
 
-    EditText username, email, mobile, codeVerfy;
-    Button saveButton, resetPassword, sendCode, verifyCode, resendCode;
-    String mVerificationId;
-    boolean nameChanged, emailChanged, mobileChanged;
+    private EditText username, email, mobile, codeVerfy;
+    private Button saveButton, resetPassword, sendCode, verifyCode, resendCode;
+    private String mVerificationId;
+    private boolean nameChanged, emailChanged, mobileChanged;
     private UserModel user;
     private ProfileFragment.OnFragmentInteractionListener mListener;
     private FirebaseAuth mAuth;

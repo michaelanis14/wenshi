@@ -2,15 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_cancel"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_signout"
-        android:orderInCategory="100"
-        android:title="@string/action_signout"
-        app:showAsAction="never" />
-
-
+        android:title="@string/cancelTrip"
+        app:showAsAction="ifRoom" />
 </menu>

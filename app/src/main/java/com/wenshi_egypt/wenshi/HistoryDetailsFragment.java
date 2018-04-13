@@ -18,7 +18,7 @@ import com.wenshi_egypt.wenshi.model.VehicleModel;
 
 public class HistoryDetailsFragment extends Fragment {
 
-    HistoryModel HISTORY_MODEL;
+    private HistoryModel HISTORY_MODEL;
     private EditText date, startTime, endTime, eta, distance, clientName, clientID, driverName, driverID, cost, completed, tripID;
 
 

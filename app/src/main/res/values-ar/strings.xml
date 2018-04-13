@@ -77,7 +77,7 @@
     <string name="button_new_vehicle">أضف سياره</string>
     <string name="textView_vehicle_addNew">أضف سياره</string>
     <string name="save">حفظ</string>
-    <string name="new_request">أطلب</string>
+    <string name="new_request">طلب جديد</string>
     <string name="vehicles">السيارات</string>
     <string name="you_must_have_atleast_one_vehicle">رجاء أضافه سياره على الأقل</string>
     <string name="invite">أرسل دعوه</string>

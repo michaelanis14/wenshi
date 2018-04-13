@@ -33,14 +33,11 @@ import java.util.Map;
 
 public class VehiclesFragment extends Fragment implements View.OnClickListener {
 
-    static String type, model;
-    static String defType, defModel;
-    DatabaseReference rootRef, vehicleRef;
-    TextView demoValue, noVehicle;
-    Button addNewVehicle;
+    private static String type, model;
+    private static String defType, defModel;
+    private Button addNewVehicle;
 
-    UserModel user;
-
+    private UserModel user;
 
 
     @Nullable
@@ -57,7 +54,7 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
 
     }
 
-  @Override
+    @Override
     public void onClick(View view) {
 
         switch (view.getId()) {
@@ -69,6 +66,7 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
 
         }
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -77,16 +75,16 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
         user = ((CustomerMapActivity) getActivity()).getCustomer();
 
         if (user.getvehicles() == null || user.getvehicles().size() == 0) {
-          //  addNewVehicle(0);
+            //  addNewVehicle(0);
             getView().findViewById(R.id.noVehicles).setVisibility(View.VISIBLE);
             Toast.makeText(getActivity(), getResources().getString(R.string.you_must_have_atleast_one_vehicle), Toast.LENGTH_SHORT).show();
             ((CustomerMapActivity) getActivity()).setCURRENTSTATE(((CustomerMapActivity) getActivity()).INCOMPLETEVHICLES);
 
 
-        } else for (Map.Entry<String, VehicleModel>  vehicle : user.getvehicles().entrySet()) {
+        } else for (Map.Entry<String, VehicleModel> vehicle : user.getvehicles().entrySet()) {
             getView().findViewById(R.id.noVehicles).setVisibility(View.GONE);
             Button button = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
-            button.setText(vehicle.getValue().getMake()+" "+vehicle.getValue().getModel() + " " + (vehicle.getValue().isType()?"Sedan":"SUV"));
+            button.setText(vehicle.getValue().getMake() + " " + vehicle.getValue().getModel() + " " + (vehicle.getValue().isType() ? "Sedan" : "SUV"));
             button.setId(Integer.parseInt(vehicle.getKey()));
             button.setOnClickListener(this);
             layout.addView(button);
@@ -97,15 +95,15 @@ public class VehiclesFragment extends Fragment implements View.OnClickListener {
     private void addNewVehicle(int vid) {
 
         ((CustomerMapActivity) getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.button_new_vehicle));
-        if (((CustomerMapActivity) getActivity()).vehicleDetailsFragment == null) ((CustomerMapActivity) getActivity()).vehicleDetailsFragment = new AddNewVehicleFragment();
+        if (((CustomerMapActivity) getActivity()).vehicleDetailsFragment == null)
+            ((CustomerMapActivity) getActivity()).vehicleDetailsFragment = new AddNewVehicleFragment();
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
-        if(vid > 0) {
+        if (vid > 0) {
             Bundle args = new Bundle();
-            args.putParcelable("DATA", ((CustomerMapActivity) getActivity()).getCustomer().getvehicles().get(vid+""));
+            args.putParcelable("DATA", ((CustomerMapActivity) getActivity()).getCustomer().getvehicles().get(vid + ""));
             ((CustomerMapActivity) getActivity()).vehicleDetailsFragment.setArguments(args);
-        }
-        else{
+        } else {
             Bundle args = new Bundle();
             args.putParcelable("DATA", null);
             ((CustomerMapActivity) getActivity()).vehicleDetailsFragment.setArguments(args);
