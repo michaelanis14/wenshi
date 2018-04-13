@@ -275,6 +275,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
         // return true so that the menu pop up is opened
+        menu.findItem(R.id.action_cancel).setVisible(false);
         return true;
     }
     private void getDriverProfile() {
