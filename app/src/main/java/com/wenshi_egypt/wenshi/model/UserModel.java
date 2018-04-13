@@ -241,7 +241,7 @@ public class UserModel implements Parcelable {
 
     @Override
     public String toString() {
-        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\"" + ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\"" + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\"" + ", \"driverCarType\":\"" + driverCarType + "\""+ ", \"rating\":\"" + rating + "\""  + ", \"driverPlateNo\":\"" + driverPlateNo + "\"" + ", \"vehicle\": " + vehicles.values().toArray()[vehicleSelectedIndex].toString() + " " + '}';
+        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\"" + ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\"" + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\"" + ", \"driverCarType\":\"" + driverCarType + "\""+ ", \"rating\":\"" + rating + "\""  + ", \"driverPlateNo\":\"" + driverPlateNo + "\"" + ", \"vehicle\": " + (vehicles.values().toArray().length>0?vehicles.values().toArray()[vehicleSelectedIndex].toString():"") + " " + '}';
     }
 
 

@@ -1361,8 +1361,12 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         if (currentHistory != null) {
             if (currentHistory.getId() == null || currentHistory.getId().isEmpty()) {
+                Calendar calendar1 = Calendar.getInstance();
+                SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MMM-dd-HH-mm-ss");
+                String currentDate = formatter1.format(calendar1.getTime());
 
-                currentHistory.setId("" + ServerValue.TIMESTAMP);
+                currentHistory.setId(currentDate);
+                Log.i("HISTORY ID",currentDate);
             }
             String uid = userId;
 
