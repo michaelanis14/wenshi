@@ -65,7 +65,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAgPwnT7C18Mv9PE7yXavg0kZ5lfSzKJW4" />
+            android:value="@string/google_maps_key" />
 
         <activity
             android:name=".DriverMapsActivity"

@@ -39,29 +39,17 @@ public class UserModel implements Parcelable {
     Location destination;
     String destinationAddress;
     Location currentLocation;
-    String vehicleSelected = "";
     int vehicleSelectedIndex = 0;
-
-    public String getDriverCarType() {
-        return driverCarType;
-    }
-
-    public void setDriverCarType(String driverCarType) {
-        this.driverCarType = driverCarType;
-    }
-
-    public String getDriverPlateNo() {
-        return driverPlateNo;
-    }
-
-    public void setDriverPlateNo(String driverPlateNo) {
-        this.driverPlateNo = driverPlateNo;
-    }
-
-    String driverCarType,driverPlateNo;
+    String driverCarType, driverPlateNo;
     double rating;
     LinkedHashMap<String, VehicleModel> vehicles = new LinkedHashMap<String, VehicleModel>();
     LinkedHashMap<String, HistoryModel> history = new LinkedHashMap<String, HistoryModel>();
+
+
+
+
+
+
     public UserModel(String id, String name, String email, String mobile, double rating) {
         this.ID = id;
         this.name = name;
@@ -82,7 +70,6 @@ public class UserModel implements Parcelable {
         this.pickup = pickup;
         this.destination = destination;
     }
-
     // example constructor that takes a Parcel and gives you an object populated with it's values
     private UserModel(Parcel in) {
         ID = in.readString();
@@ -98,6 +85,22 @@ public class UserModel implements Parcelable {
         //   destination =Location.CREATOR.createFromParcel(in);
         //  pickup = Location.CREATOR.createFromParcel(in);
         //   in.readTypedList(vehicles, VehicleModel.CREATOR);
+    }
+
+    public String getDriverCarType() {
+        return driverCarType;
+    }
+
+    public void setDriverCarType(String driverCarType) {
+        this.driverCarType = driverCarType;
+    }
+
+    public String getDriverPlateNo() {
+        return driverPlateNo;
+    }
+
+    public void setDriverPlateNo(String driverPlateNo) {
+        this.driverPlateNo = driverPlateNo;
     }
 
     public double getRating() {
@@ -130,14 +133,6 @@ public class UserModel implements Parcelable {
 
     public void setServiceType(String serviceType) {
         ServiceType = serviceType;
-    }
-
-    public String getVehicleSelected() {
-        return vehicleSelected;
-    }
-
-    public void setVehicleSelected(String vehicleSelected) {
-        this.vehicleSelected = vehicleSelected;
     }
 
     public String getPickupAddress() {
@@ -246,7 +241,7 @@ public class UserModel implements Parcelable {
 
     @Override
     public String toString() {
-        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\"" + ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\"" + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\"" + ", \"vehicle\":\"" + vehicleSelected + "\"" + '}';
+        return "{" + "\"ID\":\"" + ID + "\"" + ", \"name\":\"" + name + "\"" + ", \"email\":\"" + email + "\"" + ", \"mobile\":\"" + mobile + "\"" + ", \"Service\":\"" + ServiceType + "\"" + ", \"DropOFF\":\"" + destinationAddress + "\"" + ", \"PickupAddress\":\"" + pickupAddress + "\"" + ", \"Pickup\":\"" + pickup.toString() + "\"" + ", \"destination\":\"" + destination.toString() + "\"" + ", \"driverCarType\":\"" + driverCarType + "\""+ ", \"rating\":\"" + rating + "\""  + ", \"driverPlateNo\":\"" + driverPlateNo + "\"" + ", \"vehicle\": " + vehicles.values().toArray()[vehicleSelectedIndex].toString() + " " + '}';
     }
 
 

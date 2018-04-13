@@ -10,7 +10,22 @@ import android.os.Parcelable;
 public class VehicleModel implements Parcelable {
 
 
-    public VehicleModel(){
+    public static final Parcelable.Creator<VehicleModel> CREATOR = new Parcelable.Creator<VehicleModel>() {
+        public VehicleModel createFromParcel(Parcel in) {
+            return new VehicleModel(in);
+        }
+
+        public VehicleModel[] newArray(int size) {
+            return new VehicleModel[size];
+        }
+    };
+    String id;
+    String make;
+    String model;
+    boolean type;
+    String color;
+    String year;
+    public VehicleModel() {
         this.make = "";
         this.model = "";
         this.type = false;
@@ -18,13 +33,22 @@ public class VehicleModel implements Parcelable {
         this.year = "";
         this.id = "";
     }
-    public VehicleModel(String id,String make, String model, boolean type, String color, String year) {
+
+    public VehicleModel(String id, String make, String model, boolean type, String color, String year) {
         this.make = make;
         this.model = model;
         this.type = type;
         this.color = color;
         this.year = year;
         this.id = id;
+    }
+
+    private VehicleModel(Parcel in) {
+        make = in.readString();
+        model = in.readString();
+        type = in.readByte() != 0;
+        color = in.readString();
+        year = in.readString();
     }
 
     public String getId() {
@@ -34,11 +58,6 @@ public class VehicleModel implements Parcelable {
     public void setId(String id) {
         this.id = id;
     }
-
-    String id;
-    String make;
-    String model;
-    boolean type;
 
     public String getMake() {
         return make;
@@ -72,14 +91,6 @@ public class VehicleModel implements Parcelable {
         this.year = year;
     }
 
-    String color;
-    String year;
-
-
-
-
-
-
     @Override
     public int describeContents() {
         return 0;
@@ -93,37 +104,11 @@ public class VehicleModel implements Parcelable {
         parcel.writeString(color);
         parcel.writeString(year);
     }
+
     @Override
     public String toString() {
-        return "{" +
-                "\"make\":\"" + make + "\"" +
-                ", \"model\":\"" + model + "\"" +
-                ", \"type\":\"" + type + "\"" +
-                ", \"color\":\"" + color + "\"" +
-                ", \"year\":\"" + year + "\"" +
-                '}';
+        return "{" + "\"make\":\"" + make + "\"" + ", \"model\":\"" + model + "\"" + ", \"type\":\"" + type + "\"" + ", \"color\":\"" + color + "\"" + ", \"year\":\"" + year + "\"" + '}';
     }
-    public static final Parcelable.Creator<VehicleModel> CREATOR
-            = new Parcelable.Creator<VehicleModel>() {
-        public VehicleModel createFromParcel(Parcel in) {
-            return new VehicleModel(in);
-        }
-
-        public VehicleModel[] newArray(int size) {
-            return new VehicleModel[size];
-        }
-    };
-
-    private VehicleModel(Parcel in) {
-        make = in.readString();
-        model = in.readString();
-        type = in.readByte() != 0;
-        color = in.readString();
-        year = in.readString();
-    }
-
-
-
 
     public String getModel() {
         return model;

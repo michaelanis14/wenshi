@@ -487,7 +487,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             mGoogleApiClient.connect();
         }
     }
-///ON CLICK
+
+    ///ON CLICK
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bottom_view_btn1:
@@ -502,6 +503,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                         break;
                     case DESTINATION:
                         showRout();
+                        customerViewStateControler(REVIEWREQ);
+
                         break;
                     case REVIEWREQ:
                         customerViewStateControler(READYTOREQ);
@@ -1358,9 +1361,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
         if (currentHistory != null) {
             if (currentHistory.getId() == null || currentHistory.getId().isEmpty()) {
-                double hisDouble = Math.random() * 1000;
-                int hisCount = (int) hisDouble;
-                currentHistory.setId("" + hisCount);
+
+                currentHistory.setId("" + ServerValue.TIMESTAMP);
             }
             String uid = userId;
 
@@ -1381,6 +1383,19 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
             addHistory.child("cost").setValue(currentHistory.getCost());
             addHistory.child("compeleted").setValue(currentHistory.isCompeleted());
+
+
+            addHistory.child("driverStartAddress").setValue(currentHistory.getDriverStartAddress());
+            addHistory.child("clientIntialDropOffAddress").setValue(currentHistory.getClientIntialDropOffAddress());
+            addHistory.child("clientActualDroOffAddress").setValue(currentHistory.getClientActualDroOffAddress());
+            addHistory.child("clientIntialPickupAddress").setValue(currentHistory.getClientIntialPickupAddress());
+            addHistory.child("clientActualPickupAddress").setValue(currentHistory.getClientActualPickupAddress());
+            addHistory.child("driverStartLocation").setValue(currentHistory.getDriverStartLocation());
+            addHistory.child("clientActualDropOffLocation").setValue(currentHistory.getClientActualDropOffLocation());
+            addHistory.child("clientIntialDropOffLocation").setValue(currentHistory.getClientIntialDropOffLocation());
+            addHistory.child("clientActualPickupLocation").setValue(currentHistory.getClientActualPickupLocation());
+            addHistory.child("clientIntialPickupLocation").setValue(currentHistory.getClientIntialPickupLocation());
+
 
         }
     }
@@ -2027,13 +2042,17 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
     }
 
+    private void initCustomerHistory() {
+        if (currentHistory == null || currentHistory.getId().isEmpty())
+            currentHistory = new HistoryModel("", "", "", "", "", user.getName(), user.getID(), driverModel.getName(), driverModel.getID(), user.getvehicles().values().toArray()[(user.getVehicleSelectedIndex())].toString());
+
+    }
+
     @Override
     public void gotDurationDistanceRout(String output) {
 
         if (CURRENTSTATE == DESTINATION) customerViewStateControler(REVIEWREQ);
-
-        if (currentHistory == null || currentHistory.getId().isEmpty())
-            currentHistory = new HistoryModel("", "", "", "", "", user.getName(), user.getID(), driverModel.getName(), driverModel.getID(), user.getvehicles().values().toArray()[(user.getVehicleSelectedIndex())].toString());
+        initCustomerHistory();
 
         if (currentHistory != null) {
 

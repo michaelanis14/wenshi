@@ -1,5 +1,6 @@
 package com.wenshi_egypt.wenshi.model;
 
+import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -17,6 +18,11 @@ public class HistoryModel implements Parcelable {
             return new HistoryModel[size];
         }
     };
+    Location driverStartLocation;
+    Location clientActualDropOffLocation;
+    Location clientIntialDropOffLocation;
+    Location clientActualPickupLocation;
+    Location clientIntialPickupLocation;
     private String id;
     private String date;
     private String startTime;
@@ -31,7 +37,11 @@ public class HistoryModel implements Parcelable {
     private double cost;
     private double timeSec;
     private boolean compeleted;
-
+    private String driverStartAddress;
+    private String clientIntialDropOffAddress;
+    private String clientActualDroOffAddress;
+    private String clientIntialPickupAddress;
+    private String clientActualPickupAddress;
     public HistoryModel(String id, String date, String startTime, String endTime, String eta, String distance, String clientName, String cleintID, String driverName, String driverID, String vehicleDetails, double cost, boolean compeleted) {
         this.id = id;
         this.date = date;
@@ -73,10 +83,90 @@ public class HistoryModel implements Parcelable {
         driverName = in.readString();
         driverID = in.readString();
         vehicleDetails = in.readString();
-        cost  = in.readDouble();
-        timeSec  = in.readDouble();
+        cost = in.readDouble();
+        timeSec = in.readDouble();
         compeleted = in.readByte() != 0;
 
+    }
+
+    public Location getDriverStartLocation() {
+        return driverStartLocation;
+    }
+
+    public void setDriverStartLocation(Location driverStartLocation) {
+        this.driverStartLocation = driverStartLocation;
+    }
+
+    public String getDriverStartAddress() {
+        return driverStartAddress;
+    }
+
+    public void setDriverStartAddress(String driverStartAddress) {
+        this.driverStartAddress = driverStartAddress;
+    }
+
+    public String getClientIntialDropOffAddress() {
+        return clientIntialDropOffAddress;
+    }
+
+    public void setClientIntialDropOffAddress(String clientIntialDropOffAddress) {
+        this.clientIntialDropOffAddress = clientIntialDropOffAddress;
+    }
+
+    public String getClientActualDroOffAddress() {
+        return clientActualDroOffAddress;
+    }
+
+    public void setClientActualDroOffAddress(String clientActualDroOffAddress) {
+        this.clientActualDroOffAddress = clientActualDroOffAddress;
+    }
+
+    public Location getClientActualDropOffLocation() {
+        return clientActualDropOffLocation;
+    }
+
+    public void setClientActualDropOffLocation(Location clientActualDropOffLocation) {
+        this.clientActualDropOffLocation = clientActualDropOffLocation;
+    }
+
+    public Location getClientIntialDropOffLocation() {
+        return clientIntialDropOffLocation;
+    }
+
+    public void setClientIntialDropOffLocation(Location clientIntialDropOffLocation) {
+        this.clientIntialDropOffLocation = clientIntialDropOffLocation;
+    }
+
+    public String getClientIntialPickupAddress() {
+        return clientIntialPickupAddress;
+    }
+
+    public void setClientIntialPickupAddress(String clientIntialPickupAddress) {
+        this.clientIntialPickupAddress = clientIntialPickupAddress;
+    }
+
+    public String getClientActualPickupAddress() {
+        return clientActualPickupAddress;
+    }
+
+    public void setClientActualPickupAddress(String clientActualPickupAddress) {
+        this.clientActualPickupAddress = clientActualPickupAddress;
+    }
+
+    public Location getClientActualPickupLocation() {
+        return clientActualPickupLocation;
+    }
+
+    public void setClientActualPickupLocation(Location clientActualPickupLocation) {
+        this.clientActualPickupLocation = clientActualPickupLocation;
+    }
+
+    public Location getClientIntialPickupLocation() {
+        return clientIntialPickupLocation;
+    }
+
+    public void setClientIntialPickupLocation(Location clientIntialPickupLocation) {
+        this.clientIntialPickupLocation = clientIntialPickupLocation;
     }
 
     public String getId() {

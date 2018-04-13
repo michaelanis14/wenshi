@@ -70,8 +70,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wenshi_egypt.wenshi.model.GetDirectionsData;
+import com.wenshi_egypt.wenshi.model.HistoryModel;
 import com.wenshi_egypt.wenshi.model.UserModel;
+import com.wenshi_egypt.wenshi.model.VehicleModel;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -143,6 +146,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private Fragment currentFragment;
     private String duration;
     private String distance;
+
+    private HistoryModel currentDriverHistory;
+    private VehicleModel customerVehicle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -271,10 +277,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                     driverMod.setDriverCarType(dataSnapshot.child("carType").getValue().toString());
                 if (dataSnapshot.child("plateNo") != null && (dataSnapshot.child("plateNo").getValue() != null))
                     driverMod.setDriverPlateNo(dataSnapshot.child("plateNo").getValue().toString());
-                if ( (driverMod.getMobile() == null || driverMod.getMobile().toString().isEmpty()) &&dataSnapshot.child("mobile") != null && (dataSnapshot.child("mobile").getValue() != null))
+                if ((driverMod.getMobile() == null || driverMod.getMobile().toString().isEmpty()) && dataSnapshot.child("mobile") != null && (dataSnapshot.child("mobile").getValue() != null))
                     driverMod.setMobile(dataSnapshot.child("mobile").getValue().toString());
 
-                      checkDriverProfile();
+                checkDriverProfile();
             }
 
             @Override
@@ -303,22 +309,40 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             String email = cust.getString("email");
                             String id = cust.getString("ID");
                             String mobile = cust.getString("mobile");
+                            String service = cust.getString("Service");
+                            String dropOFF = cust.getString("DropOFF");
+                            String pickupAddress = cust.getString("PickupAddress");
+                            String rating = cust.getString("rating");
+
                             //  String lat = cust.getString("Latitude");
                             //  String longt = cust.getString("Longitude");
                             // String address = cust.getString("address");
-                            //   VehicleModel defaultVehicle = new VehicleModel("",cust.getJSONObject("Vehicle").getString("type"), cust.getJSONObject("Vehicle").getString("model"),true,"","");
+                            customerVehicle = new VehicleModel("", cust.getJSONObject("vehicle").getString("make"), cust.getJSONObject("vehicle").getString("model"), cust.getJSONObject("vehicle").getString("type").equals("true") ? true : false, cust.getJSONObject("vehicle").getString("color"), cust.getJSONObject("vehicle").getString("year"));
 
 
                             // Location locat = new Location("dummyprovider");
                             //locat.setLatitude(Double.parseDouble(lat));
                             //locat.setLongitude(Double.parseDouble(longt));
+                            double ratingDouble = 0.0;
+                            try {
+                                ratingDouble = Double.parseDouble(rating);
+                            } catch (Exception e) {
+                                ratingDouble = 4.3;
+                            }
 
 
-                            cutomerMod = new UserModel(id, name, email, mobile, 4.5);
-                            //cutomerMod.setVehicle(defaultVehicle);
+                            cutomerMod = new UserModel(id, name, email, mobile, ratingDouble);
+                            cutomerMod.setServiceType(service);
+                            cutomerMod.setDestinationAddress(dropOFF);
+                            cutomerMod.setPickupAddress(pickupAddress);
+
+
+
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Log.i("ERROR","Driver Map Activity"+e.toString());
+
                             cutomerMod = new UserModel("", "", "", "", 4.5);
+                            customerVehicle = new VehicleModel("","","",true,"","");
                         }
 
 
@@ -340,7 +364,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                                     driverViewStateControler(NEWREQ);
                                     marksCameraUpdate();
                                     hidePopup();
-                                    showPopup(getResources().getString(R.string.new_request), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : ", "CAR MODEL : ", "SERVICE : Wenshi");
+                                    showPopup(getResources().getString(R.string.new_request), getResources().getString(R.string.textView_clientName)+" : "+ cutomerMod.getName(), getResources().getString(R.string.textView_vehicle_make)+" : "+customerVehicle.getColor()+" - "+customerVehicle.getMake()+" - "+ (customerVehicle.isType()?getResources().getString(R.string.sedan):getResources().getString(R.string.SUV)), getResources().getString(R.string.textView_vehicle_model)+" : "+customerVehicle.getYear()+", "+customerVehicle.getModel(), getResources().getString(R.string.service)+" : "+cutomerMod.getServiceType());
 
                                 }
                             }
@@ -371,6 +395,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         });
 
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
+                        initDriverHistory();
 
                     } else if (!requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
                         //  requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
@@ -543,6 +568,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
+    private void initDriverHistory() {
+        if (currentDriverHistory == null || currentDriverHistory.getId().isEmpty())
+            currentDriverHistory = new HistoryModel("", "", "", "", "", driverMod.getName(), driverMod.getID(), driverMod.getName(), driverMod.getID(), driverMod.getDriverCarType());
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -608,12 +637,12 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 }
                 this.markers.clear();
             }
-            if(this.mMap != null){
+            if (this.mMap != null) {
                 mMap.clear();
             }
 
-        }catch (Exception e){
-            Log.i("Error","DriverMap"+e.toString());
+        } catch (Exception e) {
+            Log.i("Error", "DriverMap" + e.toString());
         }
     }
 
@@ -704,12 +733,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         } else if (currentFragment != null) {
             driverViewStateControler(CURRENTSTATE);
             currentFragment = null;
-        }
-        else if(findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE) {
+        } else if (findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE) {
             driverViewStateControler(CURRENTSTATE);
 
-        } else{
-         //   super.onBackPressed();
+        } else {
+            //   super.onBackPressed();
         }
     }
 
@@ -743,8 +771,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             return true;
         } else if (id == R.id.nav_history) {
             //   currentFragment = new CustomerHistoryFragment(false, getDriver().getID());
-        }
-        else if(id == R.id.nav_language){
+        } else if (id == R.id.nav_language) {
 
 
             final String[] languageList = {"Arabic", "English"};
@@ -785,7 +812,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
         setLocale(new Locale(lang));
 
-
     }
 
     private void setLocale(Locale locale) {
@@ -815,7 +841,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         String language = prefs.getString("My_Lang", "");
         setLanguage(language);
     }
-    public void viewProfilEdit(){
+
+    public void viewProfilEdit() {
         currentFragment = new DriverProfileFragment();
         if (currentFragment != null) {
             driverViewStateControler(SIDENAV);
@@ -827,6 +854,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         drawer.closeDrawer(GravityCompat.START);
 
     }
+
     @Override
     public void onFragmentInteraction(Uri uri) {
         // NOTE:  Code to replace the toolbar title based current visible fragment
