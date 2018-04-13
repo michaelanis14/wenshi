@@ -959,7 +959,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         }
 
 
-//  Toast.makeText(context,"databse date:-"+datadb+"Current Date :-"+currentDate,Toast.LENGTH_LONG).show();
+//  Toast.makeText(context,"databse timeStamp:-"+datadb+"Current Date :-"+currentDate,Toast.LENGTH_LONG).show();
 
 
         //Intialize nearest driver query variables
@@ -1337,7 +1337,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                     trips++;
 
-                    HistoryModel historyModel = new HistoryModel(historySnapshot.getKey().toString(), historySnapshot.child("date").getValue() != null ? historySnapshot.child("date").getValue().toString() : "_date", historySnapshot.child("startTime").getValue() != null ? historySnapshot.child("startTime").getValue().toString() : "_startTime", historySnapshot.child("eta").getValue() != null ? historySnapshot.child("eta").getValue().toString() : "_ETA", historySnapshot.child("distance").getValue() != null ? historySnapshot.child("distance").getValue().toString() : "_distance", historySnapshot.child("clientName").getValue() != null ? historySnapshot.child("clientName").getValue().toString() : "_clientName", historySnapshot.child("cleintID").getValue() != null ? historySnapshot.child("cleintID").getValue().toString() : "_cleintID", historySnapshot.child("driverName").getValue() != null ? historySnapshot.child("driverName").getValue().toString() : "_driverName", historySnapshot.child("driverID").getValue() != null ? historySnapshot.child("driverID").getValue().toString() : "_driverID", historySnapshot.child("vehicleDetails").getValue() != null ? historySnapshot.child("vehicleDetails").getValue().toString() : "_vehicleDetails");
+                    HistoryModel historyModel = new HistoryModel(historySnapshot.getKey().toString(), historySnapshot.child("timeStamp").getValue() != null ? historySnapshot.child("timeStamp").getValue().toString() : "_date", historySnapshot.child("startTime").getValue() != null ? historySnapshot.child("startTime").getValue().toString() : "_startTime", historySnapshot.child("eta").getValue() != null ? historySnapshot.child("eta").getValue().toString() : "_ETA", historySnapshot.child("distance").getValue() != null ? historySnapshot.child("distance").getValue().toString() : "_distance", historySnapshot.child("clientName").getValue() != null ? historySnapshot.child("clientName").getValue().toString() : "_clientName", historySnapshot.child("cleintID").getValue() != null ? historySnapshot.child("cleintID").getValue().toString() : "_cleintID", historySnapshot.child("driverName").getValue() != null ? historySnapshot.child("driverName").getValue().toString() : "_driverName", historySnapshot.child("driverID").getValue() != null ? historySnapshot.child("driverID").getValue().toString() : "_driverID", historySnapshot.child("vehicleDetails").getValue() != null ? historySnapshot.child("vehicleDetails").getValue().toString() : "_vehicleDetails");
 
                     historyModel.setCost(Double.parseDouble(historySnapshot.child("cost").getValue() != null ? historySnapshot.child("cost").getValue().toString() : "404"));
                     historyModel.setTimeSec(Double.parseDouble(historySnapshot.child("timeSec").getValue() != null ? historySnapshot.child("timeSec").getValue().toString() : "404"));
@@ -1371,7 +1371,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             String uid = userId;
 
             addHistory = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(uid).child("Trips").child(currentHistory.getId());
-            addHistory.child("date").setValue(currentHistory.getDate());
+            addHistory.child("timeStamp").setValue(ServerValue.TIMESTAMP);
             addHistory.child("startTime").setValue(currentHistory.getStartTime());
             addHistory.child("endTime").setValue(currentHistory.getEndTime());
             addHistory.child("eta").setValue(currentHistory.getEta());
@@ -1521,7 +1521,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN).setFilter(autocompleteFilter).build(this);
             startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE);
         } catch (GooglePlayServicesRepairableException e) {
-            // Indicates that Google Play Services is either not installed or not up to date. Prompt
+            // Indicates that Google Play Services is either not installed or not up to timeStamp. Prompt
             // the user to correct the issue.
             GoogleApiAvailability.getInstance().getErrorDialog(this, e.getConnectionStatusCode(), 0 /* requestCode */).show();
         } catch (GooglePlayServicesNotAvailableException e) {
