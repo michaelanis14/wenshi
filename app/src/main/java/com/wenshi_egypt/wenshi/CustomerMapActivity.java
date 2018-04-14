@@ -187,11 +187,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     VehiclesFragment vehiclesSettingsFragment;
     InviteFragment inviteSettingsFragment;
     AboutFragment aboutSettingsFragment;
-    HistoryDetailsFragment historyDetailsFragment;
     //VHICLES TAB//
     AddNewVehicleFragment vehicleDetailsFragment;
     double timeSec;
-    DatabaseReference addHistory;
+    private DatabaseReference addHistory;
+    private HistoryDetailsFragment historyDetailsFragment;
     private Spinner vehicleSpinner;
     private Spinner serviceSpinner;
     private TextView cash;
@@ -226,8 +226,15 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     private String distance;
     private HistoryModel currentHistory;
     private Menu menu;
-
     private TraceDriverFragment traceDriverFragment;
+
+    public HistoryDetailsFragment getHistoryDetailsFragment() {
+        return historyDetailsFragment;
+    }
+
+    public void setHistoryDetailsFragment(HistoryDetailsFragment historyDetailsFragment) {
+        this.historyDetailsFragment = historyDetailsFragment;
+    }
 
     public UserModel getDriverModel() {
         return driverModel;
@@ -508,7 +515,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
-        // return true so that the menu pop up is opened
+        if (menu != null) menu.findItem(R.id.action_cancel).setVisible(false);
         return true;
     }
 
@@ -975,6 +982,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
             if (mins <= 3) {
                 addHistory.removeValue();
+                user.getHistory().remove(currentHistory.getId());
             } else {
                 currentHistory.setCost(50.0);
                 currentHistory.setCompeleted(false);
@@ -1155,7 +1163,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         if (id == R.id.nav_profile) {
             fragment = new ProfileFragment();
         } else if (id == R.id.nav_history) {
-            fragment = new CustomerHistoryFragment(true, getCustomer().getID());
+            fragment = new CustomerHistoryFragment();
         } else if (id == R.id.nav_payment) {
             showPayemntOptions();
         } else if (id == R.id.nav_help) {
@@ -1377,6 +1385,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     historyModel.setCost(Double.parseDouble(historySnapshot.child("cost").getValue() != null ? historySnapshot.child("cost").getValue().toString() : "404"));
                     historyModel.setTimeSec(Double.parseDouble(historySnapshot.child("timeSec").getValue() != null ? historySnapshot.child("timeSec").getValue().toString() : "404"));
                     historyModel.setCompeleted((historySnapshot.child("compeleted").getValue() != null ? (historySnapshot.child("compeleted").getValue().toString()).equals("true") ? true : false : false));
+                    historyModel.setDriverStartAddress(historySnapshot.child("driverStartAddress").getValue() != null ? historySnapshot.child("driverStartAddress").getValue().toString() : "404");
+                    historyModel.setClientIntialDropOffAddress(historySnapshot.child("clientIntialDropOffAddress").getValue() != null ? historySnapshot.child("clientIntialDropOffAddress").getValue().toString() : "404");
+                    historyModel.setClientActualDroOffAddress(historySnapshot.child("clientActualDroOffAddress").getValue() != null ? historySnapshot.child("clientActualDroOffAddress").getValue().toString() : "404");
+                    historyModel.setClientIntialPickupAddress(historySnapshot.child("clientIntialPickupAddress").getValue() != null ? historySnapshot.child("clientIntialPickupAddress").getValue().toString() : "404");
+                    historyModel.setClientActualPickupAddress(historySnapshot.child("clientActualPickupAddress").getValue() != null ? historySnapshot.child("clientActualPickupAddress").getValue().toString() : "404");
 
                     user.addHistory(historySnapshot.getKey().toString(), historyModel);
                 }
@@ -1435,6 +1448,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             addHistory.child("clientActualPickupLocation").setValue(currentHistory.getClientActualPickupLocation());
             addHistory.child("clientIntialPickupLocation").setValue(currentHistory.getClientIntialPickupLocation());
 
+            user.addHistory(currentHistory.getId().toString(), currentHistory);
 
         }
     }
@@ -1883,7 +1897,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mbtn2.setVisibility(View.VISIBLE);
                 mbtn2.setText(getResources().getString(R.string.cancelTrip));
 
-                if (menu != null) menu.findItem(R.id.action_cancel).setVisible(true);
+                if (menu != null) menu.findItem(R.id.action_cancel).setVisible(false);
                 CURRENTSTATE = customerState;
                 if (mChoiceMarker != null) mChoiceMarker.setVisibility(View.INVISIBLE);
                 break;
@@ -1902,9 +1916,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                 getSupportActionBar().setTitle(getResources().getString(R.string.driver_confirmed_onrout));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                mbtn1.setVisibility(View.VISIBLE);
+                mbtn1.setVisibility(View.GONE);
                 mbtn1.setText(getResources().getString(R.string.callDriver));
-                mbtn2.setVisibility(View.VISIBLE);
+                mbtn2.setVisibility(View.GONE);
                 mbtn2.setText(getResources().getString(R.string.cancelTrip));
 
 
@@ -2123,6 +2137,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             }
             currentHistory.calculateCost(value);
             this.cash.setText(currentHistory.getCost() + " L.E.");
+            saveHistory();
         }
 
 

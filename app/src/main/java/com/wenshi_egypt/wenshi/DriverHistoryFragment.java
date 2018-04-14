@@ -1,9 +1,8 @@
 package com.wenshi_egypt.wenshi;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -12,63 +11,58 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.wenshi_egypt.wenshi.model.HistoryModel;
 import com.wenshi_egypt.wenshi.model.UserModel;
-import com.wenshi_egypt.wenshi.model.VehicleModel;
 
-import java.util.ArrayList;
 import java.util.Map;
 
-public class CustomerHistoryFragment extends Fragment implements View.OnClickListener {
 
-    public CustomerHistoryFragment() {
+public class DriverHistoryFragment extends Fragment implements View.OnClickListener{
+
+    public DriverHistoryFragment() {
+        // Required empty public constructor
     }
 
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_history_customer, container, false);
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_driver_history, container, false);
     }
+
 
     @Override
     public void onClick(View view) {
 
-        if (((CustomerMapActivity) getActivity()).getHistoryDetailsFragment() == null)
-            ((CustomerMapActivity) getActivity()).setHistoryDetailsFragment(new HistoryDetailsFragment());
+        if (((DriverMapsActivity) getActivity()).getHistoryDetailsFragment() == null)
+            ((DriverMapsActivity) getActivity()).setHistoryDetailsFragment(new HistoryDetailsFragment());
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.anim_slide_in_left, R.anim.anim_slide_out_left);
 
         Bundle args = new Bundle();
-        args.putParcelable("DATA", ((HistoryModel) ((CustomerMapActivity) getActivity()).getCustomer().getHistory().values().toArray()[view.getId()]));
-        ((CustomerMapActivity) getActivity()).getHistoryDetailsFragment().setArguments(args);
+        args.putParcelable("DATA", ((HistoryModel) ((DriverMapsActivity) getActivity()).getDriver().getHistory().values().toArray()[view.getId()]));
+        ((DriverMapsActivity) getActivity()).getHistoryDetailsFragment().setArguments(args);
 
-        ft.replace(R.id.mainFrame, ((CustomerMapActivity) getActivity()).getHistoryDetailsFragment());
+        ft.replace(R.id.mainFrame, ((DriverMapsActivity) getActivity()).getHistoryDetailsFragment());
         ft.commit();
     }
-
     @Override
     public void onStart() {
         super.onStart();
 
-        LinearLayout layout = (LinearLayout) getView().findViewById(R.id.history_list_layout);
-        UserModel user = ((CustomerMapActivity) getActivity()).getCustomer();
+        LinearLayout layout = (LinearLayout) getView().findViewById(R.id.history_driver_list_layout);
+        UserModel user = ((DriverMapsActivity) getActivity()).getDriver();
 
         if (user.getHistory() == null || user.getHistory().size() == 0) {
             //  addNewVehicle(0);
-            getView().findViewById(R.id.noHistory).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.noHistory_driver).setVisibility(View.VISIBLE);
 
         } else {
 
             try {
 
-                getView().findViewById(R.id.noHistory).setVisibility(View.GONE);
+                getView().findViewById(R.id.noHistory_driver).setVisibility(View.GONE);
                 int i = 0;
                 for (Map.Entry<String, HistoryModel> historyItem : user.getHistory().entrySet()) {
                     Button button = (Button) getLayoutInflater().inflate(R.layout.list_button, null);
@@ -84,7 +78,6 @@ public class CustomerHistoryFragment extends Fragment implements View.OnClickLis
             }
         }
     }
-
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

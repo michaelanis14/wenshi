@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/tw__solid_white"
+    android:orientation="vertical"
+    android:padding="15dp">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/history_driver_list_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:animationCache="true"
+            android:divider="@drawable/empty_tall_divider"
+            android:gravity="start"
+            android:orientation="vertical"
+            android:padding="15dp"
+            android:showDividers="middle">
+
+            <TextView
+                android:id="@+id/noHistory_driver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/textView_no_historic" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

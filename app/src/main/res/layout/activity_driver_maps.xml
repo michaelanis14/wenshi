@@ -8,8 +8,8 @@
     tools:openDrawer="start">
 
     <fragment
-        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:id="@+id/driver_map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.wenshi_egypt.wenshi.DriverMapsActivity" />
@@ -26,10 +26,10 @@
     </android.support.design.widget.NavigationView>
 
     <LinearLayout
+        android:id="@+id/drive_main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/drive_main_layout">
+        android:orientation="vertical">
 
         <include
             layout="@layout/app_bar_main"
@@ -52,24 +52,48 @@
             android:background="@android:color/holo_orange_light"
             android:gravity="bottom"
             android:orientation="horizontal"
+            android:weightSum="3"
             app:layout_anchor="@+id/driver_bottom_sheet"
             app:layout_anchorGravity="right|center">
-
             <Switch
                 android:id="@+id/onlineOffline_swtch"
                 android:layout_width="wrap_content"
                 android:layout_height="80dp"
+                android:layout_weight="0.5"
                 android:checked="false"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:scaleX="1.5"
                 android:scaleY="1.5"
                 android:theme="@style/Switch" />
+            <ImageView
+                android:id="@+id/img_call_btn"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_weight="0.5"
+                android:contentDescription="@string/label_logoDescritop"
+                android:gravity="center"
+                android:visibility="gone"
+                app:srcCompat="@drawable/call_icon" />
 
+
+
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/tw__solid_white" />
             <TextView
                 android:id="@+id/driver_bottom_view_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
                 android:background="@android:color/holo_orange_light"
                 android:gravity="center"
                 android:paddingLeft="15dp"
@@ -78,6 +102,26 @@
                 android:textColor="@android:color/white"
                 android:textSize="28sp"
                 android:textStyle="bold" />
+
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/tw__solid_white" />
+            <ImageView
+                android:id="@+id/img_map_btn"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:contentDescription="@string/label_logoDescritop"
+                android:gravity="center"
+
+                android:visibility="gone"
+                app:srcCompat="@drawable/navigation_icon" />
 
         </LinearLayout>
 
@@ -96,18 +140,16 @@
                 android:id="@+id/driver_request_wenshi_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-            </LinearLayout>
-
+                android:orientation="vertical"></LinearLayout>
 
 
             <Button
                 android:id="@+id/btn_1"
                 android:layout_width="330dp"
                 android:layout_height="40dp"
-                android:layout_margin="10dp"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
+                android:layout_margin="10dp"
                 android:gravity="center"
                 android:text="@string/accept"
                 android:textColor="@color/tw__solid_white" />
@@ -117,15 +159,14 @@
                 android:id="@+id/btn_2"
                 android:layout_width="330dp"
                 android:layout_height="40dp"
-                android:layout_margin="10dp"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
+                android:layout_margin="10dp"
                 android:gravity="center"
                 android:textColor="@color/tw__solid_white" />
 
         </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>
-
 
 
 </android.support.v4.widget.DrawerLayout>

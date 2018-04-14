@@ -39,6 +39,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Switch;
@@ -69,6 +70,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.wenshi_egypt.wenshi.model.GetDirectionsData;
 import com.wenshi_egypt.wenshi.model.HistoryModel;
@@ -78,7 +80,10 @@ import com.wenshi_egypt.wenshi.model.VehicleModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -140,6 +145,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private LinearLayout monlineOfflineLayout;
     private Button bottomButton1_btn;
     private Button bottomButton2_btn;
+    private ImageView call_btn, navigation_btn;
     private PopupWindow mPopupWindow;
     private UserModel cutomerMod = null;
     private Context mContext;
@@ -148,7 +154,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private String duration;
     private String distance;
 
-    private HistoryModel currentDriverHistory;
+    private HistoryModel currentHistory;
+    private HistoryDetailsFragment historyDetailsFragment;
+    private DatabaseReference addHistory;
+
+
     private VehicleModel customerVehicle;
     private Menu menu;
 
@@ -174,6 +184,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         bottomButton1_btn.setOnClickListener(this);
         bottomButton2_btn.setOnClickListener(this);
 
+        call_btn = (ImageView) findViewById(R.id.img_call_btn);
+        call_btn.setOnClickListener(this);
+        navigation_btn = (ImageView) findViewById(R.id.img_map_btn);
+        navigation_btn.setOnClickListener(this);
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.driver_map);
         mapFragment.getMapAsync(this);
@@ -266,6 +280,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         //       Log.i("mBottomSheetBehavio", "" + mBottomSheetBehavior.getPeekHeight());
 
         getDriverProfile();
+        getDriverHistory();
 
     }
 
@@ -278,6 +293,16 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         menu.findItem(R.id.action_cancel).setVisible(false);
         return true;
     }
+
+    public HistoryDetailsFragment getHistoryDetailsFragment() {
+        return historyDetailsFragment;
+    }
+
+    public void setHistoryDetailsFragment(HistoryDetailsFragment historyDetailsFragment) {
+        this.historyDetailsFragment = historyDetailsFragment;
+    }
+
+
     private void getDriverProfile() {
         DatabaseReference getProfile = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userId).child("Profile");
         getProfile.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -311,10 +336,13 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             driverAvalbl.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                    Log.i("CHILD TO ADDED", dataSnapshot.getKey());
+
                     if (requestsMap.size() == 0 && !requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant") && !dataSnapshot.getKey().equals("Accept")) {
-                        //    Log.i("CHILD ADDED",prevChildKey);
-                        GeoFire geoDriverLocation = new GeoFire(driverAvalbl.child(dataSnapshot.getKey()));
+                        Log.i("CHILD ADDED", dataSnapshot.getKey());
+                        GeoFire geoDriverLocation = new GeoFire(FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests").child(dataSnapshot.getKey().toString()));
                         try {
+
                             JSONObject cust = new JSONObject(((String) dataSnapshot.child("Customer").getValue()));
                             String name = cust.getString("name");
                             String email = cust.getString("email");
@@ -347,14 +375,16 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             cutomerMod.setDestinationAddress(dropOFF);
                             cutomerMod.setPickupAddress(pickupAddress);
 
+                            initDriverHistory(); //after Customer init
 
 
                         } catch (Exception e) {
-                            Log.i("ERROR","Driver Map Activity"+e.toString());
+                            Log.i("ERROR", "Driver Map Activity" + e.toString());
 
                             cutomerMod = new UserModel("", "", "", "", 4.5);
-                            customerVehicle = new VehicleModel("","","",true,"","");
+                            customerVehicle = new VehicleModel("", "", "", true, "", "");
                         }
+                        Log.i("Location", geoDriverLocation.getDatabaseReference().toString());
 
 
                         geoDriverLocation.getLocation("PickupLocation", new LocationCallback() {
@@ -375,8 +405,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                                     driverViewStateControler(NEWREQ);
                                     marksCameraUpdate();
                                     hidePopup();
-                                    showPopup(getResources().getString(R.string.new_request), getResources().getString(R.string.textView_clientName)+" : "+ cutomerMod.getName(), getResources().getString(R.string.textView_vehicle_make)+" : "+customerVehicle.getColor()+" - "+customerVehicle.getMake()+" - "+ (customerVehicle.isType()?getResources().getString(R.string.sedan):getResources().getString(R.string.SUV)), getResources().getString(R.string.textView_vehicle_model)+" : "+customerVehicle.getYear()+", "+customerVehicle.getModel(), getResources().getString(R.string.service)+" : "+cutomerMod.getServiceType());
-
+                                    showPopup(getResources().getString(R.string.new_request), getResources().getString(R.string.textView_clientName) + " : " + cutomerMod.getName(), getResources().getString(R.string.textView_vehicle_make) + " : " + customerVehicle.getColor() + " - " + customerVehicle.getMake() + " - " + (customerVehicle.isType() ? getResources().getString(R.string.sedan) : getResources().getString(R.string.SUV)), getResources().getString(R.string.textView_vehicle_model) + " : " + customerVehicle.getYear() + ", " + customerVehicle.getModel(), getResources().getString(R.string.service) + " : " + cutomerMod.getServiceType());
+                                    currentHistory.setClientIntialPickupAddress(locat.toString());
                                 }
                             }
 
@@ -395,6 +425,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                                     locat.setLatitude(location.latitude);
                                     locat.setLongitude(location.longitude);
                                     cutomerMod.setDestination(locat);
+                                    currentHistory.setClientIntialDropOffAddress(locat.toString());
                                 }
                             }
 
@@ -406,7 +437,15 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         });
 
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
-                        initDriverHistory();
+
+
+                        Calendar calendar1 = Calendar.getInstance();
+                        SimpleDateFormat formatter1 = new SimpleDateFormat("dd/M/yyyy h:mm");
+                        String currentDate = formatter1.format(calendar1.getTime());
+
+                        Log.i("Time MODEL", currentDate);
+
+                        currentHistory.setStartTime(currentDate);
 
                     } else if (!requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant")) {
                         //  requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
@@ -424,7 +463,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                     if (onRout && cutomerMod != null && !cutomerMod.getID().isEmpty() && requestsMap.containsKey(dataSnapshot.getKey()) && cutomerMod.getID().equals(dataSnapshot.getKey())) {
                         Log.i("REMOVE CURRENT CUSTOMER", cutomerMod.getID());
                         Toast.makeText(mContext, cutomerMod.getName() + " CANCELLED", Toast.LENGTH_SHORT).show();
+                        addHistory.removeValue();
+                        driverMod.getHistory().remove(currentHistory.getId());
 
+                        currentHistory.setId("");
                         cutomerMod = null;
                         onRout = false;
                         requestsMap.remove(dataSnapshot.getKey());
@@ -436,14 +478,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         DataSnapshot nextCustomer = (new ArrayList<DataSnapshot>(requestsMap.values())).get(0);
                         requestsMap.remove(nextCustomer.getKey());
                         if (CURRENTSTATE == ONLINE) onChildAdded(nextCustomer, "");
-                    } else if (requestsMap.size() == 1) {
-                        Log.i("REMOVingg", dataSnapshot.getKey());
-                        Log.i("REMOVingg", cutomerMod.getID());
-                        if (cutomerMod.getID().equals(dataSnapshot.getKey())) cutomerMod = null;
-                        if (!onRout) driverViewStateControler(ONLINE);
+                    } else if (requestsMap.containsKey(dataSnapshot.getKey()) && requestsMap.size() == 1) {
+                        cancel_btn(dataSnapshot.getKey());
                         requestsMap.remove(dataSnapshot.getKey());
-                        hidePopup();
-                        displayLocation();
                         // if (onRout && dataSnapshot.getKey().equals(cutomerMod.getID()))
                         //    Toast.makeText(mContext, cutomerMod.getName() + " CANCELLED", Toast.LENGTH_SHORT).show();
                     }
@@ -580,8 +617,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     }
 
     private void initDriverHistory() {
-        if (currentDriverHistory == null || currentDriverHistory.getId().isEmpty())
-            currentDriverHistory = new HistoryModel("", "", "", "", "", driverMod.getName(), driverMod.getID(), driverMod.getName(), driverMod.getID(), driverMod.getDriverCarType());
+        if (currentHistory == null || currentHistory.getId().isEmpty())
+            currentHistory = new HistoryModel("", "", "", "", "", cutomerMod.getName(), cutomerMod.getID(), driverMod.getName(), driverMod.getID(), driverMod.getDriverCarType());
     }
 
     @Override
@@ -728,6 +765,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
         //mCancel.setVisibility(View.VISIBLE);
         //mCancel.setText("Driver cancelled the trip!!");
+//        Log.i("DRIVER CANCELLED", cutomerMod.getID());
         assignedCustomer = "";
         if (assignedCustomerPickupLocationRef != null) {
             assignedCustomerPickupLocationRef.removeEventListener(assignedCustomerPickupLocationRefEventListner);
@@ -760,6 +798,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_cancel) {
+            cancel_btn(null);
             return true;
         }
 
@@ -778,7 +817,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             viewProfilEdit();
             return true;
         } else if (id == R.id.nav_history) {
-            //   currentFragment = new CustomerHistoryFragment(false, getDriver().getID());
+            currentFragment = new DriverHistoryFragment();
         } else if (id == R.id.nav_language) {
 
 
@@ -933,6 +972,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
         if (cutomerMod != null) {
             driverViewStateControler(ONROUT);
+            saveHistory();
             hidePopup();
             driverLocation.child(userId).removeValue();
             driverAvalbl = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests");
@@ -975,6 +1015,28 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 FirebaseAuth.getInstance().signOut();
                 Intent customerWelcome = new Intent(DriverMapsActivity.this, WelcomeActivity.class);
                 startActivity(customerWelcome);
+                break;
+            case R.id.img_call_btn:
+                if (cutomerMod != null && cutomerMod.getMobile() != null)
+                    startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", cutomerMod.getMobile(), null)));
+
+                break;
+            case R.id.img_map_btn:
+                double destinationLatitude = 0;
+                double destinationLongitude = 0;
+                if (CURRENTSTATE == ONROUT && cutomerMod.getPickup() != null) {
+                    destinationLatitude = cutomerMod.getPickup().getLatitude();
+                    destinationLongitude = cutomerMod.getPickup().getLongitude();
+                } else if (CURRENTSTATE == TODISTINATION && cutomerMod.getDestination() != null) {
+                    destinationLatitude = cutomerMod.getDestination().getLatitude();
+                    destinationLongitude = cutomerMod.getDestination().getLongitude();
+                }
+                if (destinationLatitude != 0) {
+                    String url = "http://maps.google.com/maps?f=d&daddr=" + destinationLatitude + "," + destinationLongitude + "&dirflg=d&layer=t";
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+                    intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                    startActivity(intent);
+                }
                 break;
         }
     }
@@ -1077,6 +1139,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
                 bottomButton1_btn.setVisibility(View.INVISIBLE);
                 if (menu != null) menu.findItem(R.id.action_cancel).setVisible(false);
+                swtch_onlineOffline.setVisibility(View.VISIBLE);
+                call_btn.setVisibility(View.GONE);
+                navigation_btn.setVisibility(View.GONE);
                 CURRENTSTATE = driverState;
                 break;
             case NEWREQ:
@@ -1101,8 +1166,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 swtch_onlineOffline.setVisibility(View.INVISIBLE);
                 bottomButton1_btn.setVisibility(View.INVISIBLE);
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
-                CURRENTSTATE = driverState;
                 if (menu != null) menu.findItem(R.id.action_cancel).setVisible(true);
+                CURRENTSTATE = driverState;
+                swtch_onlineOffline.setVisibility(View.GONE);
+                call_btn.setVisibility(View.VISIBLE);
+                navigation_btn.setVisibility(View.VISIBLE);
                 break;
             case ARRIVE:
                 Log.i("STATE", "ARR");
@@ -1110,7 +1178,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 CURRENTSTATE = driverState;
                 bottomButton2_btn.setVisibility(View.INVISIBLE);
                 bottomButton1_btn.setVisibility(View.VISIBLE);
-
+                swtch_onlineOffline.setVisibility(View.GONE);
+                call_btn.setVisibility(View.VISIBLE);
+                navigation_btn.setVisibility(View.VISIBLE);
                 break;
             case OFFLINE:
                 Log.i("STATE", "OFF");
@@ -1124,6 +1194,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 clearMarkers();
                 requestsMap.clear();
                 if (menu != null) menu.findItem(R.id.action_cancel).setVisible(false);
+
+                swtch_onlineOffline.setVisibility(View.VISIBLE);
+                call_btn.setVisibility(View.GONE);
+                navigation_btn.setVisibility(View.GONE);
                 CURRENTSTATE = driverState;
                 break;
             case SIDENAV:
@@ -1174,6 +1248,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton2_btn.setEnabled(true);
                 CURRENTSTATE = driverState;
                 onRout = false;
+
                 break;
             case TODISTINATION:
                 Log.i("STATE", "TODISTINATION");
@@ -1187,6 +1262,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 if (menu != null) menu.findItem(R.id.action_cancel).setVisible(true);
                 CURRENTSTATE = driverState;
+                swtch_onlineOffline.setVisibility(View.GONE);
+                call_btn.setVisibility(View.VISIBLE);
+                navigation_btn.setVisibility(View.VISIBLE);
                 showRout();
                 break;
         }
@@ -1198,6 +1276,16 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     public void gotDurationDistanceRout(String output) {
         mBottomTextView.setText(getResources().getString(R.string.eta) + " " + getDirectionsData.getDuration());
         //   driverViewStateControler(ONROUT); //must be after showRout to get the correct duration
+
+        if (currentHistory != null) {
+//should be the customer not the driver
+            currentHistory.setEta(getDirectionsData.getDuration());
+            currentHistory.setDistance(getDirectionsData.getDistance());
+            currentHistory.setTimeSec(getDirectionsData.getTimeSec());
+            currentHistory.calculateCost(customerVehicle.isType());
+            Toast.makeText(this, currentHistory.getCost() + " L.E.", Toast.LENGTH_SHORT);
+            saveHistory();
+        }
     }
 
     private boolean nearCustomer() {
@@ -1259,4 +1347,144 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         return state;
     }
 
+    private void cancel_btn(@Nullable String key) {
+        driverViewStateControler(ONLINE);
+
+        try {
+            Calendar calendar1 = Calendar.getInstance();
+            SimpleDateFormat formatter1 = new SimpleDateFormat("dd/M/yyyy h:mm");
+            String currentDate = formatter1.format(calendar1.getTime());
+            Date date2 = formatter1.getCalendar().getTime();
+            Date date1 = formatter1.parse(currentHistory.getStartTime());
+            long mills = date2.getTime() - date1.getTime();
+            int mins = (int) ((mills / (1000 * 60)) % 60);
+
+            if (mins <= 3) {
+                addHistory.removeValue();
+                driverMod.getHistory().remove(currentHistory.getId());
+
+            } else {
+                currentHistory.setCost(-150.0);
+                currentHistory.setCompeleted(false);
+                currentHistory.setEndTime(currentDate);
+                saveHistory();
+            }
+            currentHistory.setId("");
+        } catch (Exception e) {
+            Log.i("Error", "CustomerMap" + e.toString());
+        }
+
+        hidePopup();
+        displayLocation();
+        if (cutomerMod != null && driverAvalbl != null)
+            driverAvalbl.child(cutomerMod.getID()).removeValue();
+        if (cutomerMod != null) requestsMap.remove(cutomerMod.getID());
+        requestCancelled();
+        reciveRequests(false);
+        reciveRequests(true);
+        driverViewStateControler(ONLINE);
+        if (key != null && cutomerMod.getID().equals(key)) cutomerMod = null;
+
+
+    }
+
+
+    //History MODEL - CONTROLLER
+    private void getDriverHistory() {
+        DatabaseReference getTrips = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userId).child("Trips");
+        getTrips.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int trips = 0;
+                for (DataSnapshot historySnapshot : dataSnapshot.getChildren()) {
+
+                    if (historySnapshot.getKey().equals("FirstConstant")) continue;
+
+                    trips++;
+
+                    HistoryModel historyModel = new HistoryModel(historySnapshot.getKey().toString(), historySnapshot.child("timeStamp").getValue() != null ? historySnapshot.child("timeStamp").getValue().toString() : "_date", historySnapshot.child("startTime").getValue() != null ? historySnapshot.child("startTime").getValue().toString() : "_startTime", historySnapshot.child("eta").getValue() != null ? historySnapshot.child("eta").getValue().toString() : "_ETA", historySnapshot.child("distance").getValue() != null ? historySnapshot.child("distance").getValue().toString() : "_distance", historySnapshot.child("clientName").getValue() != null ? historySnapshot.child("clientName").getValue().toString() : "_clientName", historySnapshot.child("cleintID").getValue() != null ? historySnapshot.child("cleintID").getValue().toString() : "_cleintID", historySnapshot.child("driverName").getValue() != null ? historySnapshot.child("driverName").getValue().toString() : "_driverName", historySnapshot.child("driverID").getValue() != null ? historySnapshot.child("driverID").getValue().toString() : "_driverID", historySnapshot.child("vehicleDetails").getValue() != null ? historySnapshot.child("vehicleDetails").getValue().toString() : "_vehicleDetails");
+
+                    historyModel.setCost(Double.parseDouble(historySnapshot.child("cost").getValue() != null ? historySnapshot.child("cost").getValue().toString() : "404"));
+                    historyModel.setTimeSec(Double.parseDouble(historySnapshot.child("timeSec").getValue() != null ? historySnapshot.child("timeSec").getValue().toString() : "404"));
+                    historyModel.setCompeleted((historySnapshot.child("compeleted").getValue() != null ? (historySnapshot.child("compeleted").getValue().toString()).equals("true") ? true : false : false));
+
+
+                    historyModel.setDriverStartAddress(historySnapshot.child("driverStartAddress").getValue() != null ? historySnapshot.child("driverStartAddress").getValue().toString() : "404");
+                    historyModel.setClientIntialDropOffAddress(historySnapshot.child("clientIntialDropOffAddress").getValue() != null ? historySnapshot.child("clientIntialDropOffAddress").getValue().toString() : "404");
+                    historyModel.setClientActualDroOffAddress(historySnapshot.child("clientActualDroOffAddress").getValue() != null ? historySnapshot.child("clientActualDroOffAddress").getValue().toString() : "404");
+                    historyModel.setClientIntialPickupAddress(historySnapshot.child("clientIntialPickupAddress").getValue() != null ? historySnapshot.child("clientIntialPickupAddress").getValue().toString() : "404");
+                    historyModel.setClientActualPickupAddress(historySnapshot.child("clientActualPickupAddress").getValue() != null ? historySnapshot.child("clientActualPickupAddress").getValue().toString() : "404");
+
+                    //      historyModel.setDriverStartLocation(historySnapshot.child("driverStartLocation").getValue() != null ? Location(historySnapshot.child("driverStartLocation").getValue()) : "404");
+
+                    //      historyModel.setClientIntialDropOffAddress(historySnapshot.child("clientIntialDropOffAddress").getValue() != null ? historySnapshot.child("clientIntialDropOffAddress").getValue().toString() : "404");
+
+                    //     historyModel.setClientIntialDropOffAddress(historySnapshot.child("clientIntialDropOffAddress").getValue() != null ? historySnapshot.child("clientIntialDropOffAddress").getValue().toString() : "404");
+
+                    //      historyModel.setClientIntialDropOffAddress(historySnapshot.child("clientIntialDropOffAddress").getValue() != null ? historySnapshot.child("clientIntialDropOffAddress").getValue().toString() : "404");
+
+                    //    historyModel.setClientIntialDropOffAddress(historySnapshot.child("clientIntialDropOffAddress").getValue() != null ? historySnapshot.child("clientIntialDropOffAddress").getValue().toString() : "404");
+
+
+                    driverMod.addHistory(historySnapshot.getKey().toString(), historyModel);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // ...
+            }
+        });
+
+
+    }
+
+    private void saveHistory() {
+
+
+        if (currentHistory != null) {
+            if (currentHistory.getId() == null || currentHistory.getId().isEmpty()) {
+                Calendar calendar1 = Calendar.getInstance();
+                SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MMM-dd-HH-mm-ss");
+                String currentDate = formatter1.format(calendar1.getTime());
+
+                currentHistory.setId(currentDate);
+                Log.i("HISTORY ID", currentDate);
+            }
+            String uid = userId;
+
+            addHistory = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(uid).child("Trips").child(currentHistory.getId());
+            addHistory.child("timeStamp").setValue(ServerValue.TIMESTAMP);
+            addHistory.child("startTime").setValue(currentHistory.getStartTime());
+            addHistory.child("endTime").setValue(currentHistory.getEndTime());
+            addHistory.child("eta").setValue(currentHistory.getEta());
+            addHistory.child("distance").setValue(currentHistory.getDistance());
+            addHistory.child("clientName").setValue(currentHistory.getClientName());
+            addHistory.child("clientID").setValue(currentHistory.getCleintID());
+            addHistory.child("driverName").setValue(currentHistory.getDriverName());
+            addHistory.child("driverID").setValue(currentHistory.getDriverID());
+            addHistory.child("vehicleDetails").setValue(currentHistory.getVehicleDetails());
+            addHistory.child("cost").setValue(currentHistory.getCost().toString());
+            addHistory.child("timeSec").setValue("" + currentHistory.getTimeSec());
+            addHistory.child("compeleted").setValue(currentHistory.isCompeleted() + "");
+
+            addHistory.child("cost").setValue(currentHistory.getCost());
+            addHistory.child("compeleted").setValue(currentHistory.isCompeleted());
+
+
+            addHistory.child("driverStartAddress").setValue(currentHistory.getDriverStartAddress());
+            addHistory.child("clientIntialDropOffAddress").setValue(currentHistory.getClientIntialDropOffAddress());
+            addHistory.child("clientActualDroOffAddress").setValue(currentHistory.getClientActualDroOffAddress());
+            addHistory.child("clientIntialPickupAddress").setValue(currentHistory.getClientIntialPickupAddress());
+            addHistory.child("clientActualPickupAddress").setValue(currentHistory.getClientActualPickupAddress());
+            addHistory.child("driverStartLocation").setValue(currentHistory.getDriverStartLocation());
+            addHistory.child("clientActualDropOffLocation").setValue(currentHistory.getClientActualDropOffLocation());
+            addHistory.child("clientIntialDropOffLocation").setValue(currentHistory.getClientIntialDropOffLocation());
+            addHistory.child("clientActualPickupLocation").setValue(currentHistory.getClientActualPickupLocation());
+            addHistory.child("clientIntialPickupLocation").setValue(currentHistory.getClientIntialPickupLocation());
+
+            driverMod.addHistory(currentHistory.getId().toString(), currentHistory);
+
+        }
+    }
 }

@@ -162,13 +162,12 @@
 
     <string name="Logout">LOGOUT</string>
     <string name="Profile">Profile</string>
-    <string name="history">History</string>
+    <string name="history">My Trips</string>
     <string name="Promo_code">Promo Code</string>
     <string name="reset_password">Reset Password</string>
     <string name="fields_cannot_empty">Please fill all required fields</string>
     <string name="wrong_phone_number">Wrong Phone Number</string>s
     <string name="vehicle_prompt">Choose vehicle</string>
-
 
 
     <string name="sedan">Sedan</string>

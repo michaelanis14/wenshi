@@ -13,7 +13,6 @@
         android:layout_height="356dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="@color/tw__solid_white"
         android:contentDescription="@string/label_logoDescritop"
         app:srcCompat="@drawable/full_logo" />
 
