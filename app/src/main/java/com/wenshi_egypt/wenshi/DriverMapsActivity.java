@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -180,7 +181,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         swtch_onlineOffline = findViewById(R.id.onlineOffline_swtch);
 
         bottomButton1_btn = (Button) findViewById(R.id.btn_1);
+        bottomButton1_btn.setBackgroundColor(Color.BLACK);
         bottomButton2_btn = (Button) findViewById(R.id.btn_2);
+        bottomButton2_btn.setBackgroundColor(Color.BLACK);
         bottomButton1_btn.setOnClickListener(this);
         bottomButton2_btn.setOnClickListener(this);
 
@@ -340,7 +343,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
                     if (requestsMap.size() == 0 && !requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant") && !dataSnapshot.getKey().equals("Accept")) {
                         Log.i("CHILD ADDED", dataSnapshot.getKey());
-                        GeoFire geoDriverLocation = new GeoFire(FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests").child(dataSnapshot.getKey().toString()));
                         try {
 
                             JSONObject cust = new JSONObject(((String) dataSnapshot.child("Customer").getValue()));
@@ -384,57 +386,11 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             cutomerMod = new UserModel("", "", "", "", 4.5);
                             customerVehicle = new VehicleModel("", "", "", true, "", "");
                         }
-                        Log.i("Location", geoDriverLocation.getDatabaseReference().toString());
+                        // Log.i("Location", geoDriverLocation.getDatabaseReference().toString());
 
+                        getPickupLocation();
+                        getDropOffLocation();
 
-                        geoDriverLocation.getLocation("PickupLocation", new LocationCallback() {
-                            @Override
-                            public void onLocationResult(String key, GeoLocation location) {
-                                if (location != null) {
-
-
-                                    Marker mCustomerLocation = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).title(cutomerMod.getName()));
-
-                                    Location locat = new Location("dummyprovider");
-                                    locat.setLatitude(location.latitude);
-                                    locat.setLongitude(location.longitude);
-
-                                    cutomerMod.setPickup(locat);
-                                    markers.put(key, mCustomerLocation);
-
-                                    driverViewStateControler(NEWREQ);
-                                    marksCameraUpdate();
-                                    hidePopup();
-                                    showPopup(getResources().getString(R.string.new_request), getResources().getString(R.string.textView_clientName) + " : " + cutomerMod.getName(), getResources().getString(R.string.textView_vehicle_make) + " : " + customerVehicle.getColor() + " - " + customerVehicle.getMake() + " - " + (customerVehicle.isType() ? getResources().getString(R.string.sedan) : getResources().getString(R.string.SUV)), getResources().getString(R.string.textView_vehicle_model) + " : " + customerVehicle.getYear() + ", " + customerVehicle.getModel(), getResources().getString(R.string.service) + " : " + cutomerMod.getServiceType());
-                                    currentHistory.setClientIntialPickupAddress(locat.toString());
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                driverViewStateControler(ONLINE);
-                                System.err.println("There was an error getting the GeoFire location: " + databaseError);
-                            }
-                        });
-
-                        geoDriverLocation.getLocation("DropoffLocation", new LocationCallback() {
-                            @Override
-                            public void onLocationResult(String key, GeoLocation location) {
-                                if (location != null) {
-                                    Location locat = new Location("dummyprovider");
-                                    locat.setLatitude(location.latitude);
-                                    locat.setLongitude(location.longitude);
-                                    cutomerMod.setDestination(locat);
-                                    currentHistory.setClientIntialDropOffAddress(locat.toString());
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                driverViewStateControler(ONLINE);
-                                System.err.println("There was an error getting the GeoFire location: " + databaseError);
-                            }
-                        });
 
                         requestsMap.put(dataSnapshot.getKey(), dataSnapshot);
 
@@ -504,6 +460,84 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             offline();
 
         }
+
+    }
+
+    private void getDropOffLocation() {
+        DatabaseReference getPickup = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests").child(cutomerMod.getID()).child("DropOffLocation").child("l");
+        getPickup.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                List<Object> map = (List<Object>) dataSnapshot.getValue();
+                double locationLat = 0;
+                double locationLng = 0;
+                if (map != null && map.get(0) != null) {
+                    locationLat = Double.parseDouble(map.get(0).toString());
+                }
+
+                if (map != null && map.get(1) != null) {
+                    locationLng = Double.parseDouble(map.get(1).toString());
+                }
+
+
+                Location locat = new Location("dummyprovider");
+                locat.setLatitude(locationLat);
+                locat.setLongitude(locationLng);
+
+                cutomerMod.setDestination(locat);
+                Log.i("Destination", cutomerMod.getDestination().getLatitude() + "");
+
+                currentHistory.setClientIntialDropOffAddress(locat.toString());
+
+                if (CURRENTSTATE == TODISTINATION) showRout();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // ...
+            }
+        });
+
+    }
+
+    private void getPickupLocation() {
+        DatabaseReference getPickup = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests").child(cutomerMod.getID()).child("PickupLocation").child("l");
+        getPickup.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                List<Object> map = (List<Object>) dataSnapshot.getValue();
+                double locationLat = 0;
+                double locationLng = 0;
+                if (map != null && map.get(0) != null) {
+                    locationLat = Double.parseDouble(map.get(0).toString());
+                }
+                if (map != null && map.get(1) != null) {
+                    locationLng = Double.parseDouble(map.get(1).toString());
+                }
+                Marker mCustomerLocation = mMap.addMarker(new MarkerOptions().position(new LatLng(locationLat, locationLng)).title(cutomerMod.getName()));
+
+                Location locat = new Location("dummyprovider");
+                locat.setLatitude(locationLat);
+                locat.setLongitude(locationLng);
+
+                cutomerMod.setPickup(locat);
+                markers.put(cutomerMod.getID(), mCustomerLocation);
+
+                driverViewStateControler(NEWREQ);
+                marksCameraUpdate();
+                hidePopup();
+                showPopup(getResources().getString(R.string.new_request), getResources().getString(R.string.textView_clientName) + " : " + cutomerMod.getName(), getResources().getString(R.string.textView_vehicle_make) + " : " + customerVehicle.getColor() + " - " + customerVehicle.getMake() + " - " + (customerVehicle.isType() ? getResources().getString(R.string.sedan) : getResources().getString(R.string.SUV)), getResources().getString(R.string.textView_vehicle_model) + " : " + customerVehicle.getYear() + ", " + customerVehicle.getModel(), getResources().getString(R.string.service) + " : " + cutomerMod.getServiceType());
+                currentHistory.setClientIntialPickupAddress(locat.toString());
+                if (CURRENTSTATE == ONROUT) showRout();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // ...
+            }
+        });
 
     }
 
@@ -999,19 +1033,27 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_1:
-                if (CURRENTSTATE == NEWREQ) acceptRequest();
-                if (CURRENTSTATE == ARRIVED) driverViewStateControler(TODISTINATION);
+                switch (CURRENTSTATE) {
+                    case NEWREQ:
+                        acceptRequest();
+                        break;
+                    case ARRIVED:
+                        driverViewStateControler(TODISTINATION);
+                        break;
+                }
                 break;
             case R.id.btn_2:
                 switch (CURRENTSTATE) {
                     case NEARCUSTOMER:
                         driverViewStateControler(ARRIVED);
                         break;
-                    case TOOKPHOTOS:
+                    case ARRIVED:
                         driverViewStateControler(TODISTINATION);
                         break;
                 }
+                break;
             case R.id.nav_header_logout:
+                Log.i("Driver Logout", driverMod.getID());
                 FirebaseAuth.getInstance().signOut();
                 Intent customerWelcome = new Intent(DriverMapsActivity.this, WelcomeActivity.class);
                 startActivity(customerWelcome);
@@ -1049,9 +1091,15 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             if (cutomerMod != null && !cutomerMod.getID().isEmpty() && cutomerMod.getPickup() != null && cutomerMod.getDestination() != null) {
 
                 if (CURRENTSTATE == ONROUT) {
+                    if (cutomerMod.getPickup().getLongitude() == 0) {
+                        getPickupLocation();
+                    }
                     mCustomerMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(cutomerMod.getPickup().getLatitude(), cutomerMod.getPickup().getLongitude())).title(cutomerMod.getName()));
                     markers.put(cutomerMod.getID(), mCustomerMarker);
                 } else if (CURRENTSTATE == TODISTINATION) {
+                    if (cutomerMod.getDestination().getLongitude() == 0) {
+                        getDropOffLocation();
+                    }
                     mCustomerMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(cutomerMod.getDestination().getLatitude(), cutomerMod.getDestination().getLongitude())).title(cutomerMod.getName()));
                     markers.put(cutomerMod.getID(), mCustomerMarker);
                 }
@@ -1129,6 +1177,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             case ONLINE:
                 Log.i("STATE", "ONLINE");
                 clearMarkers();
+                hidePopup();
                 requestsMap.clear();
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 swtch_onlineOffline.setVisibility(View.VISIBLE);
@@ -1146,6 +1195,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 break;
             case NEWREQ:
                 Log.i("STATE", "NEWREQ");
+
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 monlineOfflineLayout.setVisibility(View.GONE);
@@ -1160,6 +1210,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             case ONROUT:
                 Log.i("STATE", "ONROUT");
                 onRout = true;
+                hidePopup();
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.INVISIBLE);
                 monlineOfflineLayout.setVisibility(View.VISIBLE);
@@ -1184,6 +1235,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 break;
             case OFFLINE:
                 Log.i("STATE", "OFF");
+                hidePopup();
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.INVISIBLE);
                 monlineOfflineLayout.setVisibility(View.VISIBLE);
@@ -1201,6 +1253,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 CURRENTSTATE = driverState;
                 break;
             case SIDENAV:
+                hidePopup();
                 findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
                 findViewById(R.id.mainFrame).bringToFront();
                 findViewById(R.id.mainFrame).requestLayout();
@@ -1222,18 +1275,18 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 break;
             case ARRIVED:
                 Log.i("STATE", "ARRIVED");
-                showPopup(getResources().getString(R.string.arrived), "CLIENT : " + cutomerMod.getName(), "CAR TYPE : ", "CAR MODEL : ", "SERVICE : Wenshi");
+                showPopup(getResources().getString(R.string.new_request), getResources().getString(R.string.textView_clientName) + " : " + cutomerMod.getName(), getResources().getString(R.string.textView_vehicle_make) + " : " + customerVehicle.getColor() + " - " + customerVehicle.getMake() + " - " + (customerVehicle.isType() ? getResources().getString(R.string.sedan) : getResources().getString(R.string.SUV)), getResources().getString(R.string.textView_vehicle_model) + " : " + customerVehicle.getYear() + ", " + customerVehicle.getModel(), getResources().getString(R.string.service) + " : " + cutomerMod.getServiceType());
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 monlineOfflineLayout.setVisibility(View.GONE);
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                bottomButton1_btn.setVisibility(View.VISIBLE);
-                bottomButton1_btn.setText(getResources().getString(R.string.takePhoto));
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                bottomButton1_btn.setVisibility(View.GONE);
+                // bottomButton1_btn.setText(getResources().getString(R.string.takePhoto));
                 bottomButton2_btn.setVisibility(View.VISIBLE);
                 bottomButton2_btn.setText(getResources().getString(R.string.start));
-                bottomButton2_btn.setEnabled(false);
+                bottomButton2_btn.setEnabled(true);
                 CURRENTSTATE = driverState;
-                onRout = false;
+                onRout = true;
                 break;
             case TOOKPHOTOS:
                 Log.i("STATE", "TOOKPHOTOS");
@@ -1247,12 +1300,13 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton2_btn.setText(getResources().getString(R.string.start));
                 bottomButton2_btn.setEnabled(true);
                 CURRENTSTATE = driverState;
-                onRout = false;
+                // onRout = false;
 
                 break;
             case TODISTINATION:
                 Log.i("STATE", "TODISTINATION");
                 onRout = true;
+                hidePopup();
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.INVISIBLE);
                 monlineOfflineLayout.setVisibility(View.VISIBLE);

@@ -50,6 +50,8 @@ public class TraceDriverFragment extends Fragment implements View.OnClickListene
         Bundle args = getArguments();
         if (args != null) {
         }
+        callDriver.bringToFront();
+
 
         if(((CustomerMapActivity) getActivity()).getGetDirectionsData() != null)
         eta.setText(getResources().getString(R.string.your_wenshi_will_arrive_in) + " " + ((CustomerMapActivity) getActivity()).getGetDirectionsData().getDuration());
@@ -62,6 +64,7 @@ public class TraceDriverFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.button_call_driver) {
+            Log.i("DriverMocelForcall",driverModel.toString());
             if (driverModel != null && driverModel.getMobile() != null)
                 startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", driverModel.getMobile(), null)));
             else {

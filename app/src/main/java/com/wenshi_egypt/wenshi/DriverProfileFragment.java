@@ -30,10 +30,9 @@ import java.util.HashMap;
 
 public class DriverProfileFragment extends Fragment implements View.OnClickListener {
 
-    EditText username, email, mobile, carType,plateNo;
+    private EditText username, email, mobile, carType,plateNo;
 
-    DatabaseReference rootRef, profRef;
-    Button saveButton;
+    private Button saveButton;
     private UserModel driver;
     boolean nameChanged, emailChanged;
 
@@ -113,6 +112,9 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        try {
+
+
         if (view.getId() == R.id.button_driverProfile_saveButton) {
 
             if (driver != null) {
@@ -121,42 +123,27 @@ public class DriverProfileFragment extends Fragment implements View.OnClickListe
                 if (!String.valueOf(plateNo.getText()).isEmpty() &&!String.valueOf(carType.getText()).isEmpty() &&!String.valueOf(mobile.getText()).isEmpty() && !String.valueOf(username.getText()).isEmpty() && !String.valueOf(email.getText()).isEmpty()) {
 
                     if (!driver.getName().equals(username.getText().toString()) && !username.getText().toString().isEmpty()) {
-                        nameChanged = true;
                         getView().findViewById(R.id.progress_wheel_driver_profile).setVisibility(View.VISIBLE);
                         updateUserNameAuth();
                     }
                     if (!driver.getEmail().equals(email.getText().toString()) && !email.getText().toString().isEmpty()) {
-                        emailChanged = true;
                         getView().findViewById(R.id.progress_wheel_driver_profile).setVisibility(View.VISIBLE);
-                        updateUserEmailAuth();
                     }
-                    if (!driver.getName().equals(username.getText().toString()) && !username.getText().toString().isEmpty()) {
-                        nameChanged = true;
-                        getView().findViewById(R.id.progress_wheel_driver_profile).setVisibility(View.VISIBLE);
-                        updateUserNameFire();
-                    }
-                    if (!driver.getDriverCarType().equals(carType.getText().toString()) && !carType.getText().toString().isEmpty()) {
-                        nameChanged = true;
-                        getView().findViewById(R.id.progress_wheel_driver_profile).setVisibility(View.VISIBLE);
-                        updateCarType();
-                    }
-                    if (!driver.getDriverPlateNo().equals(plateNo.getText().toString()) && !plateNo.getText().toString().isEmpty()) {
-                        nameChanged = true;
-                        getView().findViewById(R.id.progress_wheel_driver_profile).setVisibility(View.VISIBLE);
-                        updatePlateNo();
-                    }
-                    if (!driver.getMobile().equals(mobile.getText().toString()) && !mobile.getText().toString().isEmpty()) {
-                        nameChanged = true;
-                        getView().findViewById(R.id.progress_wheel_driver_profile).setVisibility(View.VISIBLE);
-                        updateDriverMobile();
-                    }
+                    nameChanged = true;
+                    emailChanged = true;
+                    updateUserEmailFire();
+                    updateCarType();
+                    updatePlateNo();
+                    updateDriverMobile();
 
-
-                     saved();
 
                 } else
                     Toast.makeText(getActivity(), getResources().getString(R.string.fields_cannot_empty), Toast.LENGTH_LONG).show();
             }
+        }
+
+        }catch (Exception e){
+            Log.i("ERROR","ProfileFragment"+e.toString());
         }
     }
 

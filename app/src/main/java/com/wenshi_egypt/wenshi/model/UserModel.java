@@ -56,8 +56,8 @@ public class UserModel implements Parcelable {
         this.email = email;
         this.mobile = mobile;
         Location locationCairo = new Location("");
-        locationCairo.setLatitude(CAIRO.latitude);
-        locationCairo.setLongitude(CAIRO.longitude);
+        locationCairo.setLatitude(0.0);
+        locationCairo.setLongitude(0.0);
         pickup = locationCairo;
         destination = locationCairo;
         this.rating = rating;

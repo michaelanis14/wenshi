@@ -10,10 +10,13 @@
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="match_parent"
-        android:layout_height="356dp"
+        android:layout_height="321dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:adjustViewBounds="false"
+        android:background="@color/tw__solid_white"
         android:contentDescription="@string/label_logoDescritop"
+        android:padding="60dp"
         app:srcCompat="@drawable/full_logo" />
 
 
@@ -35,8 +38,8 @@
         android:layout_height="48dp"
         android:layout_below="@id/imageView2"
         android:layout_centerHorizontal="true"
-        android:checked="false"
         android:background="@color/tw__solid_white"
+        android:checked="false"
 
         android:fadeScrollbars="true"
         android:visibility="gone" />
@@ -51,10 +54,10 @@
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@id/riderOrDriver_swtch"
         android:layout_toRightOf="@id/riderOrDriver_swtch"
+        android:background="@color/tw__solid_white"
         android:text="@string/label_driver"
         android:textColor="#373737"
         android:textSize="24sp"
-        android:background="@color/tw__solid_white"
 
         android:visibility="gone" />
 
@@ -67,10 +70,10 @@
         android:layout_marginStart="10dp"
         android:layout_toLeftOf="@id/riderOrDriver_swtch"
         android:layout_toStartOf="@id/riderOrDriver_swtch"
+        android:background="@color/tw__solid_white"
         android:text="@string/label_rider"
         android:textColor="#373737"
         android:textSize="24sp"
-        android:background="@color/tw__solid_white"
         android:visibility="gone" />
 
     <Button

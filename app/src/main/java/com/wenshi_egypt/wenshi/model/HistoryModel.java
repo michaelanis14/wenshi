@@ -345,4 +345,9 @@ public class HistoryModel implements Parcelable {
         parcel.writeDouble(cost);
         parcel.writeDouble(timeSec);
     }
+
+
+    public String toString() {
+        return "{" + "\"ID\":\"" + this.id + "\"" + ", \"date\":\"" + date + "\"" + ", \"startTime\":\"" + startTime + "\"" + ", \"endTime\":\"" + endTime + "\"" + ", \"eta\":\"" + eta + "\"" + ", \"distance\":\"" + distance + "\"" + ", \"clientName\":\"" + cleintID + "\"" + ", \"driverName\":\"" + driverName.toString() + "\"" + ", \"driverID\":\"" + driverID.toString() + "\"" + ", \"cost\":\"" + cost + "\""+ "  " + '}';
+    }
 }

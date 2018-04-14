@@ -794,6 +794,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                 GeoFire customerGeoFire = new GeoFire(driver);
                 customerGeoFire.setLocation("PickupLocation", new GeoLocation(user.getPickup().getLatitude(), user.getPickup().getLongitude()));
+                Log.i("Destination",user.getDestination().getLatitude()+"");
                 customerGeoFire.setLocation("DropOffLocation", new GeoLocation(user.getDestination().getLatitude(), user.getDestination().getLongitude()));
 
                 GeoFire geoDriverLocation = new GeoFire(driversAvlbl);
@@ -926,6 +927,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                     driverModel.setCurrentLocation(locat);
                     getDistanceBetweenPickUpToDriver();
+                    showRout();
                     marksCameraUpdate();
                 }
             }
@@ -1916,7 +1918,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                 getSupportActionBar().setTitle(getResources().getString(R.string.driver_confirmed_onrout));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                mbtn1.setVisibility(View.GONE);
+                mbtn1.setVisibility(View.VISIBLE);
                 mbtn1.setText(getResources().getString(R.string.callDriver));
                 mbtn2.setVisibility(View.GONE);
                 mbtn2.setText(getResources().getString(R.string.cancelTrip));
@@ -2137,7 +2139,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
             }
             currentHistory.calculateCost(value);
             this.cash.setText(currentHistory.getCost() + " L.E.");
-            saveHistory();
+            if (CURRENTSTATE != TRACEDRIVER) saveHistory();
         }
 
 
