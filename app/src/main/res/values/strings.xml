@@ -209,13 +209,13 @@
 
     <string name="google_play_services_error">Google Play Services Error</string>
     <string name="family_inivitation_message">Wenshi Family Connect Request From</string>
-    <string name="please_compelete_your_profile">Please Compelete your profile</string>
+    <string name="please_compelete_your_profile">Please Complete your profile</string>
     <string name="languge">Language</string>
     <string name="textView_date">Date</string>
     <string name="textView_startTime">Start Time</string>
     <string name="textView_endTime">End Time</string>
     <string name="textView_eta">Trip Time</string>
-    <string name="textView_clientName">Cleint Name</string>
+    <string name="textView_clientName">Client Name</string>
     <string name="textView_cleintID">Client ID</string>
     <string name="textView_driverName">DriverName</string>
     <string name="textView_driverID">Driver ID</string>
@@ -226,4 +226,7 @@
     <string name="textView_tripID">Trip ID</string>
     <string name="textView_driverProfile_PlateNo_label">Plate No</string>
     <string name="your_wenshi_will_arrive_in">Your Wenshi will arrive in</string>
+    <string name="rate">Ratings</string>
+    <string name="comments">Comments</string>
+    <string name="trip_duration">Trip Durtation</string>
 </resources>

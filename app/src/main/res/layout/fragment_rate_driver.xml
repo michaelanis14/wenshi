@@ -1,13 +1,84 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.wenshi_egypt.wenshi.RateDriverFragment">
+    android:animateLayoutChanges="true"
+    android:animationCache="true"
+    android:divider="@drawable/empty_tall_divider"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:showDividers="middle">
 
-    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/textView_trip_toal_cost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/editText_profile_userName"
+        android:text="@string/textView_profile_userName_label"
+        android:textSize="25dp"
+        android:textColor="@color/colorBlack" />
+    <TextView
+        android:id="@+id/textView_trip_toal_km"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/editText_profile_userName"
+        android:text="@string/textView_profile_userName_label"
+        android:textSize="25dp"
+
+        android:textColor="@color/colorBlack" />
+    <TextView
+        android:id="@+id/textView_trip_toal_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:text="@string/textView_profile_userName_label"
+        android:textSize="25dp"
+
+        android:textColor="@color/colorBlack" />
+
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:labelFor="@id/ratingBar"
+        android:text="@string/rate" />
 
-</FrameLayout>
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:labelFor="@id/ratingBar"
+        android:text="@string/comments" />
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textMultiLine" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="center|bottom"
+        android:orientation="vertical">
+
+
+        <Button
+            android:id="@+id/rate_save"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="40dp"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="@string/fui_done"
+            android:textColor="@color/tw__solid_white" />
+    </LinearLayout>
+
+</LinearLayout>

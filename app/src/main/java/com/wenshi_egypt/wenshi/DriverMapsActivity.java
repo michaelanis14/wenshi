@@ -90,6 +90,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class DriverMapsActivity extends AppCompatActivity implements GetDirectionsData.AsyncResponse, View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DriverProfileFragment.OnFragmentInteractionListener, CustomerHistoryFragment.OnFragmentInteractionListener, OnNavigationItemSelectedListener, com.google.android.gms.location.LocationListener {
 
@@ -108,6 +109,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private static final int TODISTINATION = 10;
     private static final int ENDTRIP = 11;
     private static final int RATE = 12;
+    private static final int ATDISTINATION = 14;
     //static final LatLng CAIRO = new LatLng(30.044281, 31.340002);
     final int MY_PERMISSION_REQ_CODE = 1234;
     final int PLAY_SERVICE_RESLUOTION_CODE = 2345;
@@ -154,14 +156,15 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private Fragment currentFragment;
     private String duration;
     private String distance;
-
     private HistoryModel currentHistory;
     private HistoryDetailsFragment historyDetailsFragment;
     private DatabaseReference addHistory;
-
-
     private VehicleModel customerVehicle;
     private Menu menu;
+
+    public HistoryModel getCurrentHistory() {
+        return currentHistory;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -579,7 +582,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (mGoogleApiClient != null)
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            if (CURRENTSTATE == ONROUT || CURRENTSTATE == TODISTINATION)  // need more optimizations TODO: remove
+            if (CURRENTSTATE == ONROUT || CURRENTSTATE == TODISTINATION)
                 showRout();
 
             if (myCurrent != null) myCurrent.remove();  //remove Old Marker
@@ -684,6 +687,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         }
         displayLocation();
         if (CURRENTSTATE == ONROUT && nearCustomer()) driverViewStateControler(NEARCUSTOMER);
+        if (CURRENTSTATE == TODISTINATION && nearDestination())
+            driverViewStateControler(ATDISTINATION);
     }
 
 
@@ -814,6 +819,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (currentFragment != null) {
+
             driverViewStateControler(CURRENTSTATE);
             currentFragment = null;
         } else if (findViewById(R.id.mainFrame).getVisibility() == View.VISIBLE) {
@@ -888,7 +894,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         return true;
     }
 
-
     private void setLanguage(String lang) {
 
         setLocale(new Locale(lang));
@@ -924,10 +929,27 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     }
 
     public void viewProfilEdit() {
+        findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
+
         currentFragment = new DriverProfileFragment();
         if (currentFragment != null) {
             driverViewStateControler(SIDENAV);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.mainFrame, currentFragment);
+            ft.commit();
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.driver_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
+    }
+
+    public void viewRatingFragment() {
+        findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
+        currentFragment = new RateDriverFragment();
+        if (currentFragment != null) {
+//            driverViewStateControler(SIDENAV);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.setCustomAnimations(R.anim.anim_slide_in_right, R.anim.anim_slide_out_right);
             ft.replace(R.id.mainFrame, currentFragment);
             ft.commit();
         }
@@ -1006,7 +1028,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
         if (cutomerMod != null) {
             driverViewStateControler(ONROUT);
-            saveHistory();
             hidePopup();
             driverLocation.child(userId).removeValue();
             driverAvalbl = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests");
@@ -1049,6 +1070,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                         break;
                     case ARRIVED:
                         driverViewStateControler(TODISTINATION);
+                        break;
+                    case ATDISTINATION:
+                        driverViewStateControler(ENDTRIP);
                         break;
                 }
                 break;
@@ -1104,6 +1128,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                     markers.put(cutomerMod.getID(), mCustomerMarker);
                 }
 
+
             }
         } catch (Exception e) {
 
@@ -1125,6 +1150,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             } else if (CURRENTSTATE == TODISTINATION) {
                 dataTransfer[2] = new LatLng(cutomerMod.getDestination().getLatitude(), cutomerMod.getDestination().getLongitude());
             }
+
         }
 
 
@@ -1172,6 +1198,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         return (googlePlacesUrl.toString());
     }
 
+    //DRiver State Macines
     private void driverViewStateControler(int driverState) {
         switch (driverState) {
             case ONLINE:
@@ -1209,6 +1236,13 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 break;
             case ONROUT:
                 Log.i("STATE", "ONROUT");
+                Calendar calendar1 = Calendar.getInstance();
+                SimpleDateFormat formatter1 =  new SimpleDateFormat("dd/M/yyyy h:mm");
+                String currentDate = formatter1.format(calendar1.getTime());
+
+                currentHistory.setStartTime(currentDate);
+                saveHistory();
+
                 onRout = true;
                 hidePopup();
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
@@ -1275,7 +1309,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 break;
             case ARRIVED:
                 Log.i("STATE", "ARRIVED");
-                showPopup(getResources().getString(R.string.new_request), getResources().getString(R.string.textView_clientName) + " : " + cutomerMod.getName(), getResources().getString(R.string.textView_vehicle_make) + " : " + customerVehicle.getColor() + " - " + customerVehicle.getMake() + " - " + (customerVehicle.isType() ? getResources().getString(R.string.sedan) : getResources().getString(R.string.SUV)), getResources().getString(R.string.textView_vehicle_model) + " : " + customerVehicle.getYear() + ", " + customerVehicle.getModel(), getResources().getString(R.string.service) + " : " + cutomerMod.getServiceType());
+                currentHistory.setClientActualPickupLocation(driverMod.getCurrentLocation());
+                saveHistory();
+                showPopup(getResources().getString(R.string.arrived), getResources().getString(R.string.textView_clientName) + " : " + cutomerMod.getName(), getResources().getString(R.string.textView_vehicle_make) + " : " + customerVehicle.getColor() + " - " + customerVehicle.getMake() + " - " + (customerVehicle.isType() ? getResources().getString(R.string.sedan) : getResources().getString(R.string.SUV)), getResources().getString(R.string.textView_vehicle_model) + " : " + customerVehicle.getYear() + ", " + customerVehicle.getModel(), getResources().getString(R.string.service) + " : " + cutomerMod.getServiceType());
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 monlineOfflineLayout.setVisibility(View.GONE);
@@ -1321,6 +1357,50 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 navigation_btn.setVisibility(View.VISIBLE);
                 showRout();
                 break;
+
+            case ATDISTINATION:
+                Log.i("STATE", "ATDIS");
+                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                mBottomSheet.setVisibility(View.VISIBLE);
+                monlineOfflineLayout.setVisibility(View.GONE);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                bottomButton1_btn.setVisibility(View.GONE);
+                bottomButton2_btn.setVisibility(View.VISIBLE);
+                bottomButton2_btn.setText(getResources().getString(R.string.arrived));
+                CURRENTSTATE = driverState;
+                break;
+            case ENDTRIP:
+                Log.i("STATE", "END");
+                Log.i("Old_cost", currentHistory.getCost());
+                if (menu != null) menu.findItem(R.id.action_cancel).setVisible(false);
+
+                Calendar calendar2 = Calendar.getInstance();
+                SimpleDateFormat formatter2 =  new SimpleDateFormat("dd/M/yyyy h:mm");
+                String currentDate2 = formatter2.format(calendar2.getTime());
+                currentHistory.setEndTime(currentDate2);
+                currentHistory.setClientActualDropOffLocation(driverMod.getCurrentLocation());
+
+                currentHistory.setDistance(getActualDistanceBetweenPickupAndDropOff() + "");
+                currentHistory.setTimeSec(getActualTimeBetweenPickupAndDropOff());
+                currentHistory.setEta(getActualTimeBetweenPickupAndDropOff()+" Sec");
+                currentHistory.setCompeleted(true);
+
+                currentHistory.calculateCost(customerVehicle.isType());
+                saveHistory();
+
+//                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
+                mBottomSheet.setVisibility(View.VISIBLE);
+                monlineOfflineLayout.setVisibility(View.GONE);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                bottomButton1_btn.setVisibility(View.GONE);
+                // bottomButton1_btn.setText(getResources().getString(R.string.takePhoto));
+                bottomButton2_btn.setVisibility(View.VISIBLE);
+                bottomButton2_btn.setText(getResources().getString(R.string.fui_done));
+                bottomButton2_btn.setEnabled(true);
+                CURRENTSTATE = ONLINE;
+                viewRatingFragment();
+                requestsMap.clear();
+                break;
         }
 
 
@@ -1332,13 +1412,12 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         //   driverViewStateControler(ONROUT); //must be after showRout to get the correct duration
 
         if (currentHistory != null) {
-//should be the customer not the driver
-            currentHistory.setEta(getDirectionsData.getDuration());
             currentHistory.setDistance(getDirectionsData.getDistance());
             currentHistory.setTimeSec(getDirectionsData.getTimeSec());
             currentHistory.calculateCost(customerVehicle.isType());
             Toast.makeText(this, currentHistory.getCost() + " L.E.", Toast.LENGTH_SHORT);
-            saveHistory();
+
+           // saveHistory();
         }
     }
 
@@ -1358,6 +1437,66 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 return true;
             } else return false;
         } else return false;
+    }
+
+    private boolean nearDestination() {
+        Log.i("NEAR CUSTOMER", "" + (cutomerMod != null) + (driverMod != null));
+        if (cutomerMod != null && driverMod != null) {
+
+            Location driversAvlbl = new Location("");
+            driversAvlbl.setLatitude(driverMod.getCurrentLocation().getLatitude());
+            driversAvlbl.setLongitude(driverMod.getCurrentLocation().getLongitude());
+
+            Location pickupLoc = new Location("");
+            pickupLoc.setLatitude(cutomerMod.getDestination().getLatitude());
+            pickupLoc.setLongitude(cutomerMod.getDestination().getLongitude());
+            Log.i("Distancee", "" + driversAvlbl.distanceTo(pickupLoc));
+            if (driversAvlbl.distanceTo(pickupLoc) < 300) {
+                return true;
+            } else return false;
+        } else return false;
+    }
+
+    private float getActualDistanceBetweenPickupAndDropOff() {
+        float distance = 40;
+        try {
+            if (currentHistory != null && currentHistory.getClientActualDropOffLocation() != null && currentHistory.getClientActualPickupLocation() != null) {
+
+                Location pickup = new Location("");
+                pickup.setLatitude(currentHistory.getClientActualPickupLocation().getLatitude());
+                pickup.setLongitude(currentHistory.getClientActualPickupLocation().getLongitude());
+
+                Location dropoff = new Location("");
+                dropoff.setLatitude(currentHistory.getClientActualDropOffLocation().getLatitude());
+                dropoff.setLongitude(currentHistory.getClientActualDropOffLocation().getLongitude());
+
+                distance = pickup.distanceTo(dropoff) * 2;
+
+            }
+        } catch (Exception e) {
+            Log.i("Error", "getActualDistanceBetweenPickupAndDropOff" + e.toString());
+        }
+
+        return distance;
+    }
+
+    private long getActualTimeBetweenPickupAndDropOff() {
+        long diffInSec = 60;
+        try {
+            Calendar calendar1 = Calendar.getInstance();
+            SimpleDateFormat formatter1 =  new SimpleDateFormat("dd/M/yyyy h:mm");
+            String currentDate = formatter1.format(calendar1.getTime());
+            Date date2 = formatter1.parse(currentHistory.getStartTime());
+            Date date1 = formatter1.parse(currentHistory.getEndTime());
+            long mills = date1.getTime() - date2.getTime();
+            diffInSec = TimeUnit.MILLISECONDS.toSeconds(mills);
+
+
+        } catch (Exception e) {
+            Log.i("Error", "getActualTimeBetweenPickupAndDropOff" + e.toString());
+        }
+
+        return diffInSec;
     }
 
     @Override
