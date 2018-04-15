@@ -569,6 +569,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                         customerViewStateControler(DESTINATION);
                         break;
 
+
                 }
                 // mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 break;

@@ -1074,6 +1074,9 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                     case ATDISTINATION:
                         driverViewStateControler(ENDTRIP);
                         break;
+                    case ENDTRIP:
+                        driverViewStateControler(ONLINE);
+                        break;
                 }
                 break;
             case R.id.nav_header_logout:
@@ -1388,6 +1391,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 currentHistory.calculateCost(customerVehicle.isType());
                 saveHistory();
 
+                viewRatingFragment();
 //                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 mBottomSheet.setVisibility(View.VISIBLE);
                 monlineOfflineLayout.setVisibility(View.GONE);
@@ -1398,7 +1402,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton2_btn.setText(getResources().getString(R.string.fui_done));
                 bottomButton2_btn.setEnabled(true);
                 CURRENTSTATE = ONLINE;
-                viewRatingFragment();
+
                 requestsMap.clear();
                 break;
         }

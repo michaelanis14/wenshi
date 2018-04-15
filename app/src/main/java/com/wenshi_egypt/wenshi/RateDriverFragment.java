@@ -18,10 +18,9 @@ import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
 
 
-public class RateDriverFragment extends Fragment implements View.OnClickListener {
+public class RateDriverFragment extends Fragment {
 
     private TextView totalCost, distance, time;
-    private Button save;
 
     public RateDriverFragment() {
     }
@@ -49,24 +48,14 @@ public class RateDriverFragment extends Fragment implements View.OnClickListener
         totalCost = getActivity().findViewById(R.id.textView_trip_toal_cost);
         distance = getActivity().findViewById(R.id.textView_trip_toal_km);
         time = getActivity().findViewById(R.id.textView_trip_toal_time);
-        save =  getView().findViewById(R.id.rate_save);
-        save.setBackgroundColor(Color.BLACK);
-        save.bringToFront();
-        save.setOnClickListener(this);
+
     }
 
-    @Override
-    public void onClick(View view) {
-        Log.i("RATEEDRIVEER","CLICKKK");
-        ((DriverMapsActivity) getActivity()).onBackPressed();
-    }
+
 
     @Override
     public void onStart() {
         super.onStart();
-
-        save.bringToFront();
-
         try {
             ((DriverMapsActivity) getActivity()).getCurrentHistory().getCost();
 
