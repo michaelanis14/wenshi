@@ -104,6 +104,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -168,12 +169,14 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
-            long millis = System.currentTimeMillis() - startTime;
-            int seconds = (int) (millis / 1000);
-            int minutes = seconds / 60;
-            seconds = seconds % 60;
-            getSupportActionBar().setTitle(String.format("%d:%02d", minutes, seconds));
-            timerHandler.postDelayed(this, 500);
+            startTime ++;
+           // getSupportActionBar().setTitle(String.format("%d:%02d", startTime, seconds));
+            timerHandler.postDelayed(this, 1000);
+            if(CURRENTSTATE == REQ && startTime == 20 ) {
+                driverCancelled();
+
+
+            }
         }
     };
     View mapView;
@@ -227,6 +230,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     private HistoryModel currentHistory;
     private Menu menu;
     private TraceDriverFragment traceDriverFragment;
+    private LinkedHashMap<String, DataSnapshot> driversCancelledMap;
+
 
     public HistoryDetailsFragment getHistoryDetailsFragment() {
         return historyDetailsFragment;
@@ -259,6 +264,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         mContext = this;
 
+        driversCancelledMap = (new LinkedHashMap<String, DataSnapshot>());
 
         model = new Model();
 
@@ -777,11 +783,22 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
+                if(driversCancelledMap.containsKey(key))
+                    return;
+
+                if(!driverModel.getID().isEmpty())
+                    return;
+
+                driversID.add(key);
                 driverFound = true;
                 System.out.println(String.format("DRIVER FOUND", key));
 
-                driversID.add(key);
+
+
+
                 driverModel.setID(key);
+
+
                 geoQuery.removeAllListeners();
                 final DatabaseReference driver = requestDriver.child(key).child("Requests").child(userId);
 
@@ -797,6 +814,12 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 customerGeoFire.setLocation("PickupLocation", new GeoLocation(user.getPickup().getLatitude(), user.getPickup().getLongitude()));
                 Log.i("Destination",user.getDestination().getLatitude()+"");
                 customerGeoFire.setLocation("DropOffLocation", new GeoLocation(user.getDestination().getLatitude(), user.getDestination().getLongitude()));
+
+                startTime = 0;
+                timerHandler.removeCallbacks(timerRunnable);
+                timerHandler.postDelayed(timerRunnable, 1000);
+
+               // timerRunnable.run();
 
                 GeoFire geoDriverLocation = new GeoFire(driversAvlbl);
 
@@ -841,16 +864,25 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
+                        if(dataSnapshot.getChildrenCount() == 0) {
+                            Toast.makeText(mContext, "Driver Cancelled", Toast.LENGTH_SHORT).show();
+                            driverAccept.removeEventListener(driverLocationRefListener);
+                            driverCancelled();
+
+                        }else
+
+
                         for (DataSnapshot imageSnapshot : dataSnapshot.getChildren()) {
+                           // Log.i("DRIVERDATAAA",dataSnapshot.toString());
                             if (imageSnapshot.getKey().equals("Accept") && imageSnapshot.getValue().toString().equals("true")) {
                                 getDriverProfile();
                                 System.out.println(String.format("DRIVER Accepted", imageSnapshot.getKey()));
-                                driverAccept.removeEventListener(driverLocationRefListener);
+                                //driverAccept.removeEventListener(driverLocationRefListener);
                                 model.linkProfData(false, driverModel);
                                 //   driverModel.linkProfData(false);
-                                Log.i("DRIVER MODEL", driverModel.toString());
+                               // Log.i("DRIVER MODEL", driverModel.toString());
 
-
+                                cancelAtOtherDrivers();
                                 Calendar calendar1 = Calendar.getInstance();
                                 SimpleDateFormat formatter1 = new SimpleDateFormat("dd/M/yyyy h:mm");
                                 String currentDate = formatter1.format(calendar1.getTime());
@@ -895,6 +927,12 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     Log.i("Radius", "" + radius);
                     // ==  getClosestDriver();
                 }
+                else {
+                    if(!driverFound && radius >= (8587.0 / 35)) {
+
+                        customerViewStateControler(REVIEWREQ);
+                    }
+                }
             }
 
             @Override
@@ -904,6 +942,19 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         });
     }
 
+    private void driverCancelled(){
+        try {
+            driversCancelledMap.put(driverModel.getID(), null);
+            driverFound = false;
+            requestDriver.child(driverModel.getID()).child("Requests").child(userId).removeValue();
+            cancelAtOtherDrivers();
+            driverModel.setID("");
+            customerViewStateControler(REQ);
+        }
+        catch (Exception e){
+            Log.i("Error","DriverCanclled"+e.toString());
+        }
+    }
     private void traceDriver() {
         Log.i("TRACE BEFORE", driverModel.getID());
         //Drivers on Trips location will be updated automatically from OnLocationChanged function in DriverMapAcitvity
@@ -954,6 +1005,14 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 getSupportActionBar().setTitle("You have arrived"); //Send a notification
                 customerViewStateControler(RATEDRIVER);
             }
+        }
+    }
+
+    private void cancelAtOtherDrivers(){
+
+        for (String driverID : driversID) {
+            if(!driverID.equals(driverModel.getID()))
+            requestDriver.child(driverID).child("Requests").child(userId).removeValue();
         }
     }
 
@@ -1832,6 +1891,9 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 CURRENTSTATE = customerState;
                 break;
             case REVIEWREQ:
+                driverModel.setID("");
+                driversID.clear();
+                driversCancelledMap.clear();
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.PickupLayout).setVisibility(View.INVISIBLE);
 
@@ -1882,6 +1944,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 customerViewStateControler(REQ);
                 break;
             case REQ:
+
                 getClosestDriver();
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
@@ -1949,7 +2012,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 mbtn1.setVisibility(View.VISIBLE);
                 mbtn1.setText(getResources().getString(R.string.callDriver));
-                mbtn2.setVisibility(View.VISIBLE);
+                mbtn2.setVisibility(View.GONE);
                 mbtn2.setText(getResources().getString(R.string.cancelTrip));
 
 

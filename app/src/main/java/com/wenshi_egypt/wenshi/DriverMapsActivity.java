@@ -65,6 +65,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -124,7 +126,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     DatabaseReference driverAvalbl;
     DatabaseReference driver;
     UserModel driverMod;
-    LinkedHashMap<String, DataSnapshot> requestsMap;
+    private LinkedHashMap<String, DataSnapshot> requestsMap;
     boolean onRout;
     Marker mCustomerMarker;
     double timeSec;
@@ -342,10 +344,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             driverAvalbl.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                    Log.i("CHILD TO ADDED", dataSnapshot.getKey());
+                    // Log.i("CHILD TO ADDED", dataSnapshot.getKey());
 
                     if (requestsMap.size() == 0 && !requestsMap.containsKey(dataSnapshot.getKey()) && !dataSnapshot.getKey().equals("FirstConstant") && !dataSnapshot.getKey().equals("Accept")) {
-                        Log.i("CHILD ADDED", dataSnapshot.getKey());
+                        //    Log.i("CHILD ADDED", dataSnapshot.getKey());
                         try {
 
                             JSONObject cust = new JSONObject(((String) dataSnapshot.child("Customer").getValue()));
@@ -381,6 +383,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                             cutomerMod.setPickupAddress(pickupAddress);
 
                             initDriverHistory(); //after Customer init
+                            driverLocation.child(userId).removeValue();
 
 
                         } catch (Exception e) {
@@ -582,8 +585,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (mGoogleApiClient != null)
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            if (CURRENTSTATE == ONROUT || CURRENTSTATE == TODISTINATION)
-                showRout();
+            if (CURRENTSTATE == ONROUT || CURRENTSTATE == TODISTINATION) showRout();
 
             if (myCurrent != null) myCurrent.remove();  //remove Old Marker
             LatLng loc = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
@@ -639,7 +641,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         return true;
     }
 
-    void buildGoogleApiClient() {
+    private void buildGoogleApiClient() {
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
             mGoogleApiClient.connect();
@@ -656,6 +658,20 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
     private void initDriverHistory() {
         if (currentHistory == null || currentHistory.getId().isEmpty())
             currentHistory = new HistoryModel("", "", "", "", "", cutomerMod.getName(), cutomerMod.getID(), driverMod.getName(), driverMod.getID(), driverMod.getDriverCarType());
+    }
+
+    private void updateDriverState(final int state) {
+        DatabaseReference driverState = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests").child(cutomerMod.getID()).child("DriverState");
+        driverState.setValue(state).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.i("UPDATE DRIVER STATE", "STATE:" + state);
+                } else {
+                    Log.i("ERROR AT UPDATE DRIVER", "STATE:" + state);
+                }
+            }
+        });
     }
 
     @Override
@@ -690,7 +706,6 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         if (CURRENTSTATE == TODISTINATION && nearDestination())
             driverViewStateControler(ATDISTINATION);
     }
-
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -1240,7 +1255,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             case ONROUT:
                 Log.i("STATE", "ONROUT");
                 Calendar calendar1 = Calendar.getInstance();
-                SimpleDateFormat formatter1 =  new SimpleDateFormat("dd/M/yyyy h:mm");
+                SimpleDateFormat formatter1 = new SimpleDateFormat("dd/M/yyyy h:mm");
                 String currentDate = formatter1.format(calendar1.getTime());
 
                 currentHistory.setStartTime(currentDate);
@@ -1259,6 +1274,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 swtch_onlineOffline.setVisibility(View.GONE);
                 call_btn.setVisibility(View.VISIBLE);
                 navigation_btn.setVisibility(View.VISIBLE);
+                updateDriverState(ONROUT);
                 break;
             case ARRIVE:
                 Log.i("STATE", "ARR");
@@ -1309,6 +1325,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton2_btn.setText(getResources().getString(R.string.arrived));
 
                 CURRENTSTATE = driverState;
+                updateDriverState(NEARCUSTOMER);
+
                 break;
             case ARRIVED:
                 Log.i("STATE", "ARRIVED");
@@ -1326,6 +1344,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton2_btn.setEnabled(true);
                 CURRENTSTATE = driverState;
                 onRout = true;
+                updateDriverState(ARRIVED);
+
                 break;
             case TOOKPHOTOS:
                 Log.i("STATE", "TOOKPHOTOS");
@@ -1359,6 +1379,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 call_btn.setVisibility(View.VISIBLE);
                 navigation_btn.setVisibility(View.VISIBLE);
                 showRout();
+                updateDriverState(TODISTINATION);
+
                 break;
 
             case ATDISTINATION:
@@ -1371,6 +1393,8 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton2_btn.setVisibility(View.VISIBLE);
                 bottomButton2_btn.setText(getResources().getString(R.string.arrived));
                 CURRENTSTATE = driverState;
+                updateDriverState(ATDISTINATION);
+
                 break;
             case ENDTRIP:
                 Log.i("STATE", "END");
@@ -1378,18 +1402,20 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 if (menu != null) menu.findItem(R.id.action_cancel).setVisible(false);
 
                 Calendar calendar2 = Calendar.getInstance();
-                SimpleDateFormat formatter2 =  new SimpleDateFormat("dd/M/yyyy h:mm");
+                SimpleDateFormat formatter2 = new SimpleDateFormat("dd/M/yyyy h:mm");
                 String currentDate2 = formatter2.format(calendar2.getTime());
                 currentHistory.setEndTime(currentDate2);
                 currentHistory.setClientActualDropOffLocation(driverMod.getCurrentLocation());
 
                 currentHistory.setDistance(getActualDistanceBetweenPickupAndDropOff() + "");
                 currentHistory.setTimeSec(getActualTimeBetweenPickupAndDropOff());
-                currentHistory.setEta(getActualTimeBetweenPickupAndDropOff()+" Sec");
+                currentHistory.setEta(getActualTimeBetweenPickupAndDropOff() + " Sec");
                 currentHistory.setCompeleted(true);
 
                 currentHistory.calculateCost(customerVehicle.isType());
                 saveHistory();
+
+                CURRENTSTATE = ENDTRIP;
 
                 viewRatingFragment();
 //                findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
@@ -1401,9 +1427,10 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
                 bottomButton2_btn.setVisibility(View.VISIBLE);
                 bottomButton2_btn.setText(getResources().getString(R.string.fui_done));
                 bottomButton2_btn.setEnabled(true);
-                CURRENTSTATE = ONLINE;
 
                 requestsMap.clear();
+                updateDriverState(ENDTRIP);
+
                 break;
         }
 
@@ -1421,7 +1448,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
             currentHistory.calculateCost(customerVehicle.isType());
             Toast.makeText(this, currentHistory.getCost() + " L.E.", Toast.LENGTH_SHORT);
 
-           // saveHistory();
+            // saveHistory();
         }
     }
 
@@ -1488,7 +1515,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
         long diffInSec = 60;
         try {
             Calendar calendar1 = Calendar.getInstance();
-            SimpleDateFormat formatter1 =  new SimpleDateFormat("dd/M/yyyy h:mm");
+            SimpleDateFormat formatter1 = new SimpleDateFormat("dd/M/yyyy h:mm");
             String currentDate = formatter1.format(calendar1.getTime());
             Date date2 = formatter1.parse(currentHistory.getStartTime());
             Date date1 = formatter1.parse(currentHistory.getEndTime());
