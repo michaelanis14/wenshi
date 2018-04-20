@@ -136,6 +136,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     private static final int TODESTINATION = 8;
     private static final int RATEDRIVER = 9;
     private static final int REQUEST_CODE_AUTOCOMPLETE = 114;
+    private static final int DRIVER_STATE = -1;
     static GoogleApiClient mGoogleApiClient;
     private static boolean review = false;
     private static String TAG = "MAP LOCATION";
@@ -166,19 +167,6 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     TextView mPaymentReviewRequet;
     //runs without a timer by reposting this handler at the end of the runnable
     Handler timerHandler = new Handler();
-    Runnable timerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            startTime ++;
-           // getSupportActionBar().setTitle(String.format("%d:%02d", startTime, seconds));
-            timerHandler.postDelayed(this, 1000);
-            if(CURRENTSTATE == REQ && startTime == 20 ) {
-                driverCancelled();
-
-
-            }
-        }
-    };
     View mapView;
     Model model;
     ///SETTINGS TAB ITEMS
@@ -210,8 +198,12 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     private boolean driverFound = false;
     private float radius = 2;
     private GeoQuery geoQuery;
-    private DatabaseReference driverLocationRef;
-    private ValueEventListener driverLocationRefListener;
+    private DatabaseReference driverLocationAcceptRef;
+    private DatabaseReference driverLocationTraceRef;
+
+    private ValueEventListener driverLocationAcceptListener;
+    private ValueEventListener driverLocationTraceListener;
+
     private String userId;
     /**
      * Receiver registered with this activity to get the response from FetchAddressIntentService.
@@ -231,7 +223,20 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
     private Menu menu;
     private TraceDriverFragment traceDriverFragment;
     private LinkedHashMap<String, DataSnapshot> driversCancelledMap;
+    //  private DatabaseReference driverAccept;
+    Runnable timerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            startTime++;
+            // getSupportActionBar().setTitle(String.format("%d:%02d", startTime, seconds));
+            timerHandler.postDelayed(this, 1000);
+            if (CURRENTSTATE == REQ && startTime == 20) {
+                driverCancelled();
 
+
+            }
+        }
+    };
 
     public HistoryDetailsFragment getHistoryDetailsFragment() {
         return historyDetailsFragment;
@@ -783,17 +788,13 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                if(driversCancelledMap.containsKey(key))
-                    return;
+                if (driversCancelledMap.containsKey(key)) return;
 
-                if(!driverModel.getID().isEmpty())
-                    return;
+                if (!driverModel.getID().isEmpty()) return;
 
                 driversID.add(key);
                 driverFound = true;
                 System.out.println(String.format("DRIVER FOUND", key));
-
-
 
 
                 driverModel.setID(key);
@@ -812,14 +813,14 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
                 GeoFire customerGeoFire = new GeoFire(driver);
                 customerGeoFire.setLocation("PickupLocation", new GeoLocation(user.getPickup().getLatitude(), user.getPickup().getLongitude()));
-                Log.i("Destination",user.getDestination().getLatitude()+"");
+                Log.i("Destination", user.getDestination().getLatitude() + "");
                 customerGeoFire.setLocation("DropOffLocation", new GeoLocation(user.getDestination().getLatitude(), user.getDestination().getLongitude()));
 
                 startTime = 0;
                 timerHandler.removeCallbacks(timerRunnable);
                 timerHandler.postDelayed(timerRunnable, 1000);
 
-               // timerRunnable.run();
+                // timerRunnable.run();
 
                 GeoFire geoDriverLocation = new GeoFire(driversAvlbl);
 
@@ -840,9 +841,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                                 locat.setLongitude(location.longitude);
                                 driverModel.setCurrentLocation(locat);
                             }
-                            mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude))
-                                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.wensh_marker))
-                                    .title("Wenshi"));
+                            mDriverMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)).icon(BitmapDescriptorFactory.fromResource(R.drawable.trk)).title("Wenshi"));
                             markers.put(mDriverMarker.getId(), mDriverMarker);
                             marksCameraUpdate();
                             //   getDistanceBetweenPickUpToDriver(new LatLng(location.latitude, location.longitude));
@@ -859,29 +858,36 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
 
                 //  DatabaseReference driverAcceptState = FirebaseDatabase.getInstance().getReference("DriversAvailable").child(key).child("Accept");
-                final DatabaseReference driverAccept = requestDriver.child(key).child("Requests").child(userId);
-                driverLocationRefListener = driverAccept.addValueEventListener(new ValueEventListener() {
+                driverLocationAcceptRef = requestDriver.child(key).child("Requests").child(userId);
+                driverLocationAcceptListener = driverLocationAcceptRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        if(dataSnapshot.getChildrenCount() == 0) {
+                        if (dataSnapshot.getChildrenCount() == 0) {
                             Toast.makeText(mContext, "Driver Cancelled", Toast.LENGTH_SHORT).show();
-                            driverAccept.removeEventListener(driverLocationRefListener);
                             driverCancelled();
 
-                        }else
+                        }
+                        //    Toast.makeText(mContext, "CHANGE" +dataSnapshot.toString(), Toast.LENGTH_SHORT).show();
 
 
                         for (DataSnapshot imageSnapshot : dataSnapshot.getChildren()) {
-                           // Log.i("DRIVERDATAAA",dataSnapshot.toString());
-                            if (imageSnapshot.getKey().equals("Accept") && imageSnapshot.getValue().toString().equals("true")) {
+
+
+                            if (imageSnapshot.getKey().equals("DriverState")) {
+                                if (CURRENTSTATE == TRACEDRIVER && imageSnapshot.getValue().toString().equals("8")) {
+                                    Toast.makeText(mContext, "Driver 8", Toast.LENGTH_SHORT).show();
+                                    customerViewStateControler(TODESTINATION);
+                                } else if (CURRENTSTATE == TODESTINATION && imageSnapshot.getValue().toString().equals("11")) {
+                                    Toast.makeText(mContext, "Driver 11", Toast.LENGTH_SHORT).show();
+                                    customerViewStateControler(RATEDRIVER);
+                                }
+                            }
+                            // Log.i("DRIVERDATAAA",dataSnapshot.toString());
+                            if (CURRENTSTATE == REQ && imageSnapshot.getKey().equals("Accept") && imageSnapshot.getValue().toString().equals("true")) {
                                 getDriverProfile();
                                 System.out.println(String.format("DRIVER Accepted", imageSnapshot.getKey()));
-                                //driverAccept.removeEventListener(driverLocationRefListener);
-                                model.linkProfData(false, driverModel);
-                                //   driverModel.linkProfData(false);
-                               // Log.i("DRIVER MODEL", driverModel.toString());
-
+                                // model.linkProfData(false, driverModel);
                                 cancelAtOtherDrivers();
                                 Calendar calendar1 = Calendar.getInstance();
                                 SimpleDateFormat formatter1 = new SimpleDateFormat("dd/M/yyyy h:mm");
@@ -926,9 +932,8 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     geoQuery.setRadius(radius++);
                     Log.i("Radius", "" + radius);
                     // ==  getClosestDriver();
-                }
-                else {
-                    if(!driverFound && radius >= (8587.0 / 35)) {
+                } else {
+                    if (!driverFound && radius >= (8587.0 / 35)) {
 
                         customerViewStateControler(REVIEWREQ);
                     }
@@ -942,24 +947,32 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         });
     }
 
-    private void driverCancelled(){
+    private void driverCancelled() {
         try {
+
+            if (driverLocationTraceRef != null)
+                driverLocationTraceRef.removeEventListener(driverLocationTraceListener);
+
+
+            if (driverLocationAcceptRef != null)
+                driverLocationAcceptRef.removeEventListener(driverLocationAcceptListener);
+
             driversCancelledMap.put(driverModel.getID(), null);
             driverFound = false;
             requestDriver.child(driverModel.getID()).child("Requests").child(userId).removeValue();
             cancelAtOtherDrivers();
             driverModel.setID("");
             customerViewStateControler(REQ);
-        }
-        catch (Exception e){
-            Log.i("Error","DriverCanclled"+e.toString());
+        } catch (Exception e) {
+            Log.i("Error", "DriverCanclled" + e.toString());
         }
     }
+
     private void traceDriver() {
         Log.i("TRACE BEFORE", driverModel.getID());
         //Drivers on Trips location will be updated automatically from OnLocationChanged function in DriverMapAcitvity
-        driverLocationRef = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(driverModel.getID()).child("CurrentLocation").child("l");
-        driverLocationRefListener = driverLocationRef.addValueEventListener(new ValueEventListener() {
+        driverLocationTraceRef = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(driverModel.getID()).child("CurrentLocation").child("l");
+        driverLocationTraceListener = driverLocationTraceRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -995,28 +1008,29 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
 
     private void getDistanceBetweenPickUpToDriver() {            //Convert it to time
 
-        if (CURRENTSTATE == PICKUP) {
-            if (driverModel.getCurrentLocation().distanceTo(user.getPickup()) < 400) {
+        if (CURRENTSTATE == TRACEDRIVER) {
+            if (driverModel.getCurrentLocation().distanceTo(user.getPickup()) < 100) {
                 getSupportActionBar().setTitle("Your driver is here"); //Send a notification
-                customerViewStateControler(TODESTINATION);
+               // customerViewStateControler(TODESTINATION);
             }
         } else if (CURRENTSTATE == TODESTINATION) {
-            if (driverModel.getCurrentLocation().distanceTo(user.getPickup()) < 400) {
+            if (driverModel.getCurrentLocation().distanceTo(user.getPickup()) < 100) {
                 getSupportActionBar().setTitle("You have arrived"); //Send a notification
-                customerViewStateControler(RATEDRIVER);
+               // customerViewStateControler(RATEDRIVER);
             }
         }
     }
 
-    private void cancelAtOtherDrivers(){
+    private void cancelAtOtherDrivers() {
 
         for (String driverID : driversID) {
-            if(!driverID.equals(driverModel.getID()))
-            requestDriver.child(driverID).child("Requests").child(userId).removeValue();
+            if (!driverID.equals(driverModel.getID()))
+                requestDriver.child(driverID).child("Requests").child(userId).removeValue();
         }
     }
 
     private void cancelTrip() {
+        Toast.makeText(mContext, "CANCELL", Toast.LENGTH_SHORT).show();
 
         mMap.clear();
         markers.clear();
@@ -1024,15 +1038,20 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         if (mDriverMarker != null) mDriverMarker.remove();
         marksCameraUpdate();
 
-        if (driverLocationRef != null)
-            driverLocationRef.removeEventListener(driverLocationRefListener);
+        if (driverLocationTraceRef != null)
+            driverLocationTraceRef.removeEventListener(driverLocationTraceListener);
 
-        // driverLocationRef.removeEventListener(driverLocationRefListener);
+
+        if (driverLocationAcceptRef != null)
+            driverLocationAcceptRef.removeEventListener(driverLocationAcceptListener);
 
 
         for (String driverID : driversID) {
             requestDriver.child(driverID).child("Requests").child(userId).removeValue();
         }
+        if (driverModel != null && !driverModel.getID().isEmpty())
+            requestDriver.child(driverModel.getID()).child("Requests").child(userId).removeValue();
+
         try {
             Calendar calendar1 = Calendar.getInstance();
             SimpleDateFormat formatter1 = new SimpleDateFormat("dd/M/yyyy h:mm");
@@ -1064,8 +1083,37 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
         if (geoQuery != null) geoQuery.removeAllListeners();
         driverFound = false;
         radius = 1;
+        driverModel.setID("");
 
 
+    }
+
+    private void endTrip() {
+        Toast.makeText(mContext, "ENDDD", Toast.LENGTH_SHORT).show();
+        mMap.clear();
+        markers.clear();
+        setMarker(true);
+        if (mDriverMarker != null) mDriverMarker.remove();
+        marksCameraUpdate();
+
+
+        if (driverLocationTraceRef != null)
+            driverLocationTraceRef.removeEventListener(driverLocationTraceListener);
+
+
+        if (driverLocationAcceptRef != null)
+            driverLocationAcceptRef.removeEventListener(driverLocationAcceptListener);
+
+
+        for (String driverID : driversID) {
+            requestDriver.child(driverID).child("Requests").child(userId).removeValue();
+        }
+        if (driverModel != null && !driverModel.getID().isEmpty())
+            requestDriver.child(driverModel.getID()).child("Requests").child(userId).removeValue();
+        if (geoQuery != null) geoQuery.removeAllListeners();
+        driverFound = false;
+        radius = 1;
+        driverModel.setID("");
     }
 
     @Override
@@ -1166,10 +1214,12 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                     customerViewStateControler(REVIEWREQ);
                     break;
                 case REQ:
+                    //cancelAtOtherDrivers();
                     cancelTrip();
                     customerViewStateControler(DESTINATION);
                     break;
                 case TRACEDRIVER:
+                    //cancelAtOtherDrivers();
                     cancelTrip();
                     customerViewStateControler(DESTINATION);
                     break;
@@ -1916,7 +1966,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mbtn1.setVisibility(View.INVISIBLE);
                 mbtn1.setText(getResources().getString(R.string.find_driver));
                 //setMarker(false); // delay the set Marker one step behind
-                if (menu != null) menu.findItem(R.id.action_cancel).setVisible(true);
+                if (menu != null) menu.findItem(R.id.action_cancel).setVisible(false);
                 CURRENTSTATE = customerState;
                 if (mChoiceMarker != null) mChoiceMarker.setVisibility(View.INVISIBLE);
                 break;
@@ -2003,12 +2053,12 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mBottomSheet.setVisibility(View.VISIBLE);
                 findViewById(R.id.mainFrame).setVisibility(View.INVISIBLE);
                 findViewById(R.id.reviewReq).setVisibility(View.INVISIBLE);
-                findViewById(R.id.PickupLayout).setVisibility(View.VISIBLE);
-                findViewById(R.id.DestinationLayout).setVisibility(View.VISIBLE);
+                findViewById(R.id.PickupLayout).setVisibility(View.GONE);
+                findViewById(R.id.DestinationLayout).setVisibility(View.GONE);
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
 
-                getSupportActionBar().setTitle(getResources().getString(R.string.driver_confirmed_onrout));
+                getSupportActionBar().setTitle(driverModel.getName());
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 mbtn1.setVisibility(View.VISIBLE);
                 mbtn1.setText(getResources().getString(R.string.callDriver));
@@ -2020,11 +2070,11 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 showRout();
                 marksCameraUpdate();
                 if (mChoiceMarker != null) mChoiceMarker.setVisibility(View.INVISIBLE);
-                traceDriver();
+                // traceDriver();
                 break;
             case RATEDRIVER:
                 //   getClosestDriver();
-
+             //   endTrip();
                 if (mDestination != null) mDestination.remove();
                 mBottomSheet.setVisibility(View.INVISIBLE);
                 findViewById(R.id.mainFrame).setVisibility(View.VISIBLE);
@@ -2043,7 +2093,7 @@ public class CustomerMapActivity extends AppCompatActivity implements GetDirecti
                 mDestinationText.setEnabled(false);
                 mPickupText.setEnabled(false);
 
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 mbtn1.setVisibility(View.INVISIBLE);
                 mbtn2.setVisibility(View.INVISIBLE);
 

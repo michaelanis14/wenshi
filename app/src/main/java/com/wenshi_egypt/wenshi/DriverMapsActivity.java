@@ -662,7 +662,7 @@ public class DriverMapsActivity extends AppCompatActivity implements GetDirectio
 
     private void updateDriverState(final int state) {
         DatabaseReference driverState = FirebaseDatabase.getInstance().getReference("Users").child("Drivers").child(userId).child("Requests").child(cutomerMod.getID()).child("DriverState");
-        driverState.setValue(state).addOnCompleteListener(new OnCompleteListener<Void>() {
+        driverState.setValue(state+"").addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
